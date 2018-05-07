@@ -1,9 +1,9 @@
 from src.handlers.GetCodesHandler import (
     GetCodeAsyncHandler,
-    # GetCodeHandler,
+    GetNodeParamsHandler,
 )
 
 app_urls = [
         ("/get-codes-async", GetCodeAsyncHandler),
-        # ("/get-codes", GetCodeHandler),
+        ("/get-params", GetNodeParamsHandler),
     ]
