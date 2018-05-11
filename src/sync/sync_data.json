@@ -1,0 +1,21 @@
+{
+    "hull":  {
+        "id": 123,
+        "freq_vectors": {
+            "shields": "1010111001010001",
+            "march_engine": "1111001010001000"
+        }
+    },
+    "shields": {
+        "id": 124,
+        "freq_vectors": {
+            "shields": "0101111001010001"
+        }
+    },
+    "march_engine": {
+        "id": 125,
+        "freq_vectors": {
+            "march_engine": "0110101100110100"
+        }
+    }
+}
