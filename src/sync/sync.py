@@ -1,8 +1,22 @@
 import json
 from collections import defaultdict
+from random import randint
 
-from src.sync.magellan import get_func_vector, getfunc, table_view, count_elements
-from src.sync.nodes_data import node_names, node_params, param_names
+try:
+    import mysql.connector
+except ModuleNotFoundError:
+    print(
+        "У вас не установлен MySQL Connector. Это не помешает вам тестировать терминал сейчас, но для использования \n"
+        "терминала на игре необходимо будет скачать и установить MySQL Connector для вашей версии Windows\n")
+try:
+    import elasticsearch
+except ModuleNotFoundError:
+    print("У вас не установлены дополнительные пакеты Python. Возможно, вы забыли запустить install.bat. \n"
+          "Это не помешает вам тестировать терминал сейчас, но для использования \n"
+          "терминала на игре необходимо будет установить эти дополнительные пакеты\n")
+
+from magellan import get_func_vector, getfunc, table_view, count_elements
+from nodes_data import node_names, node_params, param_names
 
 
 class Sync:
@@ -12,6 +26,9 @@ class Sync:
         self.systems = defaultdict(dict)
         self.corrections = {}
         self.slots = {}
+
+    def get_rand_vector(self):
+        return bin(2**16+randint(0,2**16-1))[-16:]
 
     def xor(self, freq_vectors) -> str:
         zp = zip(*freq_vectors)
@@ -83,6 +100,8 @@ class Sync:
 
     def cmd_system_vector(self, args):
         avail = list(self.freq_vectors.keys()) + ['all']
+        if len(args) == 1:
+            args.append('all')
         if args[1] == 'hull':
             print("Корпус влияет на синхронизацию всех систем, но сам системой не является")
             print("Введите system vector all для вывода векторов рассихнрона по всем системам, или "
@@ -112,16 +131,8 @@ class Sync:
         table_view(lst)
 
     def cmd_system_affected(self, args):
-        avail = list(self.freq_vectors.keys()) + ['all']
-        if args[1] == 'march_engine':
-            print('Маршевый двигатель Ласточка-GT')
-            lst = [["Параметр", "Штатное значение", "Текущее значение"], "-",
-                   ['Маршевая тяга', '110 МН', "85% (93.5 МН)"],
-                   ['Набор маршевой тяги', '40%/сек', "60% (24%/сек)"],
-                   ['Сброс маршевой тяги', '60%/сек', "100% (60%/сек)"],
-                   ['Тепловыделение', '2400 КДж/сек', "115% (2760 КДж/сек)"],
-                   ]
-        table_view(lst)
+        print("""Эта функция должна выводить список параметров систем и влияние рассинхрона на них.
+Пока что не реализовано""")
 
     def cmd_system_params(self, args):
         try:
@@ -218,6 +229,15 @@ class Sync:
             self.systems[system] = node_params[sysdata.get('id')]
             for sys, fv in sysdata['freq_vectors'].items():
                 self.freq_vectors[sys][system] = fv
+        self.calc_totals()
+
+    def cmd_randomize(self):
+        for system, sysdata in self.freq_vectors.items():
+            self.freq_vectors[system] = {sys: self.get_rand_vector() for sys in sysdata}
+        self.corrections = {}
+        print("Все частотные рисунки сгенерированы случайным образом")
+
+    def calc_totals(self):
         for sys, sysdata in self.freq_vectors.items():
             self.freq_vectors[sys]['total'] = self.xor(sysdata.values())
 
@@ -237,9 +257,7 @@ class Sync:
                 ))
 
     def cmd_save(self):
-        if self.check_system_slots():
-            pass  # Отправить данные в БД
-            print("Данные сохранены")
+        print("Эта команда не работает в тестовой версии")
 
     def terminal(self):
         while True:
@@ -259,6 +277,8 @@ class Sync:
                 self.cmd_correct(args)
             elif command == 'save':
                 self.cmd_save()
+            elif command == "randomize":
+                self.cmd_randomize()
             else:
                 print(
                     "Команда " + command + " не распознана. Введите help для вывода всех команд или help <имя команды> "
@@ -268,4 +288,5 @@ class Sync:
 if __name__ == "__main__":
     s = Sync()
     s.load_data()
+    print("Введите help для получения списка команд")
     s.terminal()

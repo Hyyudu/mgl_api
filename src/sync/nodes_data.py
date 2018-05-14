@@ -12,8 +12,10 @@ param_names = {
     "thrust_rev_acc": "Ускорение реверсной тяги",
     "thrust_slow": "Сброс тяги",
     "thrust_rev_slow": "Сброс реверсной тяги",
-    "heat_capacity": "Теплостойкость",
-    "heat_sync": "Теплоотвод",
+    "heat_capacity": "Теплоемкость",
+    "heat_sink": "Теплоотвод",
+    "heat_prod": "Тепловыделение",
+    "reflection": "Уровень отражения",
 }
 
 node_params = {
@@ -37,6 +39,9 @@ node_params = {
             "radiation_def": 150,
             "desinfect_level": 120,
             "mechanical_def": 1000,
+            "reflection": 25,
+            "heat_capacity": 350000,
+            "heat_sink": 1200,
             "weight": 200,
             "volume": 100,
         }
@@ -51,8 +56,8 @@ node_params = {
             "thrust_rev_acc": 50,
             "thrust_slow": 30,
             "thrust_rev_slow": 50,
-            "heat_capacity": 30000,
-            "heat_sync": 800,
+            "heat_prod": 30000,
+            "heat_sink": 800,
             "weight": 120,
             "volume": 80
         }

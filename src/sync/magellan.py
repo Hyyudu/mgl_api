@@ -1,16 +1,6 @@
 import re
 from collections import defaultdict
 from itertools import product
-from random import shuffle, random
-
-sample_func = '!((aBC+Ad)(B+C+aD) + Bd + !(AbcD + bc))'
-
-
-def get_rand_func(size):
-    src = list('abcd')
-    shuffle(src)
-    src = [c if random() < 0.5 else c.upper() for c in src[:size]]
-    return "".join(src) if random() < 0.5 else "+".join(src)
 
 
 def count_elements(st):
@@ -52,12 +42,6 @@ def count_elements(st):
         res['+'] = dict(res['+'])
         res['*'] = dict(res['*'])
         return res
-
-
-def group(lst, n):
-    """ Группировка элементов последовательности по count элементов """
-    return [lst[i:i + n] for i in range(0, len(lst), n)]
-
 
 def getfunc(functext):
     # очищаем вход
@@ -111,20 +95,5 @@ def table_view(data, free_space_right=4, free_space_left=1, column_separator="|"
                 [" " * free_space_left + "{:<{x}}".format(item[i], x=x - free_space_left) for i, x in
                  enumerate(column_widths)]).format(*item))
 
-
-def get_vector_carno(vector):
-    vector = vector[::-1]
-    arr = [0, 1, 3, 2, 4, 5, 7, 6, 12, 13, 15, 14, 8, 9, 11, 10]
-    groups = group(arr, 4)
-    lst = [['', 'cd', 'cD', 'CD', 'Cd']]
-    rows = ['ab', 'aB', 'AB', 'Ab']
-    for i, grp in enumerate(groups):
-        lst += [[rows[i]] + [vector[x] for x in grp]]
-    table_view(lst, free_space_right=1)
-
-
 if __name__ == "__main__":
-    print(sample_func)
-    r = count_elements(sample_func)
-    for key, val in r.items():
-        print("{}: {}".format(key, val))
+    print("Этот скрипт не работает сам по себе. Запускайте sync.py")
