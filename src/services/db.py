@@ -22,3 +22,5 @@ class DB:
         self.cursor.execute(sql)
         return [row for row in self.cursor]
 
+    def insert(self, table, data):
+        pass
