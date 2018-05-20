@@ -1,7 +1,10 @@
+import re
+
 import mysql.connector
 from mysql.connector import errorcode
 
 from config import DB_CONFIG
+
 
 class DB:
     def __init__(self):
@@ -17,10 +20,60 @@ class DB:
         else:
             self.cnx = cnx
             self.cursor = cnx.cursor(dictionary=True)
+            self.column_lists = {}
 
-    def query(self, sql):
-        self.cursor.execute(sql)
-        return [row for row in self.cursor]
+    def _query(self, sql, data, need_commit=False):
+        try:
+            self.cursor.execute(sql, data)
+            if need_commit:
+                self.cnx.commit()
+            return self.cursor
+        except Exception as e:
+            print(e.msg + "\n" + sql)
+            print(data)
+            return False
+
+    def query(self, sql, data=None, need_commit=False):
+        sql = re.sub(r':([\w\d_]+)', r'%(\1)s', sql)
+        return self._query(sql, data or {}, need_commit)
+
+    def fetchAll(self, sql, data=None):
+        self.query(sql, data or {})
+        return [item for item in self.cursor]
+
+    def fetchRow(self, sql, data=None):
+        self.query(sql, data or {})
+        for item in self.cursor:
+            return item
+
+    def fetchColumn(self, sql, data=None):
+        self.query(sql, data or {})
+        return [list(item.values())[0] for item in self.cursor]
+
+    def fetchOne(self, sql, data=None):
+        self.query(sql, data or {})
+        for item in self.cursor:
+            return list(item.values())[0]
+
+    def get_column_list(self, table):
+        """Получает список столбцов таблицы"""
+        if self.column_lists.get(table) is None:
+            self.query("show columns from " + table)
+            self.column_lists[table] = [row['Field'] for row in self.cursor]
+        return self.column_lists[table]
+
+    def upsert(self, operation, table, data, where=''):
+        column_list = self.get_column_list(table)
+        insert_data = {key: val for key, val in data.items() if key in column_list}
+        sql = "insert into" if operation == 'insert' else 'update'
+        sql += " " + table + " set " + ", ".join([field + " = %(" + field + ")s" for field in insert_data.keys()])
+        if where:
+            sql += " where " + where
+        self.query(sql, insert_data, need_commit=True)
+        return self.cursor.lastrowid
+
+    def update(self, table, data, where):
+        return self.upsert('update', table, data, where)
 
     def insert(self, table, data):
-        pass
+        return self.upsert('insert', table, data)
