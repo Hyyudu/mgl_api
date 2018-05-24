@@ -2,10 +2,10 @@ from src.services.db import DB
 
 db = DB()
 dummy = {"id": 100, "name": "Dummy"}
-new_dummy = {"id": 100, "name": "New dummy"}
+new_dummy = {"id": 101, "name": "New dummy"}
 
 def test_delete():
-    db.query('delete from companies where id=:id', dummy)
+    db.query('delete from companies where id in ({}, {})'.format(dummy['id'], new_dummy['id']), need_commit=True)
     assert db.fetchAll('select * from companies where id=:id', dummy) == []
 
 def test_fetchAll():
@@ -53,4 +53,13 @@ def test_update():
     assert found == new_dummy
 
 def test_cleanup():
+    test_delete()
+
+def test_insert_many():
+    db.insert('companies', [dummy, new_dummy])
+    found = db.fetchAll('select * from companies where id>=100 order by id')
+
+    assert found == [dummy, new_dummy]
+
+def test_cleanup2():
     test_delete()

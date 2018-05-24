@@ -72,8 +72,26 @@ class DB:
         self.query(sql, insert_data, need_commit=True)
         return self.cursor.lastrowid
 
+    def insert_many(self, table, data):
+        column_list = self.get_column_list(table)
+        insert_data = [
+            {key: val for key, val in item.items() if key in column_list}
+            for item in data
+        ]
+        sql = "insert into " + table + " (" + ", ".join(column_list) + ") values "
+        ins_data = {}
+        sql_values = []
+        for i, item in enumerate(insert_data):
+            ins_data.update({key + str(i): val for key, val in item.items()})
+            sql_values.append("(" + ", ".join([":" + key+str(i) for key in item]) + ")")
+        sql += ", \n".join(sql_values)
+        return self.query(sql, ins_data, need_commit=True)
+
     def update(self, table, data, where):
         return self.upsert('update', table, data, where)
 
     def insert(self, table, data):
-        return self.upsert('insert', table, data)
+        if isinstance(data, dict):
+            return self.upsert('insert', table, data)
+        else:
+            return self.insert_many(table, data)
