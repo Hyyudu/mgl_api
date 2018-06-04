@@ -1,8 +1,7 @@
-from src.handlers.GetCodesHandler import (
-    GetNodeParamsHandler,
-    AddModelHandler)
+from src.handlers.GetCodesHandler import GetNodeParamsHandler
+from src.handlers.ModelsHandler import *
 
 app_urls = [
     ("/get-params", GetNodeParamsHandler),
-    ("/add-model", AddModelHandler),
+    ("/model/add", AddModelHandler),
 ]

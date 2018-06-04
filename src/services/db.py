@@ -24,12 +24,13 @@ class DB:
 
     def _query(self, sql, data, need_commit=False):
         try:
-            self.cursor.execute(sql, data)
+            self.cursor.execute(sql, {key: val for key, val in data.items() if not isinstance(val, (dict, list, tuple))})
             if need_commit:
                 self.cnx.commit()
             return self.cursor
         except Exception as e:
-            print(e.msg + "\n" + sql)
+            print(e)
+            print(sql)
             print(data)
             return False
 
@@ -45,6 +46,10 @@ class DB:
         self.query(sql, data or {})
         for item in self.cursor:
             return item
+
+    def fetchDict(self, sql, data=None, key='', val=''):
+        self.query(sql, data or {})
+        return {item.get(key): item.get(val) for item in self.cursor}
 
     def fetchColumn(self, sql, data=None):
         self.query(sql, data or {})
