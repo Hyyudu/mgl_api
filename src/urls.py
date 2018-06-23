@@ -1,5 +1,5 @@
-from src.handlers.GetCodesHandler import GetNodeParamsHandler
-from src.handlers.ModelsHandler import *
+from handlers.GetCodesHandler import GetNodeParamsHandler
+from handlers.ModelsHandler import *
 
 app_urls = [
     ("/get-params", GetNodeParamsHandler),

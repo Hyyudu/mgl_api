@@ -3,7 +3,7 @@ from tornado.web import (
     Application,
 )
 
-from src.urls import app_urls
+from urls import app_urls
 
 
 def make_app():

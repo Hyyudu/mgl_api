@@ -1,4 +1,4 @@
-from src.services.db import DB
+from services.db import DB
 
 db = DB()
 
