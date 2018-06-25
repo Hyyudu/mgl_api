@@ -6,11 +6,27 @@ from tornado.web import (
 from urls import app_urls
 
 
-def make_app():
-    return Application(app_urls)
+class App(Application):
+    def __init__(self):
+        settings = dict(
+            debug=True,
+        )
+        session_settings = dict(
+            driver='memory',
+            driver_settings={'host': self},
+            force_persistence=True,
+            sid_name='torndsessionID',
+            session_lifetime=1800
+        )
+        settings['session'] = session_settings
+        Application.__init__(self, app_urls, **settings)
 
 
 if __name__ == "__main__":
-    app = make_app()
+    app = tornado.httpserver.HTTPServer(App())
     app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+
+    try:
+        tornado.ioloop.IOLoop.current().start()
+    finally:
+        del(app)

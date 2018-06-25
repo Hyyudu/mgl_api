@@ -1,11 +1,10 @@
 import json
-
-from tornado.web import RequestHandler
+from torndsession.sessionhandler import SessionBaseHandler
 
 from services.db import DB
 
 
-class GetNodeParamsHandler(RequestHandler):
+class GetNodeParamsHandler(SessionBaseHandler):
     async def get(self):
         db = DB()
         result = db.fetchAll('select * from v_node_parameter_list')
