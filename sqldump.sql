@@ -1246,17 +1246,18 @@ CREATE TABLE IF NOT EXISTS `builds` (
 CREATE TABLE IF NOT EXISTS `companies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `code` varchar(3) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
 
 -- Дамп данных таблицы magellan.companies: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `companies` DISABLE KEYS */;
-INSERT IGNORE INTO `companies` (`id`, `name`) VALUES
-	(1, 'Гугл Дисней'),
-	(2, 'Пони Роскосмос Экспресс'),
-	(3, 'Красный Крест Генетикс'),
-	(4, 'Мицубиси АвтоВАЗ Технолоджи'),
-	(5, 'МарсСтройТрест');
+INSERT IGNORE INTO `companies` (`id`, `name`, `code`) VALUES
+	(1, 'Гугл Дисней', 'gd'),
+	(2, 'Пони Роскосмос Экспресс', 'pre'),
+	(3, 'Красный Крест Генетикс', 'kkg'),
+	(4, 'Мицубиси АвтоВАЗ Технолоджи', 'mat'),
+	(5, 'МарсСтройТрест', 'mst');
 /*!40000 ALTER TABLE `companies` ENABLE KEYS */;
 
 
@@ -1280,7 +1281,7 @@ CREATE TABLE IF NOT EXISTS `models` (
 -- Дамп данных таблицы magellan.models: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company_id`, `created`) VALUES
-	(1, 'Тестобак-1', 'fuel_tank', 1, 'medium', 'Просто тестовый бак', 3, '2018-06-03 10:15:05'),
+	(1, 'Тестобак-1', 'fuel_tank', 1, 'medium', 'Просто тестовый бак', 3, '2018-06-26 07:46:28'),
 	(12, 'Ласточка-1', 'shunter', 0, 'medium', NULL, 2, '2018-05-20 14:23:35');
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 
@@ -1297,7 +1298,7 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   CONSTRAINT `pcode` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Связь узлов и параметров';
 
--- Дамп данных таблицы magellan.model_has_parameters: ~77 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_has_parameters: ~66 rows (приблизительно)
 /*!40000 ALTER TABLE `model_has_parameters` DISABLE KEYS */;
 INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`) VALUES
 	('fuel_tank', 'az_level', 100),
@@ -1440,7 +1441,7 @@ CREATE TABLE IF NOT EXISTS `node_types` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Типы узлов';
 
--- Дамп данных таблицы magellan.node_types: ~9 rows (приблизительно)
+-- Дамп данных таблицы magellan.node_types: ~8 rows (приблизительно)
 /*!40000 ALTER TABLE `node_types` DISABLE KEYS */;
 INSERT IGNORE INTO `node_types` (`code`, `id`, `name`) VALUES
 	('fuel_tank', 6, 'Топливный бак'),

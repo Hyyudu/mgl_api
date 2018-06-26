@@ -1,8 +1,8 @@
 from src.services.db import DB
 
 db = DB()
-dummy = {"id": 100, "name": "Dummy"}
-new_dummy = {"id": 101, "name": "New dummy"}
+dummy = {"id": 100, "name": "Dummy", 'code': 'dum'}
+new_dummy = {"id": 101, "name": "New dummy", 'code': 'ndm'}
 
 def test_delete():
     db.query('delete from companies where id in ({}, {})'.format(dummy['id'], new_dummy['id']), need_commit=True)
@@ -14,16 +14,16 @@ def test_fetchAll():
 
     # assert
     assert companies == [
-        {'id': 1, 'name': 'Гугл Дисней'},
-        {'id': 2, 'name': 'Пони Роскосмос Экспресс'},
-        {'id': 3, 'name': 'Красный Крест Генетикс'},
-        {'id': 4, 'name': 'Мицубиси АвтоВАЗ Технолоджи'},
-        {'id': 5, 'name': 'МарсСтройТрест'}
+        {'id': 1, 'name': 'Гугл Дисней', 'code': 'gd'},
+        {'id': 2, 'name': 'Пони Роскосмос Экспресс', 'code': 'pre'},
+        {'id': 3, 'name': 'Красный Крест Генетикс', 'code': 'kkg'},
+        {'id': 4, 'name': 'Мицубиси АвтоВАЗ Технолоджи', 'code': 'mat'},
+        {'id': 5, 'name': 'МарсСтройТрест', 'code': 'mst'}
     ]
 
 
 def test_fetchRow():
-    google = db.fetchRow("select * from companies where id=:id", {"id": 1})
+    google = db.fetchRow("select id, name from companies where id=:id", {"id": 1})
     assert google == {"id": 1, "name": "Гугл Дисней"}
     assert db.fetchRow('select * from companies where id=7') is None
 

@@ -29,4 +29,4 @@ if __name__ == "__main__":
     try:
         tornado.ioloop.IOLoop.current().start()
     finally:
-        del(app)
+        app.stop()

@@ -3,13 +3,15 @@ import json
 from tornado.web import RequestHandler
 from torndsession.sessionhandler import SessionBaseHandler
 
+from services.model_crud import add_model
+
 
 class AddModelHandler(RequestHandler):
     async def post(self):
         body = self.request.body
         req = json.loads(body)
-        self.write(req)
-
+        out = add_model(req)
+        self.write(json.dumps(out))
 
 class PingHandler(SessionBaseHandler):
     async def get(self):

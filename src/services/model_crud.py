@@ -4,7 +4,9 @@ db = DB()
 
 
 def add_model(data):
-    """ data: {<id>, name, level, description, size, node_type_code, company_id} """
+    """ data: {<id>, name, level, description, size, node_type_code, vendor, {params}} """
+    avail_vendors = db.fetchDict('select code, id from companies', {}, 'id', 'code')
+    data['company_id'] = avail_vendors.get(data['vendor'], data['vendor'])
     new_model_id = db.insert('models', data)
     model_params = db.fetchColumn('select parameter_code from model_has_parameters where node_code=:node_type_code',
                                   data)
