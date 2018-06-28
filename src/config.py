@@ -1,6 +1,6 @@
 DB_CONFIG = {
-    'host': 'localhost',
+    'host': 'mysql',
     'database': 'magellan',
     'user': 'root',
-    'password': ''
+    'password': 'hunter2'
 }
