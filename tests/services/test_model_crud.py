@@ -8,7 +8,7 @@ from src.services.db import DB
 db1 = DB()
 
 def test_delete_model():
-    delete_model(1)
+    delete_model(None, {"id": 1})
     assert db1.fetchAll("select * from model_parameters where model_id = 1") == []
     assert db1.fetchAll("select * from models where id = 1") == []
 
@@ -30,7 +30,7 @@ def test_add_model():
             "volume": 400,
         }
     }
-    add_model(data)
+    add_model(None, data)
 
-    new_model = read_model(1)
+    new_model = read_model(None, {"id": 1}).get('data')
     assert all([new_model[field] == data[field] for field in data])

@@ -27,12 +27,11 @@ class DB:
             self.cursor.execute(sql, {key: val for key, val in data.items() if not isinstance(val, (dict, list, tuple))})
             if need_commit:
                 self.cnx.commit()
+
             return self.cursor
         except Exception as e:
-            print(e)
-            print(sql)
-            print(data)
-            return False
+            e.sql = sql
+            raise e
 
     def query(self, sql, data=None, need_commit=False):
         sql = re.sub(r':([\w\d_]+)', r'%(\1)s', sql)

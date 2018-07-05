@@ -3,10 +3,11 @@ from services.db import DB
 db = DB()
 
 
-def add_model(data):
+def add_model(self, data):
     """ data: {<id>, name, level, description, size, node_type_code, vendor, {params}} """
     avail_vendors = db.fetchDict('select code, id from companies', {}, 'id', 'code')
-    data['company_id'] = avail_vendors.get(data['vendor'], data['vendor'])
+    if not data.get('company_id') and data.get('vendor'):
+        data['company_id'] = avail_vendors.get(data['vendor'], data['vendor'])
     new_model_id = db.insert('models', data)
     model_params = db.fetchColumn('select parameter_code from model_has_parameters where node_code=:node_type_code',
                                   data)
@@ -18,15 +19,24 @@ def add_model(data):
         }
         for code in model_params
     ]
+    data['id'] = new_model_id
     db.insert('model_parameters', insert_parameters)
+    data['params'] = {param['parameter_code']: param['value'] for param in insert_parameters}
+    return {"status": "ok", "data": data}
 
 
-def read_model(model_id):
-    model = db.fetchRow('select * from models where id=:model_id', vars())
-    model['params'] = db.fetchDict('select parameter_code, value from model_parameters where model_id=:model_id', vars(),
+
+def read_model(self, data):
+    model = db.fetchRow('select * from models where id=:id', data)
+    if not model:
+        return {"status": "fail", "errors": "Model with id {} not found".format(data.get('id'))}
+    model['created'] = str(model[b'created'])
+    del(model[b'created'])
+    model['params'] = db.fetchDict('select parameter_code, value from model_parameters where model_id=:id', data,
                                    'parameter_code', 'value')
-    return model
+    return {"status": "ok", "data": model}
 
-def delete_model(model_id):
-    db.query('delete from model_parameters where model_id=:model_id', vars(), need_commit=True)
-    db.query('delete from models where id=:model_id', vars(), need_commit=True)
+def delete_model(self, data):
+    db.query('delete from model_parameters where model_id=:id', data, need_commit=True)
+    deleted = db.query('delete from models where id=:id', data, need_commit=True)
+    return {"status": "ok", "deleted": deleted.rowcount}

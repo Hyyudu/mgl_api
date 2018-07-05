@@ -1,21 +1,28 @@
-import json
-
-from tornado.web import RequestHandler
 from torndsession.sessionhandler import SessionBaseHandler
 
-from services.model_crud import add_model
+from handlers.ApiHandler import ApiHandler
+from services.model_crud import add_model, delete_model, read_model
 
 
-class AddModelHandler(RequestHandler):
-    async def post(self):
-        body = self.request.body
-        req = json.loads(body)
-        out = add_model(req)
-        self.write(json.dumps(out))
+class AddModelHandler(ApiHandler):
+    func = add_model
+
+    def get_exception_text(self, e):
+        if e.errno == 1062:
+            return "Model with this ID already exists"
+
+
+class DeleteModelHandler(ApiHandler):
+    func = delete_model
+
+
+class ReadModelHandler(ApiHandler):
+    func = read_model
+
 
 class PingHandler(SessionBaseHandler):
     async def get(self):
-        self.write("Hello, world")
+        self.write("Hello, world<br>")
         data = self.session.get("data", 0)
         self.write('data=%s' % data)
         self.session["data"] = data + 1
