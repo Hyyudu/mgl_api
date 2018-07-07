@@ -2,3 +2,4 @@ tornado
 torndsession
 pymysql
 pytest
+mysql-connector-python
