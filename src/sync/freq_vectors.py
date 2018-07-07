@@ -7,7 +7,7 @@ S = Sync()
 companies = [1, 2, 3, 4, 5]
 maxtier = 10
 sizes = ['small', 'medium', 'large']
-nodes = ['march_engine', 'warp_engine', 'shunter', 'radar', 'sonar', 'fuel_tank', 'shields', 'lss']
+nodes = ['march_engine', 'warp_engine', 'shunter', 'radar', 'scaner', 'fuel_tank', 'shields', 'lss']
 
 data = {}
 for company in companies:
@@ -33,7 +33,6 @@ for company in companies:
                     "correction": corrections[i]
                 }
 
-#print(data)
 
 for company in companies:
     for node in nodes:

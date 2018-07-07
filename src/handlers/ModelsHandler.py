@@ -23,6 +23,10 @@ class ReadModelHandler(ApiHandler):
 class PingHandler(SessionBaseHandler):
     async def get(self):
         self.write("Hello, world<br>")
-        data = self.session.get("data", 0)
-        self.write('data=%s' % data)
-        self.session["data"] = data + 1
+        try:
+            data = self.session.get("data", 0)
+
+            self.session["data"] = data + 1
+            self.write('data=%s' % data)
+        except:
+            self.write('Some problem with session, nevermind')
