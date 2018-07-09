@@ -20,7 +20,7 @@ def test_add_model():
         "level": 1,
         "node_type_code": "fuel_tank",
         "size": "medium",
-        "company_id": 3,
+        "company": "kkg",
         "params": {
             "az_level": 100,
             "fuel_volume": 200,
@@ -34,3 +34,6 @@ def test_add_model():
 
     new_model = read_model(None, {"id": 1}).get('data')
     assert all([new_model[field] == data[field] for field in data])
+
+def test_delete_model2():
+    delete_model(None, {"id": 1})

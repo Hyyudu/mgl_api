@@ -4,10 +4,10 @@ db = DB()
 
 
 def add_model(self, data):
-    """ data: {<id>, name, level, description, size, node_type_code, vendor, {params}} """
+    """ data: {<id>, name, level, description, size, node_type_code, company, {params}} """
     avail_vendors = db.fetchDict('select code, id from companies', {}, 'code', 'id')
-    if not data.get('company_id') and data.get('vendor'):
-        data['company_id'] = avail_vendors.get(data['vendor'], data['vendor'])
+    if not data.get('company') in avail_vendors:
+        return {"status": "fail", "errors": "Не существует компания с кодом '{}'".format(data.get('company',''))}
     new_model_id = db.insert('models', data)
     model_params = db.fetchColumn('select parameter_code from model_has_parameters where node_code=:node_type_code',
                                   data)

@@ -3,6 +3,9 @@ from random import random
 
 from numpy import interp
 
+def roundTo(val, prec=3):
+    return round(val, prec-len(str(int(val))))
+
 estimates = {
     "march_engine": {
         "thrust": {-3: 700, 0: 1000, 5: 1500},
@@ -23,20 +26,32 @@ estimates = {
         "turn_slow": {-3: 80, 0: 90, 5: 105},
         "heat_prod": {-3: 92, 0: 80, 5: 60},
         "volume": {-1: 210, 0: 185, 2: 160},
+    },
+    "radar": {
+        "range_max": {-3: 30, 0: 40, 5: 50},
+        "angle_min": {-2: 25, 0: 20, 3: 15},
+        "angle_max": {-2: 30, 0: 35, 3: 40},
+        "angle_change": {-3: 0.8, 0: 1, 5: 1.2},
+        "range_change": {-3: 0.8, 0: 1, 5: 1.2},
+        "rotate_speed": {-3: 10, 0: 12, 5: 15},
+        "volume": {-1: 210, 0: 185, 2: 160},
     }
+
 }
 
 model = {
-    "vendor": "mat",
-    "node_type_code": "shunter",
-    "name": "Аутлендер",
-    "size": "large",
+    "company": "pre",
+    "node_type_code": "radar",
+    "name": "AN/ZPY-1 Starlite",
+    "size": "medium",
     "params": {
-        "turn": 5,
-        "turn_acc": 5,
-        "turn_slow": 1,
-        "heat_prod": 0,
-        "volume": 1,
+        "range_max": -1,
+        "angle_min": 1,
+        "angle_max": 1,
+        # "angle_change": 1,
+        # "range_change": 1,
+        "rotate_speed": 2,
+        # "volume": -1,
     }
 }
 
@@ -48,7 +63,7 @@ model['level'] = 2 if advance > 0.9 else 1 if advance > 0.45 else 0
 for name, arr in est.items():
     val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
     accuracy = 0.97
-    val = round(val * (random() * 2 * (1 - accuracy) + accuracy))
+    val = roundTo(val * (random() * 2 * (1 - accuracy) + accuracy))
     model['params'][name] = val
 
 print(json.dumps(model))
