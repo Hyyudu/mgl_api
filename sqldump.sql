@@ -11,11 +11,13 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Дамп структуры базы данных magellan
+DROP DATABASE IF EXISTS `magellan`;
 CREATE DATABASE IF NOT EXISTS `magellan` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `magellan`;
 
 
 -- Дамп структуры для таблица magellan.base_freq_vectors
+DROP TABLE IF EXISTS `base_freq_vectors`;
 CREATE TABLE IF NOT EXISTS `base_freq_vectors` (
   `company_id` int(11) NOT NULL,
   `node_code` varchar(50) NOT NULL,
@@ -148,36 +150,36 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 	(1, 'radar', 9, 'small', '0011100010111111', 'b'),
 	(1, 'radar', 9, 'medium', '0011011110110000', 'C'),
 	(1, 'radar', 9, 'large', '0011101110111100', 'bC'),
-	(1, 'scaner', 0, 'small', '0101000000110000', 'B'),
-	(1, 'scaner', 0, 'medium', '1010000011000000', ''),
-	(1, 'scaner', 0, 'large', '0110111100001111', 'b+C'),
-	(1, 'scaner', 1, 'small', '1011000100101110', 'dc'),
-	(1, 'scaner', 1, 'medium', '1010000000111111', 'a'),
-	(1, 'scaner', 1, 'large', '0101111100111111', 'A'),
-	(1, 'scaner', 2, 'small', '1010000000111111', 'B'),
-	(1, 'scaner', 2, 'medium', '0101000011001111', 'B'),
-	(1, 'scaner', 2, 'large', '1001111100000000', 'C+b'),
-	(1, 'scaner', 3, 'small', '0011011010101001', 'D'),
-	(1, 'scaner', 3, 'medium', '1001110000000011', 'C'),
-	(1, 'scaner', 3, 'large', '0110001111110011', 'A+B'),
-	(1, 'scaner', 4, 'small', '0011011000000011', 'Da'),
-	(1, 'scaner', 4, 'medium', '0011011010101001', 'D'),
-	(1, 'scaner', 4, 'large', '0110001111111100', 'd'),
-	(1, 'scaner', 5, 'small', '0000011001100110', 'b+C'),
-	(1, 'scaner', 5, 'medium', '1100100110101001', 'A'),
-	(1, 'scaner', 5, 'large', '0000010101100101', 'C'),
-	(1, 'scaner', 6, 'small', '0101000000110000', 'C'),
-	(1, 'scaner', 6, 'medium', '1001110011111100', 'd'),
-	(1, 'scaner', 6, 'large', '0110001100001100', 'A+B'),
-	(1, 'scaner', 7, 'small', '0100000100100001', 'D+C'),
-	(1, 'scaner', 7, 'medium', '1010111111001111', 'c'),
-	(1, 'scaner', 7, 'large', '0110001100000011', 'C'),
-	(1, 'scaner', 8, 'small', '0000101001101010', 'b'),
-	(1, 'scaner', 8, 'medium', '0000010101100101', 'D'),
-	(1, 'scaner', 8, 'large', '0101010100110101', 'Bd'),
-	(1, 'scaner', 9, 'small', '0000010101100101', 'c'),
-	(1, 'scaner', 9, 'medium', '0011011001010110', 'c'),
-	(1, 'scaner', 9, 'large', '0011001101010011', 'bd'),
+	(1, 'sonar', 0, 'small', '0101000000110000', 'B'),
+	(1, 'sonar', 0, 'medium', '1010000011000000', ''),
+	(1, 'sonar', 0, 'large', '0110111100001111', 'b+C'),
+	(1, 'sonar', 1, 'small', '1011000100101110', 'dc'),
+	(1, 'sonar', 1, 'medium', '1010000000111111', 'a'),
+	(1, 'sonar', 1, 'large', '0101111100111111', 'A'),
+	(1, 'sonar', 2, 'small', '1010000000111111', 'B'),
+	(1, 'sonar', 2, 'medium', '0101000011001111', 'B'),
+	(1, 'sonar', 2, 'large', '1001111100000000', 'C+b'),
+	(1, 'sonar', 3, 'small', '0011011010101001', 'D'),
+	(1, 'sonar', 3, 'medium', '1001110000000011', 'C'),
+	(1, 'sonar', 3, 'large', '0110001111110011', 'A+B'),
+	(1, 'sonar', 4, 'small', '0011011000000011', 'Da'),
+	(1, 'sonar', 4, 'medium', '0011011010101001', 'D'),
+	(1, 'sonar', 4, 'large', '0110001111111100', 'd'),
+	(1, 'sonar', 5, 'small', '0000011001100110', 'b+C'),
+	(1, 'sonar', 5, 'medium', '1100100110101001', 'A'),
+	(1, 'sonar', 5, 'large', '0000010101100101', 'C'),
+	(1, 'sonar', 6, 'small', '0101000000110000', 'C'),
+	(1, 'sonar', 6, 'medium', '1001110011111100', 'd'),
+	(1, 'sonar', 6, 'large', '0110001100001100', 'A+B'),
+	(1, 'sonar', 7, 'small', '0100000100100001', 'D+C'),
+	(1, 'sonar', 7, 'medium', '1010111111001111', 'c'),
+	(1, 'sonar', 7, 'large', '0110001100000011', 'C'),
+	(1, 'sonar', 8, 'small', '0000101001101010', 'b'),
+	(1, 'sonar', 8, 'medium', '0000010101100101', 'D'),
+	(1, 'sonar', 8, 'large', '0101010100110101', 'Bd'),
+	(1, 'sonar', 9, 'small', '0000010101100101', 'c'),
+	(1, 'sonar', 9, 'medium', '0011011001010110', 'c'),
+	(1, 'sonar', 9, 'large', '0011001101010011', 'bd'),
 	(1, 'fuel_tank', 0, 'small', '0101001100000110', 'B+c'),
 	(1, 'fuel_tank', 0, 'medium', '1010000011110101', ''),
 	(1, 'fuel_tank', 0, 'large', '0101111111110101', 'A'),
@@ -388,36 +390,36 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 	(2, 'radar', 9, 'small', '0000110010000101', 'D'),
 	(2, 'radar', 9, 'medium', '1010011000101111', 'c'),
 	(2, 'radar', 9, 'large', '0010111010100111', 'DC'),
-	(2, 'scaner', 0, 'small', '1010010001101001', 'd'),
-	(2, 'scaner', 0, 'medium', '1111000100111100', ''),
-	(2, 'scaner', 0, 'large', '0011000111111100', 'CB'),
-	(2, 'scaner', 1, 'small', '0011111011110011', 'BC'),
-	(2, 'scaner', 1, 'medium', '1111111000110011', 'b'),
-	(2, 'scaner', 1, 'large', '1100110100000000', 'c'),
-	(2, 'scaner', 2, 'small', '1111101100110110', 'dB'),
-	(2, 'scaner', 2, 'medium', '1010101101100110', 'd'),
-	(2, 'scaner', 2, 'large', '1001100001010101', 'c'),
-	(2, 'scaner', 3, 'small', '0011001011111111', 'c'),
-	(2, 'scaner', 3, 'medium', '0000000111001100', 'D'),
-	(2, 'scaner', 3, 'large', '0000000100000000', 'aC'),
-	(2, 'scaner', 4, 'small', '0101101110010110', 'D'),
-	(2, 'scaner', 4, 'medium', '1111000100111100', 'B'),
-	(2, 'scaner', 4, 'large', '0000111001101001', 'A+d'),
-	(2, 'scaner', 5, 'small', '1111110111001111', 'Cb'),
-	(2, 'scaner', 5, 'medium', '1111000111000011', 'a'),
-	(2, 'scaner', 5, 'large', '0101101101101001', 'D'),
-	(2, 'scaner', 6, 'small', '0000111000110011', 'A+b'),
-	(2, 'scaner', 6, 'medium', '1111000100111100', 'a'),
-	(2, 'scaner', 6, 'large', '1111111000110011', 'b'),
-	(2, 'scaner', 7, 'small', '0011001011111111', 'C'),
-	(2, 'scaner', 7, 'medium', '1111111000110011', 'b'),
-	(2, 'scaner', 7, 'large', '0000111000110011', 'BA'),
-	(2, 'scaner', 8, 'small', '1011101010001000', 'c+D'),
-	(2, 'scaner', 8, 'medium', '0000000100110011', 'A'),
-	(2, 'scaner', 8, 'large', '1010101110011001', 'D'),
-	(2, 'scaner', 9, 'small', '1000100110111011', 'dC'),
-	(2, 'scaner', 9, 'medium', '1100110111111111', 'C'),
-	(2, 'scaner', 9, 'large', '0011001011111111', 'A'),
+	(2, 'sonar', 0, 'small', '1010010001101001', 'd'),
+	(2, 'sonar', 0, 'medium', '1111000100111100', ''),
+	(2, 'sonar', 0, 'large', '0011000111111100', 'CB'),
+	(2, 'sonar', 1, 'small', '0011111011110011', 'BC'),
+	(2, 'sonar', 1, 'medium', '1111111000110011', 'b'),
+	(2, 'sonar', 1, 'large', '1100110100000000', 'c'),
+	(2, 'sonar', 2, 'small', '1111101100110110', 'dB'),
+	(2, 'sonar', 2, 'medium', '1010101101100110', 'd'),
+	(2, 'sonar', 2, 'large', '1001100001010101', 'c'),
+	(2, 'sonar', 3, 'small', '0011001011111111', 'c'),
+	(2, 'sonar', 3, 'medium', '0000000111001100', 'D'),
+	(2, 'sonar', 3, 'large', '0000000100000000', 'aC'),
+	(2, 'sonar', 4, 'small', '0101101110010110', 'D'),
+	(2, 'sonar', 4, 'medium', '1111000100111100', 'B'),
+	(2, 'sonar', 4, 'large', '0000111001101001', 'A+d'),
+	(2, 'sonar', 5, 'small', '1111110111001111', 'Cb'),
+	(2, 'sonar', 5, 'medium', '1111000111000011', 'a'),
+	(2, 'sonar', 5, 'large', '0101101101101001', 'D'),
+	(2, 'sonar', 6, 'small', '0000111000110011', 'A+b'),
+	(2, 'sonar', 6, 'medium', '1111000100111100', 'a'),
+	(2, 'sonar', 6, 'large', '1111111000110011', 'b'),
+	(2, 'sonar', 7, 'small', '0011001011111111', 'C'),
+	(2, 'sonar', 7, 'medium', '1111111000110011', 'b'),
+	(2, 'sonar', 7, 'large', '0000111000110011', 'BA'),
+	(2, 'sonar', 8, 'small', '1011101010001000', 'c+D'),
+	(2, 'sonar', 8, 'medium', '0000000100110011', 'A'),
+	(2, 'sonar', 8, 'large', '1010101110011001', 'D'),
+	(2, 'sonar', 9, 'small', '1000100110111011', 'dC'),
+	(2, 'sonar', 9, 'medium', '1100110111111111', 'C'),
+	(2, 'sonar', 9, 'large', '0011001011111111', 'A'),
 	(2, 'fuel_tank', 0, 'small', '1000011010110001', 'b'),
 	(2, 'fuel_tank', 0, 'medium', '1000100110111110', ''),
 	(2, 'fuel_tank', 0, 'large', '1011101010111110', 'cA'),
@@ -628,36 +630,36 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 	(3, 'radar', 9, 'small', '0111101010010000', 'b+c'),
 	(3, 'radar', 9, 'medium', '0100010110101111', 'A'),
 	(3, 'radar', 9, 'large', '0001000011111010', 'd'),
-	(3, 'scaner', 0, 'small', '0000011011100000', 'A'),
-	(3, 'scaner', 0, 'medium', '1111100111100000', ''),
-	(3, 'scaner', 0, 'large', '1100101011100000', 'cA'),
-	(3, 'scaner', 1, 'small', '0101100101000000', 'Bd'),
-	(3, 'scaner', 1, 'medium', '0000100100010000', 'B'),
-	(3, 'scaner', 1, 'large', '1111100111100000', 'B'),
-	(3, 'scaner', 2, 'small', '0011010100101100', 'C'),
-	(3, 'scaner', 2, 'medium', '1111100111100000', 'B'),
-	(3, 'scaner', 2, 'large', '0000100111100000', 'AB'),
-	(3, 'scaner', 3, 'small', '0100001001011011', 'D+C'),
-	(3, 'scaner', 3, 'medium', '1010110010110101', 'd'),
-	(3, 'scaner', 3, 'large', '0000011000011111', 'D'),
-	(3, 'scaner', 4, 'small', '1010111101001001', 'B+C'),
-	(3, 'scaner', 4, 'medium', '0101001110110101', 'A'),
-	(3, 'scaner', 4, 'large', '1010001101000101', 'B'),
-	(3, 'scaner', 5, 'small', '0110000000101100', 'd+A'),
-	(3, 'scaner', 5, 'medium', '1001111101111001', 'C'),
-	(3, 'scaner', 5, 'large', '1001000001110110', 'b'),
-	(3, 'scaner', 6, 'small', '0110000010000110', 'D'),
-	(3, 'scaner', 6, 'medium', '1100101000101100', 'd'),
-	(3, 'scaner', 6, 'large', '1100101010000110', 'Da'),
-	(3, 'scaner', 7, 'small', '0000011000101100', 'A+c'),
-	(3, 'scaner', 7, 'medium', '1111100100011111', 'c'),
-	(3, 'scaner', 7, 'large', '0011010111010011', 'C'),
-	(3, 'scaner', 8, 'small', '1111100100011111', 'C'),
-	(3, 'scaner', 8, 'medium', '0011010111010011', 'C'),
-	(3, 'scaner', 8, 'large', '1100010111010011', 'BA'),
-	(3, 'scaner', 9, 'small', '1111011000010000', 'C'),
-	(3, 'scaner', 9, 'medium', '0011101011011100', 'b'),
-	(3, 'scaner', 9, 'large', '0011101001110110', 'Da'),
+	(3, 'sonar', 0, 'small', '0000011011100000', 'A'),
+	(3, 'sonar', 0, 'medium', '1111100111100000', ''),
+	(3, 'sonar', 0, 'large', '1100101011100000', 'cA'),
+	(3, 'sonar', 1, 'small', '0101100101000000', 'Bd'),
+	(3, 'sonar', 1, 'medium', '0000100100010000', 'B'),
+	(3, 'sonar', 1, 'large', '1111100111100000', 'B'),
+	(3, 'sonar', 2, 'small', '0011010100101100', 'C'),
+	(3, 'sonar', 2, 'medium', '1111100111100000', 'B'),
+	(3, 'sonar', 2, 'large', '0000100111100000', 'AB'),
+	(3, 'sonar', 3, 'small', '0100001001011011', 'D+C'),
+	(3, 'sonar', 3, 'medium', '1010110010110101', 'd'),
+	(3, 'sonar', 3, 'large', '0000011000011111', 'D'),
+	(3, 'sonar', 4, 'small', '1010111101001001', 'B+C'),
+	(3, 'sonar', 4, 'medium', '0101001110110101', 'A'),
+	(3, 'sonar', 4, 'large', '1010001101000101', 'B'),
+	(3, 'sonar', 5, 'small', '0110000000101100', 'd+A'),
+	(3, 'sonar', 5, 'medium', '1001111101111001', 'C'),
+	(3, 'sonar', 5, 'large', '1001000001110110', 'b'),
+	(3, 'sonar', 6, 'small', '0110000010000110', 'D'),
+	(3, 'sonar', 6, 'medium', '1100101000101100', 'd'),
+	(3, 'sonar', 6, 'large', '1100101010000110', 'Da'),
+	(3, 'sonar', 7, 'small', '0000011000101100', 'A+c'),
+	(3, 'sonar', 7, 'medium', '1111100100011111', 'c'),
+	(3, 'sonar', 7, 'large', '0011010111010011', 'C'),
+	(3, 'sonar', 8, 'small', '1111100100011111', 'C'),
+	(3, 'sonar', 8, 'medium', '0011010111010011', 'C'),
+	(3, 'sonar', 8, 'large', '1100010111010011', 'BA'),
+	(3, 'sonar', 9, 'small', '1111011000010000', 'C'),
+	(3, 'sonar', 9, 'medium', '0011101011011100', 'b'),
+	(3, 'sonar', 9, 'large', '0011101001110110', 'Da'),
 	(3, 'fuel_tank', 0, 'small', '0100110111011100', 'B+C'),
 	(3, 'fuel_tank', 0, 'medium', '1011000100100000', ''),
 	(3, 'fuel_tank', 0, 'large', '0111110111101100', 'C'),
@@ -868,36 +870,36 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 	(4, 'radar', 9, 'small', '1101110111111001', 'C+A'),
 	(4, 'radar', 9, 'medium', '0010001000110101', 'D'),
 	(4, 'radar', 9, 'large', '0010110100111010', 'b'),
-	(4, 'scaner', 0, 'small', '0011111000010011', 'B+d'),
-	(4, 'scaner', 0, 'medium', '1100101111100110', ''),
-	(4, 'scaner', 0, 'large', '1001111010110011', 'd'),
-	(4, 'scaner', 1, 'small', '0011111011101100', 'Db'),
-	(4, 'scaner', 1, 'medium', '0011010011100110', 'A'),
-	(4, 'scaner', 1, 'large', '1001111001001100', 'D'),
-	(4, 'scaner', 2, 'small', '1100010011101001', 'B'),
-	(4, 'scaner', 2, 'medium', '0011010000011001', 'a'),
-	(4, 'scaner', 2, 'large', '1100101100010110', 'A+b'),
-	(4, 'scaner', 3, 'small', '0110000110110011', 'A'),
-	(4, 'scaner', 3, 'medium', '1001111010110011', 'D'),
-	(4, 'scaner', 3, 'large', '0110000100011001', 'D+A'),
-	(4, 'scaner', 4, 'small', '0011000111100011', 'Bd'),
-	(4, 'scaner', 4, 'medium', '0110000110110011', 'A'),
-	(4, 'scaner', 4, 'large', '1010110101111111', 'C'),
-	(4, 'scaner', 5, 'small', '1111100011100110', 'a+c'),
-	(4, 'scaner', 5, 'medium', '1100101100011001', 'D'),
-	(4, 'scaner', 5, 'large', '1001111001001100', 'd'),
-	(4, 'scaner', 6, 'small', '0000100011011010', 'C'),
-	(4, 'scaner', 6, 'medium', '1100010000010110', 'b'),
-	(4, 'scaner', 6, 'large', '1001101101001001', 'b+d'),
-	(4, 'scaner', 7, 'small', '0101110111011010', 'dA'),
-	(4, 'scaner', 7, 'medium', '0000100011011010', 'C'),
-	(4, 'scaner', 7, 'large', '0000100000100101', 'a'),
-	(4, 'scaner', 8, 'small', '0101110101000011', 'aC'),
-	(4, 'scaner', 8, 'medium', '0101110110001111', 'd'),
-	(4, 'scaner', 8, 'large', '0101110101110000', 'a'),
-	(4, 'scaner', 9, 'small', '1001111001001100', 'c'),
-	(4, 'scaner', 9, 'medium', '1010110101111111', 'B'),
-	(4, 'scaner', 9, 'large', '0000011101111111', 'AD'),
+	(4, 'sonar', 0, 'small', '0011111000010011', 'B+d'),
+	(4, 'sonar', 0, 'medium', '1100101111100110', ''),
+	(4, 'sonar', 0, 'large', '1001111010110011', 'd'),
+	(4, 'sonar', 1, 'small', '0011111011101100', 'Db'),
+	(4, 'sonar', 1, 'medium', '0011010011100110', 'A'),
+	(4, 'sonar', 1, 'large', '1001111001001100', 'D'),
+	(4, 'sonar', 2, 'small', '1100010011101001', 'B'),
+	(4, 'sonar', 2, 'medium', '0011010000011001', 'a'),
+	(4, 'sonar', 2, 'large', '1100101100010110', 'A+b'),
+	(4, 'sonar', 3, 'small', '0110000110110011', 'A'),
+	(4, 'sonar', 3, 'medium', '1001111010110011', 'D'),
+	(4, 'sonar', 3, 'large', '0110000100011001', 'D+A'),
+	(4, 'sonar', 4, 'small', '0011000111100011', 'Bd'),
+	(4, 'sonar', 4, 'medium', '0110000110110011', 'A'),
+	(4, 'sonar', 4, 'large', '1010110101111111', 'C'),
+	(4, 'sonar', 5, 'small', '1111100011100110', 'a+c'),
+	(4, 'sonar', 5, 'medium', '1100101100011001', 'D'),
+	(4, 'sonar', 5, 'large', '1001111001001100', 'd'),
+	(4, 'sonar', 6, 'small', '0000100011011010', 'C'),
+	(4, 'sonar', 6, 'medium', '1100010000010110', 'b'),
+	(4, 'sonar', 6, 'large', '1001101101001001', 'b+d'),
+	(4, 'sonar', 7, 'small', '0101110111011010', 'dA'),
+	(4, 'sonar', 7, 'medium', '0000100011011010', 'C'),
+	(4, 'sonar', 7, 'large', '0000100000100101', 'a'),
+	(4, 'sonar', 8, 'small', '0101110101000011', 'aC'),
+	(4, 'sonar', 8, 'medium', '0101110110001111', 'd'),
+	(4, 'sonar', 8, 'large', '0101110101110000', 'a'),
+	(4, 'sonar', 9, 'small', '1001111001001100', 'c'),
+	(4, 'sonar', 9, 'medium', '1010110101111111', 'B'),
+	(4, 'sonar', 9, 'large', '0000011101111111', 'AD'),
 	(4, 'fuel_tank', 0, 'small', '0001001010010110', 'B'),
 	(4, 'fuel_tank', 0, 'medium', '1110001001100110', ''),
 	(4, 'fuel_tank', 0, 'large', '1011011101100110', 'Ad'),
@@ -1108,36 +1110,36 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 	(5, 'radar', 9, 'small', '1110111000100101', 'a+D'),
 	(5, 'radar', 9, 'medium', '0100010011011010', 'A'),
 	(5, 'radar', 9, 'large', '0100010000100101', 'a'),
-	(5, 'scaner', 0, 'small', '1001001001111000', 'Ab'),
-	(5, 'scaner', 0, 'medium', '1001110101111000', ''),
-	(5, 'scaner', 0, 'large', '0110110110001000', 'B'),
-	(5, 'scaner', 1, 'small', '0000111011101011', 'b+d'),
-	(5, 'scaner', 1, 'medium', '0101000110110100', 'C'),
-	(5, 'scaner', 1, 'large', '0101000101001011', 'a'),
-	(5, 'scaner', 2, 'small', '1010111001001011', 'c'),
-	(5, 'scaner', 2, 'medium', '1001110101111000', 'C'),
-	(5, 'scaner', 2, 'large', '1011111101011010', 'cD'),
-	(5, 'scaner', 3, 'small', '0000010011100001', 'd'),
-	(5, 'scaner', 3, 'medium', '0101000110110100', 'C'),
-	(5, 'scaner', 3, 'large', '1111101101001011', 'D+a'),
-	(5, 'scaner', 4, 'small', '0101001001001000', 'C+B'),
-	(5, 'scaner', 4, 'medium', '1010111010110100', 'A'),
-	(5, 'scaner', 4, 'large', '1010000110111011', 'b'),
-	(5, 'scaner', 5, 'small', '0110111001110100', 'Bc'),
-	(5, 'scaner', 5, 'medium', '0101111001000100', 'B'),
-	(5, 'scaner', 5, 'large', '0110110101110111', 'c'),
-	(5, 'scaner', 6, 'small', '0110110101000100', 'ca'),
-	(5, 'scaner', 6, 'medium', '0110110101110111', 'c'),
-	(5, 'scaner', 6, 'large', '0110110110001000', 'a'),
-	(5, 'scaner', 7, 'small', '0110001010000111', 'A'),
-	(5, 'scaner', 7, 'medium', '1001110110000111', 'B'),
-	(5, 'scaner', 7, 'large', '1010111010000111', 'Ac'),
-	(5, 'scaner', 8, 'small', '1111101111100001', 'C'),
-	(5, 'scaner', 8, 'medium', '0011011100101101', 'D'),
-	(5, 'scaner', 8, 'large', '1111101111010010', 'a+C'),
-	(5, 'scaner', 9, 'small', '0110001000101101', 'DA'),
-	(5, 'scaner', 9, 'medium', '1100100000101101', 'A'),
-	(5, 'scaner', 9, 'large', '0000010011100001', 'C'),
+	(5, 'sonar', 0, 'small', '1001001001111000', 'Ab'),
+	(5, 'sonar', 0, 'medium', '1001110101111000', ''),
+	(5, 'sonar', 0, 'large', '0110110110001000', 'B'),
+	(5, 'sonar', 1, 'small', '0000111011101011', 'b+d'),
+	(5, 'sonar', 1, 'medium', '0101000110110100', 'C'),
+	(5, 'sonar', 1, 'large', '0101000101001011', 'a'),
+	(5, 'sonar', 2, 'small', '1010111001001011', 'c'),
+	(5, 'sonar', 2, 'medium', '1001110101111000', 'C'),
+	(5, 'sonar', 2, 'large', '1011111101011010', 'cD'),
+	(5, 'sonar', 3, 'small', '0000010011100001', 'd'),
+	(5, 'sonar', 3, 'medium', '0101000110110100', 'C'),
+	(5, 'sonar', 3, 'large', '1111101101001011', 'D+a'),
+	(5, 'sonar', 4, 'small', '0101001001001000', 'C+B'),
+	(5, 'sonar', 4, 'medium', '1010111010110100', 'A'),
+	(5, 'sonar', 4, 'large', '1010000110111011', 'b'),
+	(5, 'sonar', 5, 'small', '0110111001110100', 'Bc'),
+	(5, 'sonar', 5, 'medium', '0101111001000100', 'B'),
+	(5, 'sonar', 5, 'large', '0110110101110111', 'c'),
+	(5, 'sonar', 6, 'small', '0110110101000100', 'ca'),
+	(5, 'sonar', 6, 'medium', '0110110101110111', 'c'),
+	(5, 'sonar', 6, 'large', '0110110110001000', 'a'),
+	(5, 'sonar', 7, 'small', '0110001010000111', 'A'),
+	(5, 'sonar', 7, 'medium', '1001110110000111', 'B'),
+	(5, 'sonar', 7, 'large', '1010111010000111', 'Ac'),
+	(5, 'sonar', 8, 'small', '1111101111100001', 'C'),
+	(5, 'sonar', 8, 'medium', '0011011100101101', 'D'),
+	(5, 'sonar', 8, 'large', '1111101111010010', 'a+C'),
+	(5, 'sonar', 9, 'small', '0110001000101101', 'DA'),
+	(5, 'sonar', 9, 'medium', '1100100000101101', 'A'),
+	(5, 'sonar', 9, 'large', '0000010011100001', 'C'),
 	(5, 'fuel_tank', 0, 'small', '1000101100000001', 'a'),
 	(5, 'fuel_tank', 0, 'medium', '1000101111111110', ''),
 	(5, 'fuel_tank', 0, 'large', '0100101100111110', 'CB'),
@@ -1232,6 +1234,7 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 
 
 -- Дамп структуры для таблица magellan.builds
+DROP TABLE IF EXISTS `builds`;
 CREATE TABLE IF NOT EXISTS `builds` (
   `hull_id` int(11) NOT NULL,
   `node_id` int(11) NOT NULL
@@ -1243,6 +1246,7 @@ CREATE TABLE IF NOT EXISTS `builds` (
 
 
 -- Дамп структуры для таблица magellan.companies
+DROP TABLE IF EXISTS `companies`;
 CREATE TABLE IF NOT EXISTS `companies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
@@ -1262,6 +1266,7 @@ INSERT IGNORE INTO `companies` (`id`, `name`, `code`) VALUES
 
 
 -- Дамп структуры для таблица magellan.models
+DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT 'Наименования модели',
@@ -1276,21 +1281,33 @@ CREATE TABLE IF NOT EXISTS `models` (
   KEY `company` (`company_id`),
   CONSTRAINT `company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `node_type` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
 
--- Дамп данных таблицы magellan.models: ~2 rows (приблизительно)
+-- Дамп данных таблицы magellan.models: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company_id`, `created`) VALUES
-	(1, 'Тестобак-1', 'fuel_tank', 1, 'medium', 'Просто тестовый бак', 3, '2018-06-26 07:46:28'),
-	(12, 'Ласточка-1', 'shunter', 0, 'medium', NULL, 2, '2018-05-20 14:23:35');
+	(1, 'Тестобак-1', 'fuel_tank', 1, 'medium', 'Просто тестовый бак', 3, '2018-07-07 20:16:42'),
+	(6, 'Восход', 'march_engine', 0, 'small', NULL, 4, '2018-07-08 14:43:01'),
+	(7, 'Заря', 'march_engine', 0, 'medium', NULL, 4, '2018-07-08 14:45:16'),
+	(8, 'Буран', 'march_engine', 1, 'large', NULL, 4, '2018-07-08 14:46:40'),
+	(9, 'Ларри Пейдж', 'march_engine', 1, 'large', NULL, 1, '2018-07-08 14:48:20'),
+	(10, 'Сергей Брин', 'march_engine', 0, 'large', NULL, 1, '2018-07-08 14:49:18'),
+	(11, 'МСТ-ГД-4', 'march_engine', 0, 'medium', NULL, 5, '2018-07-08 14:51:21'),
+	(12, 'F-1', 'march_engine', 1, 'large', NULL, 2, '2018-07-08 14:52:52'),
+	(13, 'Эклипс', 'shunter', 0, 'small', NULL, 4, '2018-07-08 17:00:53'),
+	(14, 'Галант', 'shunter', 0, 'medium', NULL, 4, '2018-07-08 17:01:52'),
+	(15, 'Аутлендер', 'shunter', 1, 'large', NULL, 4, '2018-07-08 17:02:41');
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.model_has_parameters
+DROP TABLE IF EXISTS `model_has_parameters`;
 CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   `node_code` varchar(50) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
   `def_value` float NOT NULL DEFAULT '1000',
+  `mult_small` float NOT NULL DEFAULT '1',
+  `mult_large` float NOT NULL DEFAULT '1',
   UNIQUE KEY `Индекс 2` (`node_code`,`parameter_code`),
   KEY `node_code` (`node_code`),
   KEY `Индекс 3` (`parameter_code`),
@@ -1300,77 +1317,78 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
 
 -- Дамп данных таблицы magellan.model_has_parameters: ~66 rows (приблизительно)
 /*!40000 ALTER TABLE `model_has_parameters` DISABLE KEYS */;
-INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`) VALUES
-	('fuel_tank', 'az_level', 100),
-	('fuel_tank', 'compact', 1000),
-	('fuel_tank', 'fuel_volume', 1000),
-	('fuel_tank', 'radiation_def', 1000),
-	('fuel_tank', 'volume', 1000),
-	('fuel_tank', 'weight', 1000),
-	('hull', 'az_level', 100),
-	('hull', 'volume', 1000),
-	('hull', 'weight', 1000),
-	('lss', 'air_prepare_speed', 1000),
-	('lss', 'air_volume', 1000),
-	('lss', 'az_level', 100),
-	('lss', 'co2_level', 1000),
-	('lss', 'lightness', 1000),
-	('lss', 'thermal_def', 1000),
-	('lss', 'volume', 1000),
-	('lss', 'weight', 1000),
-	('march_engine', 'accel', 1000),
-	('march_engine', 'accel_rev', 1000),
-	('march_engine', 'az_level', 100),
-	('march_engine', 'heat_prod', 1000),
-	('march_engine', 'slowdown', 1000),
-	('march_engine', 'slowdown_rev', 1000),
-	('march_engine', 'thrust', 1000),
-	('march_engine', 'thrust_rev', 1000),
-	('march_engine', 'volume', 1000),
-	('march_engine', 'weight', 1000),
-	('shields', 'az_level', 100),
-	('shields', 'desinfect_level', 1000),
-	('shields', 'heat_capacity', 1000),
-	('shields', 'heat_sink', 1000),
-	('shields', 'mechanical_def', 1000),
-	('shields', 'radiation_def', 1000),
-	('shields', 'reflection', 1000),
-	('shields', 'volume', 1000),
-	('shields', 'weight', 1000),
-	('shunter', 'az_level', 100),
-	('shunter', 'heat_prod', 1000),
-	('shunter', 'strafe_accel', 1000),
-	('shunter', 'strafe_max', 1000),
-	('shunter', 'strafe_slowdown', 1000),
-	('shunter', 'turn_accel', 1000),
-	('shunter', 'turn_max', 1000),
-	('shunter', 'turn_slowdown', 1000),
-	('shunter', 'volume', 1000),
-	('shunter', 'weight', 1000),
-	('scaner', 'angle_change', 1000),
-	('scaner', 'angle_max', 1000),
-	('scaner', 'angle_min', 1000),
-	('scaner', 'az_level', 100),
-	('scaner', 'range_change', 1000),
-	('scaner', 'range_max', 1000),
-	('scaner', 'range_min', 1000),
-	('scaner', 'rotate_speed', 1000),
-	('scaner', 'volume', 1000),
-	('scaner', 'weight', 1000),
-	('warp_engine', 'az_level', 100),
-	('warp_engine', 'consumption', 1000),
-	('warp_engine', 'distort_accel', 1000),
-	('warp_engine', 'distort_level', 1000),
-	('warp_engine', 'distort_slowdown', 1000),
-	('warp_engine', 'turn_consumption', 1000),
-	('warp_engine', 'turn_speed', 1000),
-	('warp_engine', 'volume', 1000),
-	('warp_engine', 'warp_enter_consumption', 1000),
-	('warp_engine', 'weight', 1000);
+INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`, `mult_small`, `mult_large`) VALUES
+	('fuel_tank', 'az_level', 100, 1, 1),
+	('fuel_tank', 'compact', 1000, 1, 1),
+	('fuel_tank', 'fuel_volume', 1000, 1, 1),
+	('fuel_tank', 'radiation_def', 1000, 1, 1),
+	('fuel_tank', 'volume', 1000, 1, 1),
+	('fuel_tank', 'weight', 1000, 1, 1),
+	('hull', 'az_level', 100, 1, 1),
+	('hull', 'volume', 1000, 1, 1),
+	('hull', 'weight', 1000, 1, 1),
+	('lss', 'air_prepare_speed', 1000, 1, 1),
+	('lss', 'air_volume', 1000, 1, 1),
+	('lss', 'az_level', 100, 1, 1),
+	('lss', 'co2_level', 1000, 1, 1),
+	('lss', 'lightness', 1000, 1, 1),
+	('lss', 'thermal_def', 1000, 1, 1),
+	('lss', 'volume', 1000, 1, 1),
+	('lss', 'weight', 1000, 1, 1),
+	('march_engine', 'accel', 1000, 1, 1),
+	('march_engine', 'accel_rev', 1000, 1, 1),
+	('march_engine', 'az_level', 100, 1, 1),
+	('march_engine', 'heat_prod', 1000, 1, 1),
+	('march_engine', 'slowdown', 1000, 1, 1),
+	('march_engine', 'slowdown_rev', 1000, 1, 1),
+	('march_engine', 'thrust', 1000, 1, 1),
+	('march_engine', 'thrust_rev', 1000, 1, 1),
+	('march_engine', 'volume', 1000, 1, 1),
+	('march_engine', 'weight', 1000, 1, 1),
+	('radar', 'angle_change', 1000, 1, 1),
+	('radar', 'angle_max', 1000, 1, 1),
+	('radar', 'angle_min', 1000, 1, 1),
+	('radar', 'az_level', 100, 1, 1),
+	('radar', 'range_change', 1000, 1, 1),
+	('radar', 'range_max', 1000, 1, 1),
+	('radar', 'range_min', 1000, 1, 1),
+	('radar', 'rotate_speed', 1000, 1, 1),
+	('radar', 'volume', 1000, 1, 1),
+	('radar', 'weight', 1000, 1, 1),
+	('shields', 'az_level', 100, 1, 1),
+	('shields', 'desinfect_level', 1000, 1, 1),
+	('shields', 'heat_capacity', 1000, 1, 1),
+	('shields', 'heat_sink', 1000, 1, 1),
+	('shields', 'mechanical_def', 1000, 1, 1),
+	('shields', 'radiation_def', 1000, 1, 1),
+	('shields', 'reflection', 1000, 1, 1),
+	('shields', 'volume', 1000, 1, 1),
+	('shields', 'weight', 1000, 1, 1),
+	('shunter', 'az_level', 100, 1, 1),
+	('shunter', 'heat_prod', 1000, 1, 1),
+	('shunter', 'strafe_accel', 1000, 1, 1),
+	('shunter', 'strafe_max', 1000, 1, 1),
+	('shunter', 'strafe_slowdown', 1000, 1, 1),
+	('shunter', 'turn_accel', 1000, 1, 1),
+	('shunter', 'turn_max', 1000, 1, 1),
+	('shunter', 'turn_slowdown', 1000, 1, 1),
+	('shunter', 'volume', 1000, 1, 1),
+	('shunter', 'weight', 1000, 1, 1),
+	('warp_engine', 'az_level', 100, 1, 1),
+	('warp_engine', 'consumption', 1000, 1, 1),
+	('warp_engine', 'distort_accel', 1000, 1, 1),
+	('warp_engine', 'distort_level', 1000, 1, 1),
+	('warp_engine', 'distort_slowdown', 1000, 1, 1),
+	('warp_engine', 'turn_consumption', 1000, 1, 1),
+	('warp_engine', 'turn_speed', 1000, 1, 1),
+	('warp_engine', 'volume', 1000, 1, 1),
+	('warp_engine', 'warp_enter_consumption', 1000, 1, 1),
+	('warp_engine', 'weight', 1000, 1, 1);
 /*!40000 ALTER TABLE `model_has_parameters` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.model_parameters
+DROP TABLE IF EXISTS `model_parameters`;
 CREATE TABLE IF NOT EXISTS `model_parameters` (
   `model_id` int(11) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -1389,11 +1407,112 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(1, 'fuel_volume', 200),
 	(1, 'radiation_def', 20),
 	(1, 'volume', 400),
-	(1, 'weight', 300);
+	(1, 'weight', 300),
+	(6, 'accel', 22),
+	(6, 'accel_rev', 0),
+	(6, 'az_level', 0),
+	(6, 'heat_prod', 94),
+	(6, 'slowdown', 16),
+	(6, 'slowdown_rev', 0),
+	(6, 'thrust', 1219),
+	(6, 'thrust_rev', 0),
+	(6, 'volume', 281),
+	(6, 'weight', 0),
+	(7, 'accel', 16),
+	(7, 'accel_rev', 0),
+	(7, 'az_level', 0),
+	(7, 'heat_prod', 91),
+	(7, 'slowdown', 16),
+	(7, 'slowdown_rev', 0),
+	(7, 'thrust', 1428),
+	(7, 'thrust_rev', 0),
+	(7, 'volume', 244),
+	(7, 'weight', 0),
+	(8, 'accel', 27),
+	(8, 'accel_rev', 0),
+	(8, 'az_level', 0),
+	(8, 'heat_prod', 78),
+	(8, 'slowdown', 29),
+	(8, 'slowdown_rev', 0),
+	(8, 'thrust', 1541),
+	(8, 'thrust_rev', 0),
+	(8, 'volume', 266),
+	(8, 'weight', 0),
+	(9, 'accel', 23),
+	(9, 'accel_rev', 0),
+	(9, 'az_level', 0),
+	(9, 'heat_prod', 71),
+	(9, 'slowdown', 28),
+	(9, 'slowdown_rev', 0),
+	(9, 'thrust', 1307),
+	(9, 'thrust_rev', 0),
+	(9, 'volume', 233),
+	(9, 'weight', 0),
+	(10, 'accel', 20),
+	(10, 'accel_rev', 0),
+	(10, 'az_level', 0),
+	(10, 'heat_prod', 81),
+	(10, 'slowdown', 20),
+	(10, 'slowdown_rev', 0),
+	(10, 'thrust', 1011),
+	(10, 'thrust_rev', 0),
+	(10, 'volume', 269),
+	(10, 'weight', 0),
+	(11, 'accel', 20),
+	(11, 'accel_rev', 0),
+	(11, 'az_level', 0),
+	(11, 'heat_prod', 80),
+	(11, 'slowdown', 20),
+	(11, 'slowdown_rev', 0),
+	(11, 'thrust', 995),
+	(11, 'thrust_rev', 0),
+	(11, 'volume', 260),
+	(11, 'weight', 0),
+	(12, 'accel', 26),
+	(12, 'accel_rev', 0),
+	(12, 'az_level', 0),
+	(12, 'heat_prod', 86),
+	(12, 'slowdown', 25),
+	(12, 'slowdown_rev', 0),
+	(12, 'thrust', 1501),
+	(12, 'thrust_rev', 0),
+	(12, 'volume', 279),
+	(12, 'weight', 0),
+	(13, 'az_level', 0),
+	(13, 'heat_prod', 78),
+	(13, 'strafe_accel', 0),
+	(13, 'strafe_max', 0),
+	(13, 'strafe_slowdown', 0),
+	(13, 'turn_accel', 0),
+	(13, 'turn_max', 0),
+	(13, 'turn_slowdown', 0),
+	(13, 'volume', 207),
+	(13, 'weight', 0),
+	(14, 'az_level', 0),
+	(14, 'heat_prod', 92),
+	(14, 'strafe_accel', 0),
+	(14, 'strafe_max', 0),
+	(14, 'strafe_slowdown', 0),
+	(14, 'turn_accel', 0),
+	(14, 'turn_max', 0),
+	(14, 'turn_slowdown', 0),
+	(14, 'volume', 159),
+	(14, 'weight', 0),
+	(15, 'az_level', 0),
+	(15, 'heat_prod', 80),
+	(15, 'strafe_accel', 0),
+	(15, 'strafe_max', 0),
+	(15, 'strafe_slowdown', 0),
+	(15, 'turn_accel', 0),
+	(15, 'turn_max', 0),
+	(15, 'turn_slowdown', 0),
+	(15, 'volume', 168),
+	(15, 'weight', 0);
 /*!40000 ALTER TABLE `model_parameters` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.nodes
+DROP TABLE IF EXISTS `nodes`;
 CREATE TABLE IF NOT EXISTS `nodes` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID узла',
   `model_id` int(11) NOT NULL DEFAULT '0' COMMENT 'ID модели',
@@ -1402,11 +1521,12 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   `status_code` varchar(10) NOT NULL DEFAULT 'free' COMMENT 'Статус',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата и время создания',
   `connected_to_hull_id` int(11) DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_model_id` (`model_id`),
   KEY `FK_status_code` (`status_code`),
-  CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON UPDATE CASCADE
+  CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`),
+  CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
 -- Дамп данных таблицы magellan.nodes: ~0 rows (приблизительно)
@@ -1415,6 +1535,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
 
 
 -- Дамп структуры для таблица magellan.node_statuses
+DROP TABLE IF EXISTS `node_statuses`;
 CREATE TABLE IF NOT EXISTS `node_statuses` (
   `code` varchar(10) NOT NULL,
   `name` varchar(30) NOT NULL,
@@ -1434,6 +1555,7 @@ INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.node_types
+DROP TABLE IF EXISTS `node_types`;
 CREATE TABLE IF NOT EXISTS `node_types` (
   `code` varchar(50) NOT NULL,
   `id` tinyint(4) NOT NULL,
@@ -1441,21 +1563,23 @@ CREATE TABLE IF NOT EXISTS `node_types` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Типы узлов';
 
--- Дамп данных таблицы magellan.node_types: ~8 rows (приблизительно)
+-- Дамп данных таблицы magellan.node_types: ~9 rows (приблизительно)
 /*!40000 ALTER TABLE `node_types` DISABLE KEYS */;
 INSERT IGNORE INTO `node_types` (`code`, `id`, `name`) VALUES
-	('fuel_tank', 6, 'Топливный бак'),
+	('fuel_tank', 7, 'Топливный бак'),
 	('hull', 9, 'Корпус'),
-	('lss', 7, 'Система жизнеобеспечения'),
+	('lss', 8, 'Система жизнеобеспечения'),
 	('march_engine', 1, 'Маршевый двигатель'),
+	('radar', 5, 'Радар'),
+	('scaner', 6, 'Сканер'),
 	('shields', 4, 'Щиты'),
 	('shunter', 2, 'Маневровые двигатели'),
-	('scaner', 5, 'Сонар'),
 	('warp_engine', 3, 'Двигатель Уайта');
 /*!40000 ALTER TABLE `node_types` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.parameters_list
+DROP TABLE IF EXISTS `parameters_list`;
 CREATE TABLE IF NOT EXISTS `parameters_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(50) NOT NULL DEFAULT '',
@@ -1515,7 +1639,59 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`) VALUES
 /*!40000 ALTER TABLE `parameters_list` ENABLE KEYS */;
 
 
+-- Дамп структуры для таблица magellan.technologies
+DROP TABLE IF EXISTS `technologies`;
+CREATE TABLE IF NOT EXISTS `technologies` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `opened_at` datetime DEFAULT NULL,
+  `opened_by` int(11) DEFAULT NULL,
+  `level` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Дамп данных таблицы magellan.technologies: ~0 rows (приблизительно)
+/*!40000 ALTER TABLE `technologies` DISABLE KEYS */;
+/*!40000 ALTER TABLE `technologies` ENABLE KEYS */;
+
+
+-- Дамп структуры для таблица magellan.tech_effects
+DROP TABLE IF EXISTS `tech_effects`;
+CREATE TABLE IF NOT EXISTS `tech_effects` (
+  `tech_id` int(11) NOT NULL,
+  `node_code` varchar(30) NOT NULL,
+  `parameter_code` varchar(30) NOT NULL,
+  `value` float NOT NULL,
+  PRIMARY KEY (`tech_id`,`node_code`,`parameter_code`),
+  KEY `FK_tech_effects_node_types` (`node_code`),
+  KEY `FK_tech_effects_parameters_list` (`parameter_code`),
+  CONSTRAINT `FK_tech_effects_node_types` FOREIGN KEY (`node_code`) REFERENCES `node_types` (`code`),
+  CONSTRAINT `FK_tech_effects_parameters_list` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`),
+  CONSTRAINT `FK_tech_effects_technologies` FOREIGN KEY (`tech_id`) REFERENCES `technologies` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Эффекты технологии';
+
+-- Дамп данных таблицы magellan.tech_effects: ~0 rows (приблизительно)
+/*!40000 ALTER TABLE `tech_effects` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tech_effects` ENABLE KEYS */;
+
+
+-- Дамп структуры для таблица magellan.tech_point_cost
+DROP TABLE IF EXISTS `tech_point_cost`;
+CREATE TABLE IF NOT EXISTS `tech_point_cost` (
+  `tech_id` int(11) NOT NULL,
+  `resource_id` int(11) NOT NULL,
+  `amount` float NOT NULL,
+  KEY `Индекс 1` (`tech_id`),
+  CONSTRAINT `FK__technologies` FOREIGN KEY (`tech_id`) REFERENCES `technologies` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Стоимость одного поинта технологии';
+
+-- Дамп данных таблицы magellan.tech_point_cost: ~0 rows (приблизительно)
+/*!40000 ALTER TABLE `tech_point_cost` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tech_point_cost` ENABLE KEYS */;
+
+
 -- Дамп структуры для таблица magellan.users
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(128) NOT NULL DEFAULT '' COMMENT 'Логин',
@@ -1533,6 +1709,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list
+DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_node_parameter_list` (
 	`node_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
@@ -1543,6 +1720,7 @@ CREATE TABLE `v_node_parameter_list` (
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list
+DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_node_parameter_list`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_node_parameter_list` AS SELECT nt.code node_code, 
