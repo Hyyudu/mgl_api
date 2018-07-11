@@ -11,13 +11,11 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Дамп структуры базы данных magellan
-DROP DATABASE IF EXISTS `magellan`;
 CREATE DATABASE IF NOT EXISTS `magellan` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `magellan`;
 
 
 -- Дамп структуры для таблица magellan.base_freq_vectors
-DROP TABLE IF EXISTS `base_freq_vectors`;
 CREATE TABLE IF NOT EXISTS `base_freq_vectors` (
   `company_id` int(11) NOT NULL,
   `node_code` varchar(50) NOT NULL,
@@ -1234,7 +1232,6 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 
 
 -- Дамп структуры для таблица magellan.builds
-DROP TABLE IF EXISTS `builds`;
 CREATE TABLE IF NOT EXISTS `builds` (
   `hull_id` int(11) NOT NULL,
   `node_id` int(11) NOT NULL
@@ -1246,13 +1243,12 @@ CREATE TABLE IF NOT EXISTS `builds` (
 
 
 -- Дамп структуры для таблица magellan.companies
-DROP TABLE IF EXISTS `companies`;
 CREATE TABLE IF NOT EXISTS `companies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `code` varchar(3) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
 
 -- Дамп данных таблицы magellan.companies: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `companies` DISABLE KEYS */;
@@ -1265,8 +1261,21 @@ INSERT IGNORE INTO `companies` (`id`, `name`, `code`) VALUES
 /*!40000 ALTER TABLE `companies` ENABLE KEYS */;
 
 
+-- Дамп структуры для таблица magellan.hull_slots
+CREATE TABLE IF NOT EXISTS `hull_slots` (
+  `hull_id` int(11) NOT NULL,
+  `slot_type` enum('inv','con2','con3','con4','sum2','sum3','sum4','sum5') NOT NULL,
+  `amount` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`hull_id`,`slot_type`),
+  CONSTRAINT `FK__nodes` FOREIGN KEY (`hull_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Слоты в корпусах под детали синхронизации';
+
+-- Дамп данных таблицы magellan.hull_slots: ~0 rows (приблизительно)
+/*!40000 ALTER TABLE `hull_slots` DISABLE KEYS */;
+/*!40000 ALTER TABLE `hull_slots` ENABLE KEYS */;
+
+
 -- Дамп структуры для таблица magellan.models
-DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT 'Наименования модели',
@@ -1279,9 +1288,9 @@ CREATE TABLE IF NOT EXISTS `models` (
   PRIMARY KEY (`id`),
   KEY `node_type` (`node_type_code`),
   CONSTRAINT `node_type` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
 
--- Дамп данных таблицы magellan.models: ~11 rows (приблизительно)
+-- Дамп данных таблицы magellan.models: ~21 rows (приблизительно)
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company`, `created`) VALUES
 	(6, 'Восход', 'march_engine', 0, 'small', NULL, 'mat', '2018-07-08 14:43:01'),
@@ -1308,7 +1317,6 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 
 
 -- Дамп структуры для таблица magellan.model_has_parameters
-DROP TABLE IF EXISTS `model_has_parameters`;
 CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   `node_code` varchar(50) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -1332,6 +1340,8 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('fuel_tank', 'volume', 1000, 1, 1),
 	('fuel_tank', 'weight', 1000, 1, 1),
 	('hull', 'az_level', 100, 1, 1),
+	('hull', 'brand_lapse', 20, 1, 1),
+	('hull', 'configurability', 20, 1, 1),
 	('hull', 'volume', 1000, 1, 1),
 	('hull', 'weight', 1000, 1, 1),
 	('lss', 'air_prepare_speed', 1000, 1, 1),
@@ -1395,7 +1405,6 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 
 
 -- Дамп структуры для таблица magellan.model_parameters
-DROP TABLE IF EXISTS `model_parameters`;
 CREATE TABLE IF NOT EXISTS `model_parameters` (
   `model_id` int(11) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -1406,7 +1415,7 @@ CREATE TABLE IF NOT EXISTS `model_parameters` (
   CONSTRAINT `parameter_code` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.model_parameters: ~106 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_parameters: ~200 rows (приблизительно)
 /*!40000 ALTER TABLE `model_parameters` DISABLE KEYS */;
 INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VALUES
 	(6, 'accel', 22),
@@ -1613,7 +1622,6 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 
 
 -- Дамп структуры для таблица magellan.nodes
-DROP TABLE IF EXISTS `nodes`;
 CREATE TABLE IF NOT EXISTS `nodes` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID узла',
   `model_id` int(11) NOT NULL DEFAULT '0' COMMENT 'ID модели',
@@ -1636,7 +1644,6 @@ CREATE TABLE IF NOT EXISTS `nodes` (
 
 
 -- Дамп структуры для таблица magellan.node_statuses
-DROP TABLE IF EXISTS `node_statuses`;
 CREATE TABLE IF NOT EXISTS `node_statuses` (
   `code` varchar(10) NOT NULL,
   `name` varchar(30) NOT NULL,
@@ -1656,7 +1663,6 @@ INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.node_types
-DROP TABLE IF EXISTS `node_types`;
 CREATE TABLE IF NOT EXISTS `node_types` (
   `code` varchar(50) NOT NULL,
   `id` tinyint(4) NOT NULL,
@@ -1680,14 +1686,13 @@ INSERT IGNORE INTO `node_types` (`code`, `id`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.parameters_list
-DROP TABLE IF EXISTS `parameters_list`;
 CREATE TABLE IF NOT EXISTS `parameters_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(50) NOT NULL DEFAULT '',
   `name` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Индекс 2` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=46 DEFAULT CHARSET=utf8 COMMENT='Список параметров';
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8 COMMENT='Список параметров';
 
 -- Дамп данных таблицы magellan.parameters_list: ~42 rows (приблизительно)
 /*!40000 ALTER TABLE `parameters_list` DISABLE KEYS */;
@@ -1736,12 +1741,13 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`) VALUES
 	(42, 'heat_sink', 'Теплоотвод'),
 	(43, 'weight', 'Масса'),
 	(44, 'volume', 'Объем'),
-	(45, 'az_level', 'Уровень аварийной защиты');
+	(45, 'az_level', 'Уровень аварийной защиты'),
+	(46, 'configurability', 'Конфигурабельность'),
+	(47, 'brand_lapse', 'Бренд-лапс');
 /*!40000 ALTER TABLE `parameters_list` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.technologies
-DROP TABLE IF EXISTS `technologies`;
 CREATE TABLE IF NOT EXISTS `technologies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -1757,7 +1763,6 @@ CREATE TABLE IF NOT EXISTS `technologies` (
 
 
 -- Дамп структуры для таблица magellan.tech_effects
-DROP TABLE IF EXISTS `tech_effects`;
 CREATE TABLE IF NOT EXISTS `tech_effects` (
   `tech_id` int(11) NOT NULL,
   `node_code` varchar(30) NOT NULL,
@@ -1777,7 +1782,6 @@ CREATE TABLE IF NOT EXISTS `tech_effects` (
 
 
 -- Дамп структуры для таблица magellan.tech_point_cost
-DROP TABLE IF EXISTS `tech_point_cost`;
 CREATE TABLE IF NOT EXISTS `tech_point_cost` (
   `tech_id` int(11) NOT NULL,
   `resource_id` int(11) NOT NULL,
@@ -1792,7 +1796,6 @@ CREATE TABLE IF NOT EXISTS `tech_point_cost` (
 
 
 -- Дамп структуры для таблица magellan.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(128) NOT NULL DEFAULT '' COMMENT 'Логин',
@@ -1810,7 +1813,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list
-DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_node_parameter_list` (
 	`node_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
@@ -1821,7 +1823,6 @@ CREATE TABLE `v_node_parameter_list` (
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list
-DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_node_parameter_list`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_node_parameter_list` AS SELECT nt.code node_code, 

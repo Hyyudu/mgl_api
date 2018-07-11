@@ -1,7 +1,21 @@
+from collections import OrderedDict
+from random import choices
+
 from services.db import DB
 
-db = DB()
 
+
+db = DB()
+detail_distribution = OrderedDict({
+    "sum2": 6,
+    "sum3": 8,
+    "sum4": 3,
+    "sum5": 1,
+    "inv": 4,
+    "con2": 6,
+    "con3": 8,
+    "con4": 2,
+})
 
 def add_model(self, data):
     """ data: {<id>, name, level, description, size, node_type_code, company, {params}} """
@@ -21,6 +35,19 @@ def add_model(self, data):
     ]
     data['id'] = new_model_id
     db.insert('model_parameters', insert_parameters)
+
+    if data['node_type_code'] == 'hull':
+        slots = choices(detail_distribution.keys(), detail_distribution.values(), k=data['params'].get('configurability', 0))
+        insert_slots = [
+            {
+                "hull_id": data['id'],
+                "slot_type": key,
+                "amount": slots.count(key)
+            } for key in detail_distribution
+        ]
+        db.insert_many('hull_slots', insert_slots)
+        data['params']['insert_slots'] = insert_slots
+
     data['params'] = {param['parameter_code']: param['value'] for param in insert_parameters}
     return {"status": "ok", "data": data}
 

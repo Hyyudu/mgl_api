@@ -1,5 +1,5 @@
 import json
-from random import random
+from random import random, uniform
 
 from numpy import interp
 
@@ -62,8 +62,8 @@ model['level'] = 2 if advance > 0.9 else 1 if advance > 0.45 else 0
 
 for name, arr in est.items():
     val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
-    accuracy = 0.97
-    val = roundTo(val * (random() * 2 * (1 - accuracy) + accuracy))
+    accuracy = 0.02
+    val = roundTo(val * (uniform(1 - accuracy, 1+ accuracy)))
     model['params'][name] = val
 
 print(json.dumps(model))
