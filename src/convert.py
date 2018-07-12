@@ -54,16 +54,16 @@ model = {
         # "volume": -1,
     }
 }
+if __name__ == "__main__":
+    est = estimates[model['node_type_code']]
 
-est = estimates[model['node_type_code']]
+    advance = sum(model['params'].values()) / sum([max(arr) for arr in est.values()])
+    model['level'] = 2 if advance > 0.9 else 1 if advance > 0.45 else 0
 
-advance = sum(model['params'].values()) / sum([max(arr) for arr in est.values()])
-model['level'] = 2 if advance > 0.9 else 1 if advance > 0.45 else 0
+    for name, arr in est.items():
+        val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
+        accuracy = 0.02
+        val = roundTo(val * (uniform(1 - accuracy, 1+ accuracy)))
+        model['params'][name] = val
 
-for name, arr in est.items():
-    val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
-    accuracy = 0.02
-    val = roundTo(val * (uniform(1 - accuracy, 1+ accuracy)))
-    model['params'][name] = val
-
-print(json.dumps(model))
+    print(json.dumps(model))

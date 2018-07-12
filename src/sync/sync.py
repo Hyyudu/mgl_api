@@ -1,8 +1,10 @@
 import json
 from collections import defaultdict
 
+from convert import roundTo
 from src.sync.magellan import get_func_vector, getfunc, table_view, count_elements
 from src.sync.nodes_data import node_names, node_params, param_names
+from src.sync.desync_penalties import desync_penalties
 
 
 class Sync:
@@ -99,28 +101,37 @@ class Sync:
             ]
         else:
             syst = args[1]
-            fv = self.freq_vectors[syst]
+            syst_vector = self.freq_vectors[syst]
             print(node_names[syst] + ": вектор частот ")
             lst = [["Система", "Вектор частот"], "-"] + [
-                [node_names[sys] + ' ' + self.systems[sys].get('name'), self.mask(fv[sys], fv['total'])]
-                for sys in fv.keys()
+                [node_names[sys] + ' ' + self.systems[sys].get('name'), self.mask(syst_vector[sys], syst_vector['total'])]
+                for sys in syst_vector.keys()
                 if sys not in ('total', 'correct', 'result')
-            ] + ["=", ["Суммарно", fv['total']]]
-            if len(fv.get('correct', '')) > 0:
-                lst += [["Корректировка", fv.get('correct')], ["Итого", fv.get('result')]]
+            ] + ["=", ["Суммарно", syst_vector['total']]]
+            if len(syst_vector.get('correct', '')) > 0:
+                lst += [["Корректировка", syst_vector.get('correct')], ["Итого", syst_vector.get('result')]]
 
         table_view(lst)
 
     def cmd_system_affected(self, args):
-        avail = list(self.freq_vectors.keys()) + ['all']
-        if args[1] == 'march_engine':
-            print('Маршевый двигатель Ласточка-GT')
-            lst = [["Параметр", "Штатное значение", "Текущее значение"], "-",
-                   ['Маршевая тяга', '110 МН', "85% (93.5 МН)"],
-                   ['Набор маршевой тяги', '40%/сек', "60% (24%/сек)"],
-                   ['Сброс маршевой тяги', '60%/сек', "100% (60%/сек)"],
-                   ['Тепловыделение', '2400 КДж/сек', "115% (2760 КДж/сек)"],
-                   ]
+        avail = list(self.freq_vectors.keys())
+        if len(args) < 2:
+            print("Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
+            return
+        if args[1] not in avail:
+            print("Указан код несуществующей системы: "+args[1])
+            print("Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
+            return
+        syst = self.systems[args[1]]
+        sys_code = syst['type']
+        print(node_names[syst['type']]+' '+syst['name'])
+        lst = [["Параметр", "Штатное значение", "Текущее значение"], "-",]
+        for param, val in syst['params'].items():
+            arr = [param_names[param], val]
+            func = desync_penalties[syst['type']].get(param, lambda s: 0)
+            percent = 100 + func(self.freq_vectors[sys_code]['result'])
+            arr.append("{}% ({})".format(percent, roundTo(val*percent/100)))
+            lst.append(arr)
         table_view(lst)
 
     def cmd_system_params(self, args):
@@ -220,6 +231,8 @@ class Sync:
                 self.freq_vectors[sys][system] = fv
         for sys, sysdata in self.freq_vectors.items():
             self.freq_vectors[sys]['total'] = self.xor(sysdata.values())
+            self.freq_vectors[sys]['correct'] = '0'*16
+            self.freq_vectors[sys]['result'] = self.freq_vectors[sys]['total']
 
     def show_corrections(self, systems=[]):
         if systems == []:

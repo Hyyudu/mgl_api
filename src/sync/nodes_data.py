@@ -8,12 +8,13 @@ param_names = {
     "volume": "Объем",
     "thrust": "Тяга",
     "thrust_rev": "Реверсная тяга",
-    "thrust_acc": "Ускорение тяги",
-    "thrust_rev_acc": "Ускорение реверсной тяги",
-    "thrust_slow": "Сброс тяги",
-    "thrust_rev_slow": "Сброс реверсной тяги",
+    "accel": "Ускорение тяги",
+    "accel_rev": "Ускорение реверсной тяги",
+    "slowdown": "Сброс тяги",
+    "slowdown_rev": "Сброс реверсной тяги",
     "heat_capacity": "Теплостойкость",
-    "heat_sync": "Теплоотвод",
+    "heat_sink": "Теплоотвод",
+    "heat_prod": "Тепловыделение"
 }
 
 node_params = {
@@ -47,12 +48,11 @@ node_params = {
         "params": {
             "thrust": 1000,
             "thrust_rev": 200,
-            "thrust_acc": 10,
-            "thrust_rev_acc": 50,
-            "thrust_slow": 30,
-            "thrust_rev_slow": 50,
-            "heat_capacity": 30000,
-            "heat_sync": 800,
+            "accel": 10,
+            "accel_rev": 50,
+            "slowdown": 30,
+            "slowdown_rev": 50,
+            "heat_prod": 80,
             "weight": 120,
             "volume": 80
         }
