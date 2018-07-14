@@ -11,11 +11,13 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Дамп структуры базы данных magellan
+DROP DATABASE IF EXISTS `magellan`;
 CREATE DATABASE IF NOT EXISTS `magellan` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `magellan`;
 
 
 -- Дамп структуры для таблица magellan.base_freq_vectors
+DROP TABLE IF EXISTS `base_freq_vectors`;
 CREATE TABLE IF NOT EXISTS `base_freq_vectors` (
   `company_id` int(11) NOT NULL,
   `node_code` varchar(50) NOT NULL,
@@ -1232,6 +1234,7 @@ INSERT IGNORE INTO `base_freq_vectors` (`company_id`, `node_code`, `level`, `siz
 
 
 -- Дамп структуры для таблица magellan.builds
+DROP TABLE IF EXISTS `builds`;
 CREATE TABLE IF NOT EXISTS `builds` (
   `hull_id` int(11) NOT NULL,
   `node_id` int(11) NOT NULL
@@ -1243,6 +1246,7 @@ CREATE TABLE IF NOT EXISTS `builds` (
 
 
 -- Дамп структуры для таблица magellan.companies
+DROP TABLE IF EXISTS `companies`;
 CREATE TABLE IF NOT EXISTS `companies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
@@ -1262,6 +1266,7 @@ INSERT IGNORE INTO `companies` (`id`, `name`, `code`) VALUES
 
 
 -- Дамп структуры для таблица magellan.hull_slots
+DROP TABLE IF EXISTS `hull_slots`;
 CREATE TABLE IF NOT EXISTS `hull_slots` (
   `hull_id` int(11) NOT NULL,
   `slot_type` enum('inv','con2','con3','con4','sum2','sum3','sum4','sum5') NOT NULL,
@@ -1276,6 +1281,7 @@ CREATE TABLE IF NOT EXISTS `hull_slots` (
 
 
 -- Дамп структуры для таблица magellan.models
+DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT 'Наименования модели',
@@ -1317,6 +1323,7 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 
 
 -- Дамп структуры для таблица magellan.model_has_parameters
+DROP TABLE IF EXISTS `model_has_parameters`;
 CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   `node_code` varchar(50) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -1330,19 +1337,19 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   CONSTRAINT `pcode` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Связь узлов и параметров';
 
--- Дамп данных таблицы magellan.model_has_parameters: ~66 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_has_parameters: ~68 rows (приблизительно)
 /*!40000 ALTER TABLE `model_has_parameters` DISABLE KEYS */;
 INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`, `mult_small`, `mult_large`) VALUES
 	('fuel_tank', 'az_level', 100, 1, 1),
-	('fuel_tank', 'compact', 1000, 1, 1),
+	('fuel_tank', 'fuel_protection', 1000, 1, 1),
 	('fuel_tank', 'fuel_volume', 1000, 1, 1),
 	('fuel_tank', 'radiation_def', 1000, 1, 1),
-	('fuel_tank', 'volume', 1000, 1, 1),
+	('fuel_tank', 'volume', 1000, 0.52, 1.7),
 	('fuel_tank', 'weight', 1000, 1, 1),
 	('hull', 'az_level', 100, 1, 1),
 	('hull', 'brand_lapse', 20, 1, 1),
 	('hull', 'configurability', 20, 1, 1),
-	('hull', 'volume', 1000, 1, 1),
+	('hull', 'volume', 1000, 0.52, 1.7),
 	('hull', 'weight', 1000, 1, 1),
 	('lss', 'air_prepare_speed', 1000, 1, 1),
 	('lss', 'air_volume', 1000, 1, 1),
@@ -1350,17 +1357,17 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('lss', 'co2_level', 1000, 1, 1),
 	('lss', 'lightness', 1000, 1, 1),
 	('lss', 'thermal_def', 1000, 1, 1),
-	('lss', 'volume', 1000, 1, 1),
+	('lss', 'volume', 1000, 0.52, 1.7),
 	('lss', 'weight', 1000, 1, 1),
-	('march_engine', 'accel', 1000, 1, 1),
-	('march_engine', 'accel_rev', 1000, 1, 1),
+	('march_engine', 'accel', 1000, 1.4, 0.6),
+	('march_engine', 'accel_rev', 1000, 1.4, 0.6),
 	('march_engine', 'az_level', 100, 1, 1),
 	('march_engine', 'heat_prod', 1000, 1, 1),
-	('march_engine', 'slowdown', 1000, 1, 1),
-	('march_engine', 'slowdown_rev', 1000, 1, 1),
-	('march_engine', 'thrust', 1000, 1, 1),
-	('march_engine', 'thrust_rev', 1000, 1, 1),
-	('march_engine', 'volume', 1000, 1, 1),
+	('march_engine', 'slowdown', 1000, 1.4, 0.6),
+	('march_engine', 'slowdown_rev', 1000, 1.4, 0.6),
+	('march_engine', 'thrust', 1000, 0.5, 1.6),
+	('march_engine', 'thrust_rev', 1000, 0.5, 1.6),
+	('march_engine', 'volume', 1000, 0.52, 1.7),
 	('march_engine', 'weight', 1000, 1, 1),
 	('radar', 'angle_change', 1000, 1, 1),
 	('radar', 'angle_max', 1000, 1, 1),
@@ -1370,7 +1377,7 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('radar', 'range_max', 1000, 1, 1),
 	('radar', 'range_min', 1000, 1, 1),
 	('radar', 'rotate_speed', 1000, 1, 1),
-	('radar', 'volume', 1000, 1, 1),
+	('radar', 'volume', 1000, 0.52, 1.7),
 	('radar', 'weight', 1000, 1, 1),
 	('shields', 'az_level', 100, 1, 1),
 	('shields', 'desinfect_level', 1000, 1, 1),
@@ -1379,7 +1386,7 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('shields', 'mechanical_def', 1000, 1, 1),
 	('shields', 'radiation_def', 1000, 1, 1),
 	('shields', 'reflection', 1000, 1, 1),
-	('shields', 'volume', 1000, 1, 1),
+	('shields', 'volume', 1000, 0.52, 1.7),
 	('shields', 'weight', 1000, 1, 1),
 	('shunter', 'az_level', 100, 1, 1),
 	('shunter', 'heat_prod', 1000, 1, 1),
@@ -1389,7 +1396,7 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('shunter', 'turn_accel', 1000, 1, 1),
 	('shunter', 'turn_max', 1000, 1, 1),
 	('shunter', 'turn_slowdown', 1000, 1, 1),
-	('shunter', 'volume', 1000, 1, 1),
+	('shunter', 'volume', 1000, 0.52, 1.7),
 	('shunter', 'weight', 1000, 1, 1),
 	('warp_engine', 'az_level', 100, 1, 1),
 	('warp_engine', 'consumption', 1000, 1, 1),
@@ -1398,13 +1405,14 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('warp_engine', 'distort_slowdown', 1000, 1, 1),
 	('warp_engine', 'turn_consumption', 1000, 1, 1),
 	('warp_engine', 'turn_speed', 1000, 1, 1),
-	('warp_engine', 'volume', 1000, 1, 1),
+	('warp_engine', 'volume', 1000, 0.52, 1.7),
 	('warp_engine', 'warp_enter_consumption', 1000, 1, 1),
 	('warp_engine', 'weight', 1000, 1, 1);
 /*!40000 ALTER TABLE `model_has_parameters` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.model_parameters
+DROP TABLE IF EXISTS `model_parameters`;
 CREATE TABLE IF NOT EXISTS `model_parameters` (
   `model_id` int(11) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -1424,7 +1432,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(6, 'heat_prod', 94),
 	(6, 'slowdown', 16),
 	(6, 'slowdown_rev', 0),
-	(6, 'thrust', 1219),
+	(6, 'thrust', 1220),
 	(6, 'thrust_rev', 0),
 	(6, 'volume', 281),
 	(6, 'weight', 0),
@@ -1434,7 +1442,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(7, 'heat_prod', 91),
 	(7, 'slowdown', 16),
 	(7, 'slowdown_rev', 0),
-	(7, 'thrust', 1428),
+	(7, 'thrust', 1430),
 	(7, 'thrust_rev', 0),
 	(7, 'volume', 244),
 	(7, 'weight', 0),
@@ -1444,7 +1452,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(8, 'heat_prod', 78),
 	(8, 'slowdown', 29),
 	(8, 'slowdown_rev', 0),
-	(8, 'thrust', 1541),
+	(8, 'thrust', 1540),
 	(8, 'thrust_rev', 0),
 	(8, 'volume', 266),
 	(8, 'weight', 0),
@@ -1454,7 +1462,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(9, 'heat_prod', 71),
 	(9, 'slowdown', 28),
 	(9, 'slowdown_rev', 0),
-	(9, 'thrust', 1307),
+	(9, 'thrust', 1310),
 	(9, 'thrust_rev', 0),
 	(9, 'volume', 233),
 	(9, 'weight', 0),
@@ -1464,7 +1472,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(10, 'heat_prod', 81),
 	(10, 'slowdown', 20),
 	(10, 'slowdown_rev', 0),
-	(10, 'thrust', 1011),
+	(10, 'thrust', 1010),
 	(10, 'thrust_rev', 0),
 	(10, 'volume', 269),
 	(10, 'weight', 0),
@@ -1484,7 +1492,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(12, 'heat_prod', 86),
 	(12, 'slowdown', 25),
 	(12, 'slowdown_rev', 0),
-	(12, 'thrust', 1501),
+	(12, 'thrust', 1500),
 	(12, 'thrust_rev', 0),
 	(12, 'volume', 279),
 	(12, 'weight', 0),
@@ -1622,6 +1630,7 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 
 
 -- Дамп структуры для таблица magellan.nodes
+DROP TABLE IF EXISTS `nodes`;
 CREATE TABLE IF NOT EXISTS `nodes` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID узла',
   `model_id` int(11) NOT NULL DEFAULT '0' COMMENT 'ID модели',
@@ -1644,6 +1653,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
 
 
 -- Дамп структуры для таблица magellan.node_statuses
+DROP TABLE IF EXISTS `node_statuses`;
 CREATE TABLE IF NOT EXISTS `node_statuses` (
   `code` varchar(10) NOT NULL,
   `name` varchar(30) NOT NULL,
@@ -1663,6 +1673,7 @@ INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.node_types
+DROP TABLE IF EXISTS `node_types`;
 CREATE TABLE IF NOT EXISTS `node_types` (
   `code` varchar(50) NOT NULL,
   `id` tinyint(4) NOT NULL,
@@ -1686,6 +1697,7 @@ INSERT IGNORE INTO `node_types` (`code`, `id`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.parameters_list
+DROP TABLE IF EXISTS `parameters_list`;
 CREATE TABLE IF NOT EXISTS `parameters_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(50) NOT NULL DEFAULT '',
@@ -1694,7 +1706,7 @@ CREATE TABLE IF NOT EXISTS `parameters_list` (
   UNIQUE KEY `Индекс 2` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8 COMMENT='Список параметров';
 
--- Дамп данных таблицы magellan.parameters_list: ~42 rows (приблизительно)
+-- Дамп данных таблицы magellan.parameters_list: ~44 rows (приблизительно)
 /*!40000 ALTER TABLE `parameters_list` DISABLE KEYS */;
 INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`) VALUES
 	(1, 'thrust', 'Маршевая тяга'),
@@ -1727,7 +1739,7 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`) VALUES
 	(28, 'scan_speed', 'Скорость сканирования'),
 	(29, 'rotate_speed', 'Скорость поворота'),
 	(30, 'fuel_volume', 'Объем топлива'),
-	(31, 'compact', 'Компактность'),
+	(31, 'fuel_protection', 'Защита топлива'),
 	(32, 'radiation_def', 'Радиационная защита'),
 	(33, 'thermal_def', 'Тепловая защита'),
 	(34, 'co2_level', 'Поддержание уровня СО2'),
@@ -1748,6 +1760,7 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.technologies
+DROP TABLE IF EXISTS `technologies`;
 CREATE TABLE IF NOT EXISTS `technologies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -1763,6 +1776,7 @@ CREATE TABLE IF NOT EXISTS `technologies` (
 
 
 -- Дамп структуры для таблица magellan.tech_effects
+DROP TABLE IF EXISTS `tech_effects`;
 CREATE TABLE IF NOT EXISTS `tech_effects` (
   `tech_id` int(11) NOT NULL,
   `node_code` varchar(30) NOT NULL,
@@ -1782,6 +1796,7 @@ CREATE TABLE IF NOT EXISTS `tech_effects` (
 
 
 -- Дамп структуры для таблица magellan.tech_point_cost
+DROP TABLE IF EXISTS `tech_point_cost`;
 CREATE TABLE IF NOT EXISTS `tech_point_cost` (
   `tech_id` int(11) NOT NULL,
   `resource_id` int(11) NOT NULL,
@@ -1796,6 +1811,7 @@ CREATE TABLE IF NOT EXISTS `tech_point_cost` (
 
 
 -- Дамп структуры для таблица magellan.users
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(128) NOT NULL DEFAULT '' COMMENT 'Логин',
@@ -1812,7 +1828,18 @@ CREATE TABLE IF NOT EXISTS `users` (
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 
+-- Дамп структуры для представление magellan.v_model_params
+DROP VIEW IF EXISTS `v_model_params`;
+-- Создание временной таблицы для обработки ошибок зависимостей представлений
+CREATE TABLE `v_model_params` (
+	`id` INT(11) NOT NULL,
+	`parameter_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
+	`value` DOUBLE(19,2) NULL
+) ENGINE=MyISAM;
+
+
 -- Дамп структуры для представление magellan.v_node_parameter_list
+DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_node_parameter_list` (
 	`node_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
@@ -1822,7 +1849,24 @@ CREATE TABLE `v_node_parameter_list` (
 ) ENGINE=MyISAM;
 
 
+-- Дамп структуры для представление magellan.v_model_params
+DROP VIEW IF EXISTS `v_model_params`;
+-- Удаление временной таблицы и создание окончательной структуры представления
+DROP TABLE IF EXISTS `v_model_params`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_model_params` AS select 
+	m.id,
+	mhp.parameter_code, 
+	round(
+		coalesce(mp.value, mhp.def_value)*
+		if(m.size='small', mhp.mult_small, if(m.size='large', mhp.mult_large,1))
+	,2) value
+from models m
+join model_has_parameters mhp on m.node_type_code = mhp.node_code
+left join model_parameters mp on mhp.parameter_code = mp.parameter_code and mp.model_id = m.id ;
+
+
 -- Дамп структуры для представление magellan.v_node_parameter_list
+DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_node_parameter_list`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_node_parameter_list` AS SELECT nt.code node_code, 
