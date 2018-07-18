@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 
-from convert import roundTo
+from convert_start_nodes import roundTo
 from src.sync.magellan import get_func_vector, getfunc, table_view, count_elements
 from src.sync.nodes_data import node_names, node_params, param_names
 from src.sync.desync_penalties import desync_penalties

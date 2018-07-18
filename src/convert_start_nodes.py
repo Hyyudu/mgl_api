@@ -35,30 +35,54 @@ estimates = {
         "range_change": {-3: 0.8, 0: 1, 5: 1.2},
         "rotate_speed": {-3: 10, 0: 12, 5: 15},
         "volume": {-1: 210, 0: 185, 2: 160},
+    },
+    "warp_engine": {
+        "distort": {-3: 800, 0: 1000, 5: 1200},
+        "warp_enter_consumption": {-2: 30, 0: 21, 3: 21},
+        "distort_acc": {-2: 3, 0: 4, 4: 6},
+        "distort_slow": {-2: 3, 0: 4, 4: 6},
+        "fuel_consumption": {-3: 0.12, 0: 0.1, 5: 0.08},
+        "turn_consumption": {-2: 1.1, 0: 1, 3: 0.9},
+        "turn_speed": {-2: 0.8, 0: 1, 3: 1.2},
+        "volume": {-1: 333, 0: 288, 2: 259}
+    },
+    "fuel_tank": {
+        "fuel_volume": {-3: 800, 0: 1000, 5: 1300},
+        "fuel_protection": {-3: 3, 0: 5, 5: 7},
+        "radiation_def": {-3: 80, 0: 100, 5: 140},
+        "volume": {-1: 378, 0: 333, 2: 288},
+    },
+    "shields": {
+        "radiation_def": {-2: 7, 0: 10, 4: 14},
+        "desinfect_level": {-2: 50, 0: 80, 4: 120},
+        "mechanical_def": {-2: 8, 0: 10, 4: 13},
+        "heat_reflection": {-2: 8, 0: 10, 4: 13},
+        "heat_capacity": {-2: 382.5, 0: 450, 4: 550},
+        "heat_sink": {-2: 85, 0: 100, 4: 120},
+        "volume": {-1: 315, 0: 277.5, 2: 240},
     }
-
 }
 
 model = {
     "company": "pre",
-    "node_type_code": "radar",
-    "name": "AN/ZPY-1 Starlite",
-    "size": "medium",
+    "node_type_code": "shields",
+    "name": "Interceptor",
+    "size": "small",
     "params": {
-        "range_max": -1,
-        "angle_min": 1,
-        "angle_max": 1,
-        # "angle_change": 1,
-        # "range_change": 1,
-        "rotate_speed": 2,
-        # "volume": -1,
+        # "radiation_def": 2,
+        "desinfect_level": -1,
+        "mechanical_def": -1,
+        "heat_reflection": -1,
+        "heat_capacity": 0,
+        "heat_sink": 3,
+        # "volume": 1,
     }
 }
 if __name__ == "__main__":
     est = estimates[model['node_type_code']]
 
     advance = sum(model['params'].values()) / sum([max(arr) for arr in est.values()])
-    model['level'] = 2 if advance > 0.9 else 1 if advance > 0.45 else 0
+    model['level'] = 2 if advance > 0.85 else 1 if advance > 0.45 else 0
 
     for name, arr in est.items():
         val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
