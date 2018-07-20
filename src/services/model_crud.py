@@ -78,6 +78,25 @@ def apply_companies_perks(model):
             model['params']['volume'] *= 0.92
         else:
             model['params']['volume'] *= 1.08
+
     elif model['company'] in ['gd', 'mst']:
         model['params']['az_level'] *= 1.15
+
+    elif model['company'] == 'kkg':
+        if model['node_type_code'] == 'lss':
+            for field in ['thermal_def', 'co2_level', 'air_volume', 'air_speed']:
+                model['params'][field] *= 1.09
+
     return model
+
+
+def read_all_models(self, params):
+    sql = "SELECT * from models WHERE 1=1"
+    add_where = db.construct_where(params)
+    if add_where:
+        sql += " and " + add_where
+    result = db.fetchAll(sql)
+    for item in result:
+        item['created'] = str(item[b'created'])
+        del (item[b'created'])
+    return result

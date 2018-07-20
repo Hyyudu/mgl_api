@@ -14,7 +14,7 @@ class ApiHandler(RequestHandler):
             body = self.request.body
             req = json.loads(body)
             out = self.func(req)
-            self.write(json.dumps(out))
+            self.write(json.dumps(out, indent=4))
         except Exception as e:
             err_text = self.get_exception_text(e)
             if err_text:

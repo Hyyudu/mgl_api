@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 
 import mysql.connector
 from mysql.connector import errorcode
@@ -24,7 +25,8 @@ class DB:
 
     def _query(self, sql, data, need_commit=False):
         try:
-            self.cursor.execute(sql, {key: val for key, val in data.items() if not isinstance(val, (dict, list, tuple))})
+            self.cursor.execute(sql,
+                                {key: val for key, val in data.items() if not isinstance(val, (dict, list, tuple))})
             if need_commit:
                 self.cnx.commit()
 
@@ -87,7 +89,7 @@ class DB:
         sql_values = []
         for i, item in enumerate(insert_data):
             ins_data.update({key + str(i): val for key, val in item.items()})
-            sql_values.append("(" + ", ".join([":" + key+str(i) for key in item]) + ")")
+            sql_values.append("(" + ", ".join([":" + key + str(i) for key in item]) + ")")
         sql += ", \n".join(sql_values)
         return self.query(sql, ins_data, need_commit=True)
 
@@ -99,3 +101,13 @@ class DB:
             return self.upsert('insert', table, data)
         else:
             return self.insert_many(table, data)
+
+    @staticmethod
+    def construct_where(params: Dict) -> str:
+        where = []
+        for key, val in params.items():
+            if isinstance(val, (tuple, list, set)):
+                where.append(key+" in ('" + "', '".join(val) + "')")
+            else:
+                where.append(key+" = :"+key)
+        return " and ".join(where)

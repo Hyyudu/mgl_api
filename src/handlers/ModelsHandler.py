@@ -1,7 +1,7 @@
 from torndsession.sessionhandler import SessionBaseHandler
 
 from handlers.ApiHandler import ApiHandler
-from services.model_crud import add_model, delete_model, read_model
+from services.model_crud import add_model, delete_model, read_model, read_all_models
 
 
 class AddModelHandler(ApiHandler):
@@ -18,6 +18,10 @@ class DeleteModelHandler(ApiHandler):
 
 class ReadModelHandler(ApiHandler):
     func = read_model
+
+
+class ReadAllModelsHandler(ApiHandler):
+    func = read_all_models
 
 
 class PingHandler(SessionBaseHandler):
