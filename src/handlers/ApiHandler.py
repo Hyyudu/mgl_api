@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 
 from tornado.web import RequestHandler
 
@@ -12,7 +13,10 @@ class ApiHandler(RequestHandler):
     async def post(self):
         try:
             body = self.request.body
-            req = json.loads(body)
+            try:
+                req = json.loads(body)
+            except JSONDecodeError:
+                req = {}
             out = self.func(req)
             self.write(json.dumps(out, indent=4))
         except Exception as e:
