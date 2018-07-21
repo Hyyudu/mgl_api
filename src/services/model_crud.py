@@ -56,8 +56,6 @@ def read_model(self, data):
     model = db.fetchRow('select * from models where id=:id', data)
     if not model:
         return {"status": "fail", "errors": "Model with id {} not found".format(data.get('id'))}
-    model['created'] = str(model[b'created'])
-    del (model[b'created'])
     model['params'] = db.fetchDict('select parameter_code, value from v_model_params where model_id=:id', data,
                                    'parameter_code', 'value')
     model = apply_companies_perks(model)
@@ -90,13 +88,23 @@ def apply_companies_perks(model):
     return model
 
 
-def read_all_models(self, params):
+def read_models(self, params):
     sql = "SELECT * from models WHERE 1=1"
     add_where = db.construct_where(params)
     if add_where:
         sql += " and " + add_where
-    result = db.fetchAll(sql)
-    for item in result:
-        item['created'] = str(item[b'created'])
-        del (item[b'created'])
-    return result
+    params = db.construct_params(params)
+    models = db.fetchAll(sql, params)
+    if not models:
+        return []
+
+    ids = {"model_id": [model['id'] for model in models]}
+    params_where = db.construct_where(ids)
+    ids = db.construct_params(ids)
+    all_params = db.fetchAll("select * from v_model_params where " + params_where, ids)
+
+    for model in models:
+        model['params'] = {item['parameter_code']: item['value'] for item in all_params
+                           if item['model_id'] == model['id']}
+
+    return models

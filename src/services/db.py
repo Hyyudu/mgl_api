@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from typing import Dict
 
 import mysql.connector
@@ -22,6 +23,7 @@ class DB:
             self.cnx = cnx
             self.cursor = cnx.cursor(dictionary=True)
             self.column_lists = {}
+            self.last_sql = ""
 
     def _query(self, sql, data, need_commit=False):
         try:
@@ -29,6 +31,7 @@ class DB:
                                 {key: val for key, val in data.items() if not isinstance(val, (dict, list, tuple))})
             if need_commit:
                 self.cnx.commit()
+            self.last_sql = sql
 
             return self.cursor
         except Exception as e:
@@ -39,33 +42,46 @@ class DB:
         sql = re.sub(r':([\w\d_]+)', r'%(\1)s', sql)
         return self._query(sql, data or {}, need_commit)
 
+    def get_last_sql(self):
+        return self.last_sql
+
+    def get_result(self):
+        for item in self.cursor:
+            item = {
+                key if type(key) != bytes else key.decode():
+                    val if type(val) != datetime else val.strftime("%Y-%m-%d %H:%M:%S")
+                for key, val in item.items()}
+            yield item
+
     def fetchAll(self, sql, data=None):
         self.query(sql, data or {})
-        return [item for item in self.cursor]
+        result = [item for item in self.get_result()]
+        return result
 
     def fetchRow(self, sql, data=None):
         self.query(sql, data or {})
-        for item in self.cursor:
+        for item in self.get_result():
             return item
 
     def fetchDict(self, sql, data=None, key='', val=''):
         self.query(sql, data or {})
-        return {item.get(key): item.get(val) for item in self.cursor}
+        ret = {item.get(key): item.get(val) for item in self.get_result()}
+        return ret
 
     def fetchColumn(self, sql, data=None):
         self.query(sql, data or {})
-        return [list(item.values())[0] for item in self.cursor]
+        return [list(item.values())[0] for item in self.get_result()]
 
     def fetchOne(self, sql, data=None):
         self.query(sql, data or {})
-        for item in self.cursor:
+        for item in self.get_result():
             return list(item.values())[0]
 
     def get_column_list(self, table):
         """Получает список столбцов таблицы"""
         if self.column_lists.get(table) is None:
             self.query("show columns from " + table)
-            self.column_lists[table] = [row['Field'] for row in self.cursor]
+            self.column_lists[table] = [row['Field'] for row in self.get_result()]
         return self.column_lists[table]
 
     def upsert(self, operation, table, data, where=''):
@@ -107,7 +123,18 @@ class DB:
         where = []
         for key, val in params.items():
             if isinstance(val, (tuple, list, set)):
-                where.append(key+" in ('" + "', '".join(val) + "')")
+                where.append(key + " in (" + ", ".join([":" + key + "__" + str(i) for i in range(len(val))]) + ") ")
             else:
-                where.append(key+" = :"+key)
+                where.append(key + " = :" + key)
         return " and ".join(where)
+
+    @staticmethod
+    def construct_params(params: Dict) -> Dict:
+        new_params = {}
+        for key, val in params.items():
+            if isinstance(val, (tuple, list, set)):
+                new_params.update({key + "__" + str(i): item for i, item in enumerate(val)})
+            else:
+                new_params[key] = val
+        params = new_params
+        return params
