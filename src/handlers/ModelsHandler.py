@@ -34,3 +34,12 @@ class PingHandler(SessionBaseHandler):
             self.write('data=%s' % data)
         except:
             self.write('Some problem with session, nevermind')
+
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with,access-control-allow-origin,authorization,content-type")
+
+    def options(self):
+        self.set_status(204)
+        self.finish()
