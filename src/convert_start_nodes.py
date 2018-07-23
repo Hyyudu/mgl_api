@@ -1,10 +1,13 @@
 import json
-from random import random, uniform
+from random import uniform
 
+from copy import deepcopy
 from numpy import interp
 
+
 def roundTo(val, prec=3):
-    return round(val, prec-len(str(int(val))))
+    return round(val, prec - len(str(int(val))))
+
 
 estimates = {
     "march_engine": {
@@ -60,34 +63,60 @@ estimates = {
         "heat_capacity": {-2: 382.5, 0: 450, 4: 550},
         "heat_sink": {-2: 85, 0: 100, 4: 120},
         "volume": {-1: 315, 0: 277.5, 2: 240},
+    },
+    "hull": {
+        "configurability": {-3: 16, 0: 19, 5: 24},
+        "brand_lapse": {-2: 17, 0: 19, 4: 23},
+        "volume": {
+            "small": {-3: 800, 0: 1300, 5: 1800},
+            "medium": {-3: 2000, 0: 2500, 5: 3000},
+            "large": {-3: 3500, 0: 4250, 5: 5000}
+        }
+    },
+    "scaner": {
+        "scan_speed": {-3: 25, 0: 2.8, 5: 3},
+        "scan_range": {-3: 42, 0: 50, 5: 60},
+        "drop_speed": {-2: 38, 0: 41, 4: 45},
+        "drop_range": {-2: 20, 0: 25, 4: 30},
+        "volume": {-1: 147, 0: 129.5, 2: 112},
+
     }
 }
 
-model = {
-    "company": "pre",
-    "node_type_code": "shields",
-    "name": "Interceptor",
-    "size": "small",
-    "params": {
-        # "radiation_def": 2,
-        "desinfect_level": -1,
-        "mechanical_def": -1,
-        "heat_reflection": -1,
-        "heat_capacity": 0,
-        "heat_sink": 3,
-        # "volume": 1,
-    }
-}
-if __name__ == "__main__":
+
+def get_model_params(model1):
+    model = deepcopy(model1)
     est = estimates[model['node_type_code']]
+    if 'medium' in est['volume']:
+        est['volume'] = est['volume'][model['size']]
 
     advance = sum(model['params'].values()) / sum([max(arr) for arr in est.values()])
     model['level'] = 2 if advance > 0.85 else 1 if advance > 0.45 else 0
 
     for name, arr in est.items():
+
         val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
         accuracy = 0.02
-        val = roundTo(val * (uniform(1 - accuracy, 1+ accuracy)))
+        val = roundTo(val * (uniform(1 - accuracy, 1 + accuracy)))
+        if name in ('configurability', 'brand_lapse'):
+            val = round(val)
         model['params'][name] = val
 
     print(json.dumps(model))
+
+
+model = {
+    "company": "mst",
+    "node_type_code": "radar",
+    "name": "МСТ-КР-2",
+    "size": "medium",
+    "params": {
+        # "scan_speed": -1,
+        # "scan_range": -1,
+        # "drop_speed": 1,
+        # "drop_range": 4,
+        # "volume": 0,
+    }
+}
+if __name__ == "__main__":
+    get_model_params(model)

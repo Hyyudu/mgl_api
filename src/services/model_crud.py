@@ -1,19 +1,6 @@
-from collections import OrderedDict
-from random import choices
-
 from services.db import DB
 
 db = DB()
-detail_distribution = OrderedDict({
-    "sum2": 6,
-    "sum3": 8,
-    "sum4": 3,
-    "sum5": 1,
-    "inv": 4,
-    "con2": 6,
-    "con3": 8,
-    "con4": 2,
-})
 
 
 def add_model(self, data):
@@ -22,31 +9,20 @@ def add_model(self, data):
     if not data.get('company') in avail_vendors:
         return {"status": "fail", "errors": "Не существует компания с кодом '{}'".format(data.get('company', ''))}
     new_model_id = db.insert('models', data)
-    model_params = db.fetchColumn('select parameter_code from model_has_parameters where node_code=:node_type_code',
-                                  data)
+    db.query('update models set premium_expires = created + interval 3 hour where id=:id', {"id": new_model_id})
+    model_params = db.fetchDict(
+        'select parameter_code, def_value from model_has_parameters where node_code=:node_type_code',
+        data, 'parameter_code', 'def_value')
     insert_parameters = [
         {
             "model_id": new_model_id,
             "parameter_code": code,
-            "value": data['params'].get(code, 0)
+            "value": data['params'].get(code, def_value)
         }
-        for code in model_params
+        for code, def_value in model_params.items()
     ]
     data['id'] = new_model_id
     db.insert('model_parameters', insert_parameters)
-
-    if data['node_type_code'] == 'hull':
-        slots = choices(detail_distribution.keys(), detail_distribution.values(),
-                        k=data['params'].get('configurability', 0))
-        insert_slots = [
-            {
-                "hull_id": data['id'],
-                "slot_type": key,
-                "amount": slots.count(key)
-            } for key in detail_distribution
-        ]
-        db.insert_many('hull_slots', insert_slots)
-        data['params']['insert_slots'] = insert_slots
 
     data['params'] = {param['parameter_code']: param['value'] for param in insert_parameters}
     return {"status": "ok", "data": data}
@@ -63,6 +39,7 @@ def read_model(self, data):
 
 
 def delete_model(self, data):
+    db.query('delete from nodes where model_id=:id', data, need_commit=True)
     db.query('delete from model_parameters where model_id=:id', data, need_commit=True)
     deleted = db.query('delete from models where id=:id', data, need_commit=True)
     return {"status": "ok", "deleted": deleted.rowcount}
@@ -71,7 +48,7 @@ def delete_model(self, data):
 def apply_companies_perks(model):
     if model['company'] == 'pre':
         if model['node_type_code'] == 'warp_engine':
-            model['params']['distort'] *= 1.1
+            model['params']['distort_level'] *= 1.1
         if model['node_type_code'] != 'hull':
             model['params']['volume'] *= 0.92
         else:
@@ -106,5 +83,24 @@ def read_models(self, params):
     for model in models:
         model['params'] = {item['parameter_code']: item['value'] for item in all_params
                            if item['model_id'] == model['id']}
-
+        model = apply_companies_perks(model)
+        model['params']['weight'] = calc_weight(model['node_type_code'], model['size'], model['params']['volume'])
     return models
+
+
+def calc_weight(node_type: str, size: str, volume: float) -> float:
+    densities = {
+        "hull": 0.2,
+        "march_engine": 0.5,
+        "shunter": 0.5,
+        "warp_engine": 0.7,
+        "scaner": 0.4,
+        "radar": 0.4,
+        "shields": 0.6,
+        "fuel_tank": 0.9,
+        "lss": 0.6,
+    }
+    node_weight_multiplier = 1.2
+    hull_weight_add = {"small": 0, "medium": 900, "large": 3000}
+    weight = volume * densities[node_type]
+    return round(weight + hull_weight_add[size] if node_type == 'hull' else weight * node_weight_multiplier)

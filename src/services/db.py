@@ -3,9 +3,8 @@ from datetime import datetime
 from typing import Dict
 
 import mysql.connector
-from mysql.connector import errorcode
-
 from config import DB_CONFIG
+from mysql.connector import errorcode
 
 
 class DB:
@@ -84,39 +83,46 @@ class DB:
             self.column_lists[table] = [row['Field'] for row in self.get_result()]
         return self.column_lists[table]
 
-    def upsert(self, operation, table, data, where=''):
+    def upsert(self, operation, table, data, where='', on_duplicate_key_update=''):
         column_list = self.get_column_list(table)
         insert_data = {key: val for key, val in data.items() if key in column_list}
         sql = "insert into" if operation == 'insert' else 'update'
         sql += " " + table + " set " + ", ".join([field + " = %(" + field + ")s" for field in insert_data.keys()])
         if where:
             sql += " where " + where
+        if on_duplicate_key_update:
+            sql += " on duplicate key update " + on_duplicate_key_update
         self.query(sql, insert_data, need_commit=True)
         return self.cursor.lastrowid
 
-    def insert_many(self, table, data):
+    def insert_many(self, table, data, on_duplicate_key_update=''):
         column_list = self.get_column_list(table)
         insert_data = [
             {key: val for key, val in item.items() if key in column_list}
             for item in data
         ]
-        sql = "insert into " + table + " (" + ", ".join(column_list) + ") values "
+        sql = "insert into " + table + " (" + ", ".join(insert_data[0].keys()) + ") values "
         ins_data = {}
         sql_values = []
         for i, item in enumerate(insert_data):
             ins_data.update({key + str(i): val for key, val in item.items()})
             sql_values.append("(" + ", ".join([":" + key + str(i) for key in item]) + ")")
         sql += ", \n".join(sql_values)
+        if on_duplicate_key_update:
+            sql += " on duplicate key update " + on_duplicate_key_update
         return self.query(sql, ins_data, need_commit=True)
 
     def update(self, table, data, where):
-        return self.upsert('update', table, data, where)
+        return self.upsert('update', table, data, where=where)
 
-    def insert(self, table, data):
+    def insert(self, table, data, on_duplicate_key_update=''):
         if isinstance(data, dict):
-            return self.upsert('insert', table, data)
+            return self.upsert('insert', table, data, on_duplicate_key_update=on_duplicate_key_update)
         else:
-            return self.insert_many(table, data)
+            return self.insert_many(table, data, on_duplicate_key_update=on_duplicate_key_update)
+
+    def affected_rows(self):
+        return self.cursor.rowcount
 
     @staticmethod
     def construct_where(params: Dict) -> str:

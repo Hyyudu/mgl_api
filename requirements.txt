@@ -3,3 +3,4 @@ torndsession
 pymysql
 pytest
 mysql-connector-python
+requests
