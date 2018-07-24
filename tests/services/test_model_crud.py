@@ -5,7 +5,8 @@ from src.services.model_crud import (
     add_model,
     read_model,
     delete_model,
-    calc_weight)
+    calc_weight, read_models,
+)
 
 db1 = DB()
 
@@ -53,5 +54,15 @@ def test_delete_model2():
     ("warp_engine", "large", 100, 100 * 0.7 * 1.2),
 ])
 def test_calc_weight(node_type, size, volume, weight):
-
     assert calc_weight(node_type, size, volume) == weight
+
+
+def test_read_models():
+    result = read_models(None, {})
+    assert type(result) == list
+    assert result
+    assert type(result[0]) == dict
+    assert all([field in result[0] for field in [
+        'id', 'name', 'node_type_code', 'level', 'size', 'description',
+        'company', 'created', 'premium_expires', 'params', 'nodes']
+    ])

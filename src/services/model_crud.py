@@ -29,7 +29,13 @@ def add_model(self, data):
 
 
 def read_model(self, data):
-    return read_models(self, data={"id": data['id']})[0]
+    model = db.fetchRow('select * from models where id=:id', data)
+    if not model:
+        return {"status": "fail", "errors": "Model with id {} not found".format(data.get('id'))}
+    model['params'] = db.fetchDict('select parameter_code, value from v_model_params where model_id=:id', data,
+                                   'parameter_code', 'value')
+    model = apply_companies_perks(model)
+    return {"status": "ok", "data": model}
 
 
 def delete_model(self, data):
