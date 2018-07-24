@@ -80,11 +80,19 @@ def read_models(self, params):
     ids = db.construct_params(ids)
     all_params = db.fetchAll("select * from v_model_params where " + params_where, ids)
 
+    all_nodes = db.fetchAll('select id, model_id, name, az_level, status_code, date_created'
+                            ' from nodes where ' + params_where, ids)
+
     for model in models:
         model['params'] = {item['parameter_code']: item['value'] for item in all_params
                            if item['model_id'] == model['id']}
         model = apply_companies_perks(model)
-        model['params']['weight'] = calc_weight(model['node_type_code'], model['size'], model['params']['volume'])
+        model['params']['weight'] = calc_weight(
+            model['node_type_code'],
+            model['size'],
+            model['params']['volume']
+        )
+        model['nodes'] = [node for node in all_nodes if node['model_id'] == model['id']]
     return models
 
 

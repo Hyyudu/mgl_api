@@ -1279,19 +1279,14 @@ CREATE TABLE IF NOT EXISTS `flights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `departure` datetime NOT NULL,
   `dock` tinyint(4) NOT NULL,
-  `pilot` int(11) NOT NULL,
-  `navigator` int(11) NOT NULL,
-  `engineer` int(11) NOT NULL,
-  `supercargo` int(11) NOT NULL,
-  `radist` int(11) NOT NULL,
   `status` enum('prepare','freight','returned','lost') NOT NULL DEFAULT 'prepare',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
 
 -- Дамп данных таблицы magellan.flights: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `flights` DISABLE KEYS */;
-INSERT IGNORE INTO `flights` (`id`, `departure`, `dock`, `pilot`, `navigator`, `engineer`, `supercargo`, `radist`, `status`) VALUES
-	(1, '2018-08-20 12:00:00', 1, 1, 2, 3, 4, 5, 'prepare');
+INSERT IGNORE INTO `flights` (`id`, `departure`, `dock`, `status`) VALUES
+	(1, '2018-08-20 12:00:00', 1, 'prepare');
 /*!40000 ALTER TABLE `flights` ENABLE KEYS */;
 
 
@@ -1313,6 +1308,24 @@ INSERT IGNORE INTO `flight_cargos` (`flight_id`, `cargo_type`, `owner`, `volume`
 	(1, 'beacon', NULL, 350, 175, 2),
 	(1, 'mine', 'mat', 700, 350, 1);
 /*!40000 ALTER TABLE `flight_cargos` ENABLE KEYS */;
+
+
+-- Дамп структуры для таблица magellan.flight_crews
+DROP TABLE IF EXISTS `flight_crews`;
+CREATE TABLE IF NOT EXISTS `flight_crews` (
+  `flight_id` int(11) NOT NULL,
+  `role` enum('pilot','navigator','supercargo','radist','engineer','other') NOT NULL,
+  `user_id` int(11) NOT NULL,
+  KEY `FK_flight_crews_flights` (`flight_id`),
+  CONSTRAINT `FK_flight_crews_flights` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Экипаж';
+
+-- Дамп данных таблицы magellan.flight_crews: ~2 rows (приблизительно)
+/*!40000 ALTER TABLE `flight_crews` DISABLE KEYS */;
+INSERT IGNORE INTO `flight_crews` (`flight_id`, `role`, `user_id`) VALUES
+	(1, 'pilot', 1),
+	(1, 'navigator', 2);
+/*!40000 ALTER TABLE `flight_crews` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.hull_slots
@@ -1347,7 +1360,7 @@ CREATE TABLE IF NOT EXISTS `models` (
   CONSTRAINT `node_type` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
 
--- Дамп данных таблицы magellan.models: ~43 rows (приблизительно)
+-- Дамп данных таблицы magellan.models: ~66 rows (приблизительно)
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company`, `created`, `premium_expires`) VALUES
 	(6, 'Восход', 'march_engine', 0, 'small', NULL, 'mat', '2018-07-08 14:43:01', '2018-07-08 17:43:01'),
@@ -1481,13 +1494,13 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('scaner', 'scan_range', 42, 0.8, 1.2, 1),
 	('scaner', 'scan_speed', 2.5, 0.9, 1.1, 1),
 	('shields', 'az_level', 100, 1, 1, 1),
-	('shields', 'desinfect_level', 1000, 1, 1, 1),
-	('shields', 'heat_capacity', 1000, 1, 1, 1),
-	('shields', 'heat_sink', 1000, 1, 1, 1),
-	('shields', 'mechanical_def', 1000, 1, 1, 1),
-	('shields', 'radiation_def', 1000, 1, 1, 1),
-	('shields', 'reflection', 1000, 1, 1, 1),
-	('shields', 'volume', 1000, 0.52, 1.7, -1),
+	('shields', 'desinfect_level', 50, 0.9, 1.1, 1),
+	('shields', 'heat_capacity', 382.5, 0.7, 1.3, 1),
+	('shields', 'heat_sink', 85, 0.7, 1.3, 1),
+	('shields', 'mechanical_def', 1000, 0.8, 1.2, 1),
+	('shields', 'radiation_def', 7, 0.8, 1.2, 1),
+	('shields', 'reflection', 8, 0.8, 1.2, 1),
+	('shields', 'volume', 315, 0.52, 1.7, -1),
 	('shields', 'weight', 1000, 1, 1, -1),
 	('shunter', 'az_level', 100, 1, 1, 1),
 	('shunter', 'heat_prod', 92, 1, 1, -1),
@@ -1524,7 +1537,7 @@ CREATE TABLE IF NOT EXISTS `model_parameters` (
   CONSTRAINT `parameter_code` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.model_parameters: ~393 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_parameters: ~517 rows (приблизительно)
 /*!40000 ALTER TABLE `model_parameters` DISABLE KEYS */;
 INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VALUES
 	(6, 'accel', 22),
@@ -2066,7 +2079,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
--- Дамп данных таблицы magellan.nodes: ~44 rows (приблизительно)
+-- Дамп данных таблицы magellan.nodes: ~37 rows (приблизительно)
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
 	(9, 11, '', 115, 'free', '2018-07-22 20:14:21', NULL, '', '2018-07-08 17:51:21'),
@@ -2317,7 +2330,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   CONSTRAINT `fk_company_id` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9150 DEFAULT CHARSET=utf8 COMMENT='Пользователи системы';
 
--- Дамп данных таблицы magellan.users: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.users: ~150 rows (приблизительно)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT IGNORE INTO `users` (`id`, `name`, `company_id`, `is_active`) VALUES
 	(8000, 'Геннадий Лавров', NULL, 0),
