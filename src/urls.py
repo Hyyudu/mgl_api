@@ -1,7 +1,17 @@
 from handlers.GetCodesHandler import GetNodeParamsHandler
 from handlers.MiscHandler import RefreshUsersHandler
-from handlers.ModelsHandler import *
-from handlers.NodesHandler import *
+from handlers.ModelsHandler import (
+    AddModelHandler,
+    ReadModelHandler,
+    ReadModelsHandler,
+    DeleteModelHandler,
+    PingHandler,
+)
+from handlers.NodesHandler import (
+    CreateNodeHandler,
+    ReserveNodeHandler,
+)
+
 
 app_urls = [
     ("/get-params", GetNodeParamsHandler),
@@ -10,6 +20,7 @@ app_urls = [
     ("/model/read_all", ReadModelsHandler),
     ("/model/delete", DeleteModelHandler),
     ("/node/create", CreateNodeHandler),
+    ("/node/reserve", ReserveNodeHandler),
     ("/users/refresh", RefreshUsersHandler),
     ("/ping", PingHandler),
 ]

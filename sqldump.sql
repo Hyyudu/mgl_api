@@ -1286,28 +1286,10 @@ CREATE TABLE IF NOT EXISTS `flights` (
 -- Дамп данных таблицы magellan.flights: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `flights` DISABLE KEYS */;
 INSERT IGNORE INTO `flights` (`id`, `departure`, `dock`, `status`) VALUES
-	(1, '2018-08-20 12:00:00', 1, 'prepare');
+	(1, '2018-08-20 12:00:00', 1, 'prepare'),
+	(2, '2018-08-20 15:00:00', 3, 'prepare'),
+	(3, '2018-04-24 22:51:42', 2, 'returned');
 /*!40000 ALTER TABLE `flights` ENABLE KEYS */;
-
-
--- Дамп структуры для таблица magellan.flight_cargos
-DROP TABLE IF EXISTS `flight_cargos`;
-CREATE TABLE IF NOT EXISTS `flight_cargos` (
-  `flight_id` int(11) NOT NULL,
-  `cargo_type` enum('mine','module','beacon') NOT NULL,
-  `owner` enum('mst','mat','gd','kkg','pre') DEFAULT NULL,
-  `volume` float NOT NULL,
-  `weight` float NOT NULL,
-  `amount` tinyint(4) NOT NULL DEFAULT '1',
-  KEY `flight_id` (`flight_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Дамп данных таблицы magellan.flight_cargos: ~2 rows (приблизительно)
-/*!40000 ALTER TABLE `flight_cargos` DISABLE KEYS */;
-INSERT IGNORE INTO `flight_cargos` (`flight_id`, `cargo_type`, `owner`, `volume`, `weight`, `amount`) VALUES
-	(1, 'beacon', NULL, 350, 175, 2),
-	(1, 'mine', 'mat', 700, 350, 1);
-/*!40000 ALTER TABLE `flight_cargos` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.flight_crews
@@ -1324,8 +1306,33 @@ CREATE TABLE IF NOT EXISTS `flight_crews` (
 /*!40000 ALTER TABLE `flight_crews` DISABLE KEYS */;
 INSERT IGNORE INTO `flight_crews` (`flight_id`, `role`, `user_id`) VALUES
 	(1, 'pilot', 1),
-	(1, 'navigator', 2);
+	(1, 'navigator', 2),
+	(1, 'engineer', 3),
+	(1, 'supercargo', 4),
+	(1, 'radist', 5),
+	(2, 'supercargo', 4),
+	(3, 'supercargo', 4);
 /*!40000 ALTER TABLE `flight_crews` ENABLE KEYS */;
+
+
+-- Дамп структуры для таблица magellan.flight_luggage
+DROP TABLE IF EXISTS `flight_luggage`;
+CREATE TABLE IF NOT EXISTS `flight_luggage` (
+  `flight_id` int(11) NOT NULL,
+  `cargo_type` enum('mine','module','beacon') NOT NULL,
+  `owner` enum('mst','mat','gd','kkg','pre') DEFAULT NULL,
+  `volume` float NOT NULL,
+  `weight` float NOT NULL,
+  `amount` tinyint(4) NOT NULL DEFAULT '1',
+  KEY `flight_id` (`flight_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Дамп данных таблицы magellan.flight_luggage: ~2 rows (приблизительно)
+/*!40000 ALTER TABLE `flight_luggage` DISABLE KEYS */;
+INSERT IGNORE INTO `flight_luggage` (`flight_id`, `cargo_type`, `owner`, `volume`, `weight`, `amount`) VALUES
+	(1, 'beacon', NULL, 350, 175, 2),
+	(1, 'mine', 'mat', 700, 350, 1);
+/*!40000 ALTER TABLE `flight_luggage` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.hull_slots
@@ -1420,14 +1427,9 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 	(72, 'Caperus-S', 'radar', 0, 'small', NULL, 'kkg', '2018-07-23 00:22:57', '2018-07-23 03:22:57'),
 	(73, 'Caperus-M', 'radar', 0, 'medium', NULL, 'kkg', '2018-07-23 00:23:08', '2018-07-23 03:23:08'),
 	(74, 'Caperus-L', 'radar', 0, 'large', NULL, 'kkg', '2018-07-23 00:23:15', '2018-07-23 03:23:15'),
-	(75, 'Invenirus-S', 'scaner', 0, 'small', NULL, 'kkg', '2018-07-23 00:23:23', '2018-07-23 03:23:23'),
-	(76, 'Invenirus-M', 'scaner', 0, 'medium', NULL, 'kkg', '2018-07-23 00:23:29', '2018-07-23 03:23:29'),
-	(77, 'Invenirus-L', 'scaner', 0, 'large', NULL, 'kkg', '2018-07-23 00:23:36', '2018-07-23 03:23:36'),
 	(78, 'Lacus-S', 'fuel_tank', 0, 'small', NULL, 'kkg', '2018-07-23 00:23:41', '2018-07-23 03:23:41'),
 	(79, 'Lacus-M', 'fuel_tank', 0, 'medium', NULL, 'kkg', '2018-07-23 00:23:47', '2018-07-23 03:23:47'),
 	(80, 'Lacus-L', 'fuel_tank', 0, 'large', NULL, 'kkg', '2018-07-23 00:23:53', '2018-07-23 03:23:53'),
-	(81, 'E-2 Hawkeye', 'scaner', 0, 'medium', NULL, 'pre', '2018-07-23 00:27:44', '2018-07-23 03:27:44'),
-	(82, 'МСТ-СР-2', 'scaner', 0, 'medium', NULL, 'mst', '2018-07-23 00:28:47', '2018-07-23 03:28:47'),
 	(83, 'МСТ-КР-2', 'radar', 0, 'medium', NULL, 'mst', '2018-07-23 00:29:54', '2018-07-23 03:29:54');
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 
@@ -1489,10 +1491,13 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('radar', 'rotate_speed', 10, 1, 1, 1),
 	('radar', 'volume', 210, 0.52, 1.7, -1),
 	('radar', 'weight', 1000, 1, 1, -1),
+	('scaner', 'az_level', 100, 1, 1, 1),
 	('scaner', 'drop_range', 20, 0.8, 1.2, 1),
 	('scaner', 'drop_speed', 38, 0.9, 1.1, 1),
 	('scaner', 'scan_range', 42, 0.8, 1.2, 1),
 	('scaner', 'scan_speed', 2.5, 0.9, 1.1, 1),
+	('scaner', 'volume', 147, 0.52, 1.7, -1),
+	('scaner', 'weight', 1000, 1, 1, -1),
 	('shields', 'az_level', 100, 1, 1, 1),
 	('shields', 'desinfect_level', 50, 0.9, 1.1, 1),
 	('shields', 'heat_capacity', 382.5, 0.7, 1.3, 1),
@@ -2010,18 +2015,6 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(74, 'rotate_speed', 12),
 	(74, 'volume', 187),
 	(74, 'weight', 1000),
-	(75, 'drop_range', 25),
-	(75, 'drop_speed', 40),
-	(75, 'scan_range', 50),
-	(75, 'scan_speed', 3),
-	(76, 'drop_range', 25),
-	(76, 'drop_speed', 42),
-	(76, 'scan_range', 51),
-	(76, 'scan_speed', 3),
-	(77, 'drop_range', 25),
-	(77, 'drop_speed', 40),
-	(77, 'scan_range', 51),
-	(77, 'scan_speed', 3),
 	(78, 'az_level', 100),
 	(78, 'fuel_protection', 5),
 	(78, 'fuel_volume', 1010),
@@ -2040,14 +2033,6 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(80, 'radiation_def', 99),
 	(80, 'volume', 327),
 	(80, 'weight', 1000),
-	(81, 'drop_range', 30),
-	(81, 'drop_speed', 42),
-	(81, 'scan_range', 48),
-	(81, 'scan_speed', 10),
-	(82, 'drop_range', 25),
-	(82, 'drop_speed', 41),
-	(82, 'scan_range', 49),
-	(82, 'scan_speed', 3),
 	(83, 'angle_change', 1),
 	(83, 'angle_max', 36),
 	(83, 'angle_min', 20),

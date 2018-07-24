@@ -1,7 +1,9 @@
 from collections import OrderedDict
 
 from services.db import DB
+from services.misc import modernize_date, api_fail
 from services.model_crud import read_models
+
 
 db = DB()
 detail_distribution = OrderedDict({
@@ -39,3 +41,23 @@ def create_node(self, params):
         new_id = db.insert('nodes', insert_data)
         result = db.fetchRow('select * from nodes where id=:id', {"id": new_id})
         return result
+
+
+def reserve_node(self, data):
+    flight = db.fetchRow("""
+select f.* from flights f
+join flight_crews fc on f.id = fc.flight_id
+where fc.role='supercargo' and fc.user_id = :user_id
+and departure > Now()
+order by departure asc 
+limit 1""", data)
+    if not flight:
+        return api_fail("Вы не назначены ни на какой полет в качестве суперкарго")
+    flight['departure'] = modernize_date(flight['departure'])
+    if flight.get('status', '') == 'freight':
+        return api_fail("""Вы назначены суперкарго на полет №{id} (вылет {departure}, док №{dock}).
+В настоящее время ваш корабль уже зафрахтован, внесение изменений в конструкцию невозможно""".format(**flight))
+    node = db.fetchRow('select * from nodes where id=:node_id', data)
+    if not node:
+        return api_fail("Узел с бортовым номером {} не существует и никогда не существовал".format(data.get('node_id')))
+    return {"status": "ok"}
