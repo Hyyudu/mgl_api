@@ -55,25 +55,31 @@ class DB:
     def fetchAll(self, sql, data=None):
         self.query(sql, data or {})
         result = [item for item in self.get_result()]
+        self.cnx.commit()
         return result
 
     def fetchRow(self, sql, data=None):
         self.query(sql, data or {})
         for item in self.get_result():
+            self.cnx.commit()
             return item
 
     def fetchDict(self, sql, data=None, key='', val=''):
         self.query(sql, data or {})
         ret = {item.get(key): item.get(val) for item in self.get_result()}
+        self.cnx.commit()
         return ret
 
     def fetchColumn(self, sql, data=None):
         self.query(sql, data or {})
-        return [list(item.values())[0] for item in self.get_result()]
+        ret = [list(item.values())[0] for item in self.get_result()]
+        self.cnx.commit()
+        return ret
 
     def fetchOne(self, sql, data=None):
         self.query(sql, data or {})
         for item in self.get_result():
+            self.cnx.commit()
             return list(item.values())[0]
 
     def get_column_list(self, table):
