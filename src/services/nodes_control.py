@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import Dict, Any
 
 from services.db import DB
 from services.misc import modernize_date, api_fail
@@ -43,14 +44,19 @@ def create_node(self, params):
         return result
 
 
-def check_reserve_node(data):
+def get_nearest_flight_for_supercargo(user_id):
     flight = db.fetchRow("""
-    select f.* from flights f
-    join flight_crews fc on f.id = fc.flight_id
-    where fc.role='supercargo' and fc.user_id = :user_id
-    and departure > Now()
-    order by departure asc 
-    limit 1""", data)
+        select f.* from flights f
+        join flight_crews fc on f.id = fc.flight_id
+        where fc.role='supercargo' and fc.user_id = :user_id
+        and departure > Now()
+        order by departure asc 
+        limit 1""", {"user_id": user_id})
+    return flight
+
+
+def check_reserve_node(data):
+    flight = get_nearest_flight_for_supercargo(data.get('user_id', 0))
     if not flight:
         return api_fail("Вы не назначены ни на какой полет в качестве суперкарго")
     flight['departure'] = modernize_date(flight['departure'])
@@ -94,3 +100,15 @@ where n.id=:node_id""", reserve_result)
     db.insert('builds', reserve_result)
     db.query('update nodes set status_code="reserved" where id=:node_id', reserve_result, need_commit=True)
     return {"status": "ok"}
+
+
+def get_my_reserved_nodes(self, data) -> Dict[str, Any]:
+    """ data: {"user_id": int} """
+    flight = get_nearest_flight_for_supercargo(data.get('user_id'))
+    if not flight:
+        return {"status": "fail", "errors": "Суперкарго {} не назначен ни на какой полет".format(user_id)}
+    nodes = db.fetchDict(
+        "select node_type_code, node_id from builds where flight_id=:id",
+        flight, "node_type_code", "node_id"
+    )
+    return {"result": "ok", "flight": flight, "nodes": nodes}

@@ -11,6 +11,7 @@ from handlers.ModelsHandler import (
 from handlers.NodesHandler import (
     CreateNodeHandler,
     ReserveNodeHandler,
+    GetMyReservedNodeHandler,
 )
 
 
@@ -21,6 +22,7 @@ app_urls = [
     ("/model/read_all", ReadModelsHandler),
     ("/model/delete", DeleteModelHandler),
     ("/node/create", CreateNodeHandler),
+    ("/node/get_my_reserved", GetMyReservedNodeHandler),
     ("/node/reserve", ReserveNodeHandler),
     ("/users/refresh", RefreshUsersHandler),
     ("/economics/resources", ResourceListHandler),

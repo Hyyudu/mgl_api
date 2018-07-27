@@ -1,5 +1,5 @@
 from handlers.ApiHandler import ApiHandler
-from services.nodes_control import create_node, reserve_node
+from services.nodes_control import create_node, reserve_node, get_my_reserved_nodes
 
 
 class CreateNodeHandler(ApiHandler):
@@ -8,3 +8,7 @@ class CreateNodeHandler(ApiHandler):
 
 class ReserveNodeHandler(ApiHandler):
     func = reserve_node
+
+
+class GetMyReservedNodeHandler(ApiHandler):
+    func = get_my_reserved_nodes
