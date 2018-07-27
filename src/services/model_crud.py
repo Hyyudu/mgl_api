@@ -5,7 +5,7 @@ db = DB()
 
 def add_model(self, data):
     """ data: {<id>, name, level, description, size, node_type_code, company, {params}} """
-    avail_vendors = db.fetchDict('select code, id from companies', {}, 'code', 'id')
+    avail_vendors = db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return {"status": "fail", "errors": "Не существует компания с кодом '{}'".format(data.get('company', ''))}
     new_model_id = db.insert('models', data)
