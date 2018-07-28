@@ -1,6 +1,7 @@
 import json
 from json import JSONDecodeError
 
+from services.misc import api_fail
 from tornado.web import RequestHandler
 
 
@@ -22,7 +23,7 @@ class ApiHandler(RequestHandler):
         except Exception as e:
             err_text = self.get_exception_text(e)
             if err_text:
-                self.write(json.dumps({"status": "status", "errors": err_text}))
+                self.write(json.dumps(api_fail(err_text)))
             else:
                 raise
 

@@ -1,4 +1,4 @@
-from handlers.EconomicsHandler import ResourceListHandler
+from handlers.EconomicsHandler import ResourceListHandler, AddPumpHandler, ReadPumpsHandler
 from handlers.GetCodesHandler import GetNodeParamsHandler
 from handlers.MiscHandler import RefreshUsersHandler
 from handlers.ModelsHandler import (
@@ -26,6 +26,8 @@ app_urls = [
     ("/node/reserve", ReserveNodeHandler),
     ("/users/refresh", RefreshUsersHandler),
     ("/economics/resources", ResourceListHandler),
+    ("/economics/add_pump", AddPumpHandler),
+    ("/economics/read_pumps", ReadPumpsHandler),
 
     ("/ping", PingHandler),
 ]

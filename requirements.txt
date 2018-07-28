@@ -3,4 +3,5 @@ torndsession
 pymysql
 pytest
 mysql-connector-python
+numpy
 requests

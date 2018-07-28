@@ -106,7 +106,7 @@ def get_my_reserved_nodes(self, data) -> Dict[str, Any]:
     """ data: {"user_id": int} """
     flight = get_nearest_flight_for_supercargo(data.get('user_id'))
     if not flight:
-        return {"status": "fail", "errors": "Суперкарго {} не назначен ни на какой полет".format(user_id)}
+        return api_fail("Суперкарго {} не назначен ни на какой полет".format(data.get('user_id')))
     nodes = db.fetchDict(
         "select node_type_code, node_id from builds where flight_id=:id",
         flight, "node_type_code", "node_id"

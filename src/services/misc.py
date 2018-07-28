@@ -1,6 +1,8 @@
 import json
+
 import requests
 from services.db import DB
+
 
 db = DB()
 
@@ -35,6 +37,7 @@ def read_users_from_alice(self, params):
 
 def modernize_date(date):
     return date.replace("2018", "2435")
+
 
 def api_fail(msg):
     return {"status": "fail", "errors": msg}

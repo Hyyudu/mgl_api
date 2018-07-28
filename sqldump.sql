@@ -1265,7 +1265,7 @@ CREATE TABLE IF NOT EXISTS `companies` (
   `name` varchar(50) NOT NULL,
   `code` varchar(3) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
 
 -- Дамп данных таблицы magellan.companies: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `companies` DISABLE KEYS */;
@@ -1474,7 +1474,7 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   CONSTRAINT `pcode` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Связь узлов и параметров';
 
--- Дамп данных таблицы magellan.model_has_parameters: ~74 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_has_parameters: ~72 rows (приблизительно)
 /*!40000 ALTER TABLE `model_has_parameters` DISABLE KEYS */;
 INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`, `mult_small`, `mult_large`, `increase_direction`) VALUES
 	('fuel_tank', 'az_level', 100, 1, 1, 1),
@@ -1525,10 +1525,10 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 	('shields', 'az_level', 100, 1, 1, 1),
 	('shields', 'desinfect_level', 50, 0.9, 1.1, 1),
 	('shields', 'heat_capacity', 382.5, 0.7, 1.3, 1),
+	('shields', 'heat_reflection', 8, 0.8, 1.2, 1),
 	('shields', 'heat_sink', 85, 0.7, 1.3, 1),
 	('shields', 'mechanical_def', 1000, 0.8, 1.2, 1),
 	('shields', 'radiation_def', 7, 0.8, 1.2, 1),
-	('shields', 'reflection', 8, 0.8, 1.2, 1),
 	('shields', 'volume', 315, 0.52, 1.7, -1),
 	('shields', 'weight', 1000, 1, 1, -1),
 	('shunter', 'az_level', 100, 1, 1, 1),
@@ -1814,82 +1814,82 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 	(41, 'az_level', 100),
 	(41, 'desinfect_level', 50),
 	(41, 'heat_capacity', 481),
+	(41, 'heat_reflection', 0),
 	(41, 'heat_sink', 106),
 	(41, 'mechanical_def', 11),
 	(41, 'radiation_def', 11),
-	(41, 'reflection', 0),
 	(41, 'volume', 273),
 	(41, 'weight', 0),
 	(42, 'az_level', 100),
 	(42, 'desinfect_level', 50),
 	(42, 'heat_capacity', 492),
+	(42, 'heat_reflection', 0),
 	(42, 'heat_sink', 109),
 	(42, 'mechanical_def', 8),
 	(42, 'radiation_def', 7),
-	(42, 'reflection', 0),
 	(42, 'volume', 239),
 	(42, 'weight', 0),
 	(43, 'az_level', 100),
 	(43, 'desinfect_level', 81),
 	(43, 'heat_capacity', 451),
+	(43, 'heat_reflection', 0),
 	(43, 'heat_sink', 100),
 	(43, 'mechanical_def', 10),
 	(43, 'radiation_def', 10),
-	(43, 'reflection', 0),
 	(43, 'volume', 280),
 	(43, 'weight', 0),
 	(44, 'az_level', 100),
 	(44, 'desinfect_level', 91),
 	(44, 'heat_capacity', 502),
+	(44, 'heat_reflection', 0),
 	(44, 'heat_sink', 117),
 	(44, 'mechanical_def', 11),
 	(44, 'radiation_def', 12),
-	(44, 'reflection', 0),
 	(44, 'volume', 314),
 	(44, 'weight', 0),
 	(45, 'az_level', 100),
 	(45, 'desinfect_level', 79),
 	(45, 'heat_capacity', 448),
+	(45, 'heat_reflection', 0),
 	(45, 'heat_sink', 102),
 	(45, 'mechanical_def', 10),
 	(45, 'radiation_def', 10),
-	(45, 'reflection', 0),
 	(45, 'volume', 281),
 	(45, 'weight', 0),
 	(46, 'az_level', 100),
 	(46, 'desinfect_level', 110),
 	(46, 'heat_capacity', 533),
+	(46, 'heat_reflection', 0),
 	(46, 'heat_sink', 117),
 	(46, 'mechanical_def', 12),
 	(46, 'radiation_def', 12),
-	(46, 'reflection', 0),
 	(46, 'volume', 263),
 	(46, 'weight', 0),
 	(47, 'az_level', 100),
 	(47, 'desinfect_level', 79),
 	(47, 'heat_capacity', 446),
+	(47, 'heat_reflection', 0),
 	(47, 'heat_sink', 102),
 	(47, 'mechanical_def', 10),
 	(47, 'radiation_def', 10),
-	(47, 'reflection', 0),
 	(47, 'volume', 275),
 	(47, 'weight', 0),
 	(48, 'az_level', 100),
 	(48, 'desinfect_level', 79),
 	(48, 'heat_capacity', 455),
+	(48, 'heat_reflection', 0),
 	(48, 'heat_sink', 99),
 	(48, 'mechanical_def', 10),
 	(48, 'radiation_def', 10),
-	(48, 'reflection', 0),
 	(48, 'volume', 273),
 	(48, 'weight', 0),
 	(49, 'az_level', 100),
 	(49, 'desinfect_level', 65),
 	(49, 'heat_capacity', 449),
+	(49, 'heat_reflection', 0),
 	(49, 'heat_sink', 116),
 	(49, 'mechanical_def', 9),
 	(49, 'radiation_def', 10),
-	(49, 'reflection', 0),
 	(49, 'volume', 274),
 	(49, 'weight', 0),
 	(50, 'az_level', 100),
@@ -2139,7 +2139,7 @@ CREATE TABLE IF NOT EXISTS `node_statuses` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Статусы узлов';
 
--- Дамп данных таблицы magellan.node_statuses: ~5 rows (приблизительно)
+-- Дамп данных таблицы magellan.node_statuses: ~6 rows (приблизительно)
 /*!40000 ALTER TABLE `node_statuses` DISABLE KEYS */;
 INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 	('decomm', 'Списан'),
@@ -2183,7 +2183,7 @@ CREATE TABLE IF NOT EXISTS `parameters_list` (
   `short_name` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Индекс 2` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 COMMENT='Список параметров';
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8 COMMENT='Список параметров';
 
 -- Дамп данных таблицы magellan.parameters_list: ~49 rows (приблизительно)
 /*!40000 ALTER TABLE `parameters_list` DISABLE KEYS */;
@@ -2227,7 +2227,7 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`, `short_name`) VALUES
 	(37, 'lightness', 'Освещение', 'Освещение'),
 	(38, 'desinfect_level', 'Уровень дезинфекции', 'Дезинфекция'),
 	(39, 'mechanical_def', 'Механическая защита', 'Скорость ремонта'),
-	(40, 'reflection', 'Степень отражения', 'Теплоотражение'),
+	(40, 'heat_reflection', 'Степень отражения', 'Теплоотражение'),
 	(41, 'heat_capacity', 'Теплоемкость', 'Теплоемкость'),
 	(42, 'heat_sink', 'Теплоотвод', 'Теплоотвод'),
 	(43, 'weight', 'Масса', 'Масса'),
@@ -2244,7 +2244,7 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`, `short_name`) VALUES
 DROP TABLE IF EXISTS `pumps`;
 CREATE TABLE IF NOT EXISTS `pumps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `company` enum('msg','mat','gd','kkg','pre') NOT NULL,
+  `company` enum('mst','mat','gd','kkg','pre') NOT NULL,
   `date_begin` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата начала актива',
   `date_end` datetime DEFAULT NULL COMMENT 'Дата завершения',
   `section` varchar(50) NOT NULL COMMENT 'Раздел (шахты, апкип и проч)',
@@ -2254,10 +2254,16 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   PRIMARY KEY (`id`),
   KEY `FK_resource_flows_resource_sections` (`section`),
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
+INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `comment`, `is_income`, `amount`) VALUES
+	(1, 'mat', '2018-07-28 13:20:38', NULL, 'mines', 'Шахты Мицубиси Автоваз Технолоджис на планетах Ойкумены', 1, 1),
+	(2, 'mst', '2018-07-28 13:22:17', NULL, 'mines', 'Шахты МарсСтройТреста на планетах Ойкумены', 1, 1),
+	(3, 'gd', '2018-07-28 13:22:34', NULL, 'mines', 'Шахты Гугл Диснея на планетах Ойкумены', 1, 1),
+	(4, 'pre', '2018-07-28 13:22:50', NULL, 'mines', 'Шахты Пони Роскосмос Экспресс на планетах Ойкумены', 1, 1),
+	(5, 'kkg', '2018-07-28 13:23:07', NULL, 'mines', 'Шахты Красный Крест Генетикс на планетах Ойкумены', 1, 1);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
 
 
@@ -2273,8 +2279,34 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~25 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
+INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
+	(1, 'aluminium', 500),
+	(1, 'iron', 500),
+	(1, 'magnesium', 500),
+	(1, 'nickel', 500),
+	(1, 'titan', 500),
+	(2, 'aluminium', 500),
+	(2, 'iron', 500),
+	(2, 'magnesium', 500),
+	(2, 'nickel', 500),
+	(2, 'titan', 500),
+	(3, 'aluminium', 500),
+	(3, 'iron', 500),
+	(3, 'magnesium', 500),
+	(3, 'nickel', 500),
+	(3, 'titan', 500),
+	(4, 'aluminium', 500),
+	(4, 'iron', 500),
+	(4, 'magnesium', 500),
+	(4, 'nickel', 500),
+	(4, 'titan', 500),
+	(5, 'aluminium', 500),
+	(5, 'iron', 500),
+	(5, 'magnesium', 500),
+	(5, 'nickel', 500),
+	(5, 'titan', 500);
 /*!40000 ALTER TABLE `pump_resources` ENABLE KEYS */;
 
 
@@ -2318,8 +2350,8 @@ INSERT IGNORE INTO `resources` (`code`, `name`, `is_active`) VALUES
 	('m5', NULL, 0),
 	('m6', NULL, 0),
 	('m7', NULL, 0),
+	('magnesium', 'Магний', 1),
 	('nickel', 'Никель', 1),
-	('tin', 'Олово', 1),
 	('titan', 'Титан', 1);
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 

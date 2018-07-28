@@ -1,4 +1,6 @@
 from services.db import DB
+from services.misc import api_fail
+
 
 db = DB()
 
@@ -7,7 +9,7 @@ def add_model(self, data):
     """ data: {<id>, name, level, description, size, node_type_code, company, {params}} """
     avail_vendors = db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
-        return {"status": "fail", "errors": "Не существует компания с кодом '{}'".format(data.get('company', ''))}
+        return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
     new_model_id = db.insert('models', data)
     db.query('update models set premium_expires = created + interval 3 hour where id=:id', {"id": new_model_id})
     model_params = db.fetchDict(
@@ -31,7 +33,7 @@ def add_model(self, data):
 def read_model(self, data):
     model = db.fetchRow('select * from models where id=:id', data)
     if not model:
-        return {"status": "fail", "errors": "Model with id {} not found".format(data.get('id'))}
+        return api_fail("Model with id {} not found".format(data.get('id')))
     model['params'] = db.fetchDict('select parameter_code, value from v_model_params where model_id=:id', data,
                                    'parameter_code', 'value')
     model = apply_companies_perks(model)
