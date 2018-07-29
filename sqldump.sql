@@ -1474,7 +1474,7 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   CONSTRAINT `pcode` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Связь узлов и параметров';
 
--- Дамп данных таблицы magellan.model_has_parameters: ~72 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_has_parameters: ~74 rows (приблизительно)
 /*!40000 ALTER TABLE `model_has_parameters` DISABLE KEYS */;
 INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`, `mult_small`, `mult_large`, `increase_direction`) VALUES
 	('fuel_tank', 'az_level', 100, 1, 1, 1),
@@ -2092,7 +2092,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
 	(9, 11, '', 115, 'free', '2018-07-22 20:14:21', NULL, '', '2018-07-08 17:51:21'),
-	(47, 6, '', 100, 'free', '2018-07-22 20:16:47', NULL, '123', '2018-07-08 17:51:21'),
+	(47, 6, '', 100, 'free', '2018-07-22 20:16:47', NULL, '123', '0000-00-00 00:00:00'),
 	(48, 7, '', 100, 'reserved', '2018-07-22 20:16:47', NULL, '', '2018-07-08 17:45:16'),
 	(49, 8, '', 100, 'free', '2018-07-22 20:16:47', NULL, '', '2018-07-08 17:46:40'),
 	(50, 9, '', 115, 'free', '2018-07-22 20:16:47', NULL, '', '2018-07-08 17:48:20'),
@@ -2139,7 +2139,7 @@ CREATE TABLE IF NOT EXISTS `node_statuses` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Статусы узлов';
 
--- Дамп данных таблицы magellan.node_statuses: ~6 rows (приблизительно)
+-- Дамп данных таблицы magellan.node_statuses: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `node_statuses` DISABLE KEYS */;
 INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 	('decomm', 'Списан'),
@@ -2318,7 +2318,7 @@ CREATE TABLE IF NOT EXISTS `pump_sections` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Разделы трат и доходов';
 
--- Дамп данных таблицы magellan.pump_sections: ~4 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_sections: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_sections` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_sections` (`code`, `name`) VALUES
 	('crises', 'Кризисы'),

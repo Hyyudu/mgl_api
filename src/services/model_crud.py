@@ -82,8 +82,14 @@ def read_models(self, params):
     ids = db.construct_params(ids)
     all_params = db.fetchAll("select * from v_model_params where " + params_where, ids)
 
-    all_nodes = db.fetchAll('select id, model_id, name, az_level, status_code, date_created'
-                            ' from nodes where ' + params_where, ids)
+    all_nodes = db.fetchAll("""
+        select id, model_id, name, az_level, status_code, date_created,
+            if (password is not null and (
+                premium_expires = 0
+                or premium_expires is null
+                or premium_expires > Now()
+            ), 1, 0) is_premium 
+        from nodes where """ + params_where, ids)
 
     for model in models:
         model['params'] = {item['parameter_code']: item['value'] for item in all_params
