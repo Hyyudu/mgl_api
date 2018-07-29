@@ -99,7 +99,7 @@ class DB:
         if on_duplicate_key_update:
             sql += " on duplicate key update " + on_duplicate_key_update
         self.query(sql, insert_data, need_commit=True)
-        return self.cursor.lastrowid
+        return self.cursor.lastrowid if operation == 'insert' else self.affected_rows()
 
     def insert_many(self, table, data, on_duplicate_key_update=''):
         column_list = self.get_column_list(table)

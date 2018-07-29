@@ -9,7 +9,7 @@ class ApiHandler(RequestHandler):
     func = None
 
     def get_exception_text(self, e):
-        pass
+        return str(e)
 
     async def post(self):
         try:

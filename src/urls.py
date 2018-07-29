@@ -12,6 +12,8 @@ from handlers.NodesHandler import (
     CreateNodeHandler,
     ReserveNodeHandler,
     GetMyReservedNodeHandler,
+    SetPasswordNodeHandler,
+    CheckPasswordNodeHandler,
 )
 
 
@@ -22,6 +24,8 @@ app_urls = [
     ("/model/read_all", ReadModelsHandler),
     ("/model/delete", DeleteModelHandler),
     ("/node/create", CreateNodeHandler),
+    ("/node/set_password", SetPasswordNodeHandler),
+    ("/node/check_password", CheckPasswordNodeHandler),
     ("/node/get_my_reserved", GetMyReservedNodeHandler),
     ("/node/reserve", ReserveNodeHandler),
     ("/users/refresh", RefreshUsersHandler),
