@@ -1,6 +1,8 @@
 import json
+
 import requests
 from services.db import DB
+
 
 db = DB()
 
@@ -31,3 +33,11 @@ def read_users_from_alice(self, params):
     db.query('update users set is_active=0')
     db.insert('users', ins_data, on_duplicate_key_update="is_active=1")
     return {"status": "ok", "affected": db.affected_rows()}
+
+
+def modernize_date(date):
+    return date.replace("2018", "2435")
+
+
+def api_fail(msg):
+    return {"status": "fail", "errors": msg}

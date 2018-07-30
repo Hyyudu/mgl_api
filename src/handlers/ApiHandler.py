@@ -1,6 +1,7 @@
 import json
 from json import JSONDecodeError
 
+from services.misc import api_fail
 from tornado.web import RequestHandler
 
 
@@ -8,7 +9,7 @@ class ApiHandler(RequestHandler):
     func = None
 
     def get_exception_text(self, e):
-        pass
+        return str(e)
 
     async def post(self):
         try:
@@ -22,7 +23,7 @@ class ApiHandler(RequestHandler):
         except Exception as e:
             err_text = self.get_exception_text(e)
             if err_text:
-                self.write(json.dumps({"status": "status", "errors": err_text}))
+                self.write(json.dumps(api_fail(err_text)))
             else:
                 raise
 
@@ -34,3 +35,6 @@ class ApiHandler(RequestHandler):
     def options(self):
         self.set_status(204)
         self.finish()
+
+    def get(self):
+        return self.post()

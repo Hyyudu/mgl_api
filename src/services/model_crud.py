@@ -1,13 +1,15 @@
 from services.db import DB
+from services.misc import api_fail
+
 
 db = DB()
 
 
 def add_model(self, data):
     """ data: {<id>, name, level, description, size, node_type_code, company, {params}} """
-    avail_vendors = db.fetchDict('select code, id from companies', {}, 'code', 'id')
+    avail_vendors = db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
-        return {"status": "fail", "errors": "Не существует компания с кодом '{}'".format(data.get('company', ''))}
+        return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
     new_model_id = db.insert('models', data)
     db.query('update models set premium_expires = created + interval 3 hour where id=:id', {"id": new_model_id})
     model_params = db.fetchDict(
@@ -31,7 +33,7 @@ def add_model(self, data):
 def read_model(self, data):
     model = db.fetchRow('select * from models where id=:id', data)
     if not model:
-        return {"status": "fail", "errors": "Model with id {} not found".format(data.get('id'))}
+        return api_fail("Model with id {} not found".format(data.get('id')))
     model['params'] = db.fetchDict('select parameter_code, value from v_model_params where model_id=:id', data,
                                    'parameter_code', 'value')
     model = apply_companies_perks(model)
@@ -80,11 +82,25 @@ def read_models(self, params):
     ids = db.construct_params(ids)
     all_params = db.fetchAll("select * from v_model_params where " + params_where, ids)
 
+    all_nodes = db.fetchAll("""
+        select id, model_id, name, az_level, status_code, date_created,
+            if (password is not null and (
+                premium_expires = 0
+                or premium_expires is null
+                or premium_expires > Now()
+            ), 1, 0) is_premium 
+        from nodes where """ + params_where, ids)
+
     for model in models:
         model['params'] = {item['parameter_code']: item['value'] for item in all_params
                            if item['model_id'] == model['id']}
         model = apply_companies_perks(model)
-        model['params']['weight'] = calc_weight(model['node_type_code'], model['size'], model['params']['volume'])
+        model['params']['weight'] = calc_weight(
+            model['node_type_code'],
+            model['size'],
+            model['params']['volume']
+        )
+        model['nodes'] = [node for node in all_nodes if node['model_id'] == model['id']]
     return models
 
 

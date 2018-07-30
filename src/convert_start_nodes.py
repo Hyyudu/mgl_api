@@ -1,7 +1,7 @@
 import json
+from copy import deepcopy
 from random import uniform
 
-from copy import deepcopy
 from numpy import interp
 
 
@@ -18,7 +18,7 @@ estimates = {
         "accel_rev": {0: 0},
         "slowdown_rev": {0: 0},
         "heat_prod": {-3: 100, 0: 80, 5: 60},
-        "volume": {-1: 315, 0: 277.5, 2: 240}
+        "volume": {-1: 294, 0: 259, 2: 224}
     },
     "shunter": {
         "turn": {-3: 45, 0: 60, 5: 80},
@@ -53,7 +53,7 @@ estimates = {
         "fuel_volume": {-3: 800, 0: 1000, 5: 1300},
         "fuel_protection": {-3: 3, 0: 5, 5: 7},
         "radiation_def": {-3: 80, 0: 100, 5: 140},
-        "volume": {-1: 378, 0: 333, 2: 288},
+        "volume": {-1: 336, 0: 296, 2: 256},
     },
     "shields": {
         "radiation_def": {-2: 7, 0: 10, 4: 14},
@@ -80,6 +80,14 @@ estimates = {
         "drop_range": {-2: 20, 0: 25, 4: 30},
         "volume": {-1: 147, 0: 129.5, 2: 112},
 
+    },
+    "lss": {
+        "thermal_def": {-3: 4, 0: 10, 5: 20},  # термическая защита
+        "co2_level": {-2: 50, 0: 100, 4: 200},  # поддержание уровня CO2
+        "air_volume": {0: 0},  # поддержание давления
+        "air_speed": {0: 0},  # поддержание давления
+        "lightness": {-1: 0, 1: 20, 2: 36.5},  # уровень освещения
+        "volume": {-1: 273, 0: 240, 2: 208},  # масса/объем
     }
 }
 
@@ -111,11 +119,11 @@ model = {
     "name": "МСТ-КР-2",
     "size": "medium",
     "params": {
-        # "scan_speed": -1,
-        # "scan_range": -1,
-        # "drop_speed": 1,
-        # "drop_range": 4,
-        # "volume": 0,
+        "scan_speed": -1,
+        "scan_range": -1,
+        "drop_speed": 1,
+        "drop_range": 4,
+        "volume": 0,
     }
 }
 if __name__ == "__main__":
