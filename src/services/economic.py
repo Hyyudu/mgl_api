@@ -31,10 +31,13 @@ def add_pump(self, data):
 
 
 def read_pumps(self, params):
-    sql = "SELECT * from pumps WHERE 1=1"
+    sql = """SELECT * from pumps WHERE date_begin < Now()
+        and (date_end is null or date_end = 0 or date_end > Now() )
+    """
     add_where = db.construct_where(params)
     if add_where:
         sql += " and " + add_where
+    sql += " order by company, is_income, section, entity_id, comment"
     params = db.construct_params(params)
     pumps = db.fetchAll(sql, params)
     if not pumps:

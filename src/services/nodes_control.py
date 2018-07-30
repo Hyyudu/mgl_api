@@ -98,7 +98,10 @@ where n.id=:node_id""", reserve_result)
         db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
                  reserve_result)
     db.insert('builds', reserve_result)
-    db.query('update nodes set status_code="reserved" where id=:node_id', reserve_result, need_commit=True)
+    db.query("""update nodes 
+        set status_code="reserved", 
+            connected_to_hull_id = null 
+        where id=:node_id""", reserve_result, need_commit=True)
     return {"status": "ok"}
 
 
@@ -128,3 +131,7 @@ def check_password(self, data):
     if row.get('password') != data.get('password'):
         return api_fail('Пароль неверен')
     return {"result": "ok"}
+
+
+def get_all_params(self, data):
+    return db.fetchAll('select * from v_node_parameter_list')

@@ -8,8 +8,12 @@ from tornado.web import RequestHandler
 class ApiHandler(RequestHandler):
     func = None
 
+    def initialize(self, **kwargs):
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+
     def get_exception_text(self, e):
-        return str(e)
+        pass
 
     async def post(self):
         try:
@@ -18,19 +22,20 @@ class ApiHandler(RequestHandler):
                 req = json.loads(body)
             except JSONDecodeError:
                 req = {}
-            out = self.func(req)
+            out = self.func(self, req)
             self.write(json.dumps(out, indent=4))
         except Exception as e:
             err_text = self.get_exception_text(e)
             if err_text:
                 self.write(json.dumps(api_fail(err_text)))
             else:
-                raise
+                raise e
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with,access-control-allow-origin,authorization,content-type")
+        self.set_header("Access-Control-Allow-Headers",
+                        "x-requested-with,access-control-allow-origin,authorization,content-type")
 
     def options(self):
         self.set_status(204)

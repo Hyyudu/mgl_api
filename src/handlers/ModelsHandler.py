@@ -1,29 +1,5 @@
 from torndsession.sessionhandler import SessionBaseHandler
 
-from handlers.ApiHandler import ApiHandler
-from services.model_crud import add_model, delete_model, read_model, read_models
-
-
-class AddModelHandler(ApiHandler):
-    func = add_model
-
-    def get_exception_text(self, e):
-        if e.errno == 1062:
-            return "Model with this ID already exists"
-
-
-class DeleteModelHandler(ApiHandler):
-    func = delete_model
-
-
-class ReadModelHandler(ApiHandler):
-    func = read_model
-
-
-class ReadModelsHandler(ApiHandler):
-    func = read_models
-
-
 class PingHandler(SessionBaseHandler):
     async def get(self):
         self.write("Hello, world<br>")
