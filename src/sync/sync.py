@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+from random import randint
 
 from convert_start_nodes import roundTo
 from src.sync.magellan import get_func_vector, getfunc, table_view, count_elements
@@ -14,6 +15,9 @@ class Sync:
         self.systems = defaultdict(dict)
         self.corrections = {}
         self.slots = {}
+
+    def get_rand_vector(self):
+        return bin(2 ** 16 + randint(0, 2 ** 16 - 1))[-16:]
 
     def xor(self, freq_vectors) -> str:
         zp = zip(*freq_vectors)
@@ -223,6 +227,12 @@ class Sync:
         functext = "".join(args[1:])
         self.set_system_correct(syst, functext)
 
+    def cmd_randomize(self):
+        for system, sysdata in self.freq_vectors.items():
+            self.freq_vectors[system] = {sys: self.get_rand_vector() for sys in sysdata}
+        self.corrections = {}
+        print("Все частотные рисунки сгенерированы случайным образом")
+
     def load_data(self):
         sync_data = json.load(open("sync_data.json"))
         for system, sysdata in sync_data.items():
@@ -272,6 +282,8 @@ class Sync:
                 self.cmd_correct(args)
             elif command == 'save':
                 self.cmd_save()
+            elif command == "randomize":
+                self.cmd_randomize()
             else:
                 print(
                     "Команда " + command + " не распознана. Введите help для вывода всех команд или help <имя команды> "

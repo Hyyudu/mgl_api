@@ -4,3 +4,4 @@ pymysql
 pytest
 mysql-connector-python
 requests
+numpy
