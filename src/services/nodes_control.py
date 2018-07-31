@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from typing import Dict, Any
+from numpy.random import choice
 
 from services.db import DB
 from services.misc import modernize_date, api_fail
@@ -7,17 +8,6 @@ from services.model_crud import read_models
 
 
 db = DB()
-detail_distribution = OrderedDict({
-    "sum2": 6,
-    "sum3": 8,
-    "sum4": 3,
-    "sum5": 1,
-    "inv": 4,
-    "con2": 6,
-    "con3": 8,
-    "con4": 2,
-})
-
 
 def create_node(self, params):
     """ params: {model_id: int, password: str} """
@@ -31,17 +21,19 @@ def create_node(self, params):
         raise Exception("No model with id {}".format(model_id))
     model = model[0]
     existing_nodes = db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
+    insert_data = {
+        "model_id": model_id,
+        "name": "",
+        "az_level": model['params']['az_level'],
+        "password": params.get('password', ''),
+        'premium_expires': None if not existing_nodes else model['premium_expires']
+    }
+    node_id = db.insert('nodes', insert_data)
     if model['node_type_code'] != 'hull':
-        insert_data = {
-            "model_id": model_id,
-            "name": "",
-            "az_level": model['params']['az_level'],
-            "password": params.get('password', ''),
-            'premium_expires': None if not existing_nodes else model['premium_expires']
-        }
-        new_id = db.insert('nodes', insert_data)
-        result = db.fetchRow('select * from nodes where id=:id', {"id": new_id})
+        result = db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
+    else:
+        return create_hull(model, node_id)
 
 
 def get_nearest_flight_for_supercargo(user_id):
@@ -135,3 +127,26 @@ def check_password(self, data):
 
 def get_all_params(self, data):
     return db.fetchAll('select * from v_node_parameter_list')
+
+
+def create_hull(model: Dict, node_id: int):
+    detail_distribution = OrderedDict({
+        "sum2": 6,
+        "sum3": 8,
+        "sum4": 3,
+        "sum5": 1,
+        "inv": 2,
+        "con2": 6,
+        "con3": 8,
+        "con4": 4,
+    })
+    dd = detail_distribution
+    weights = [i/sum(dd.values()) for i in dd.values()]
+    slots = choice(
+        list(detail_distribution.keys()),
+        model['params'].get('configurability'),
+        p=weights,
+        replace=True,
+    )
+    # создать бонусы/пенальти
+    # создать частотные рисунки

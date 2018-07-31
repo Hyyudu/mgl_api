@@ -1307,7 +1307,7 @@ CREATE TABLE IF NOT EXISTS `flight_crews` (
   CONSTRAINT `FK_flight_crews_flights` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Экипаж';
 
--- Дамп данных таблицы magellan.flight_crews: ~7 rows (приблизительно)
+-- Дамп данных таблицы magellan.flight_crews: ~8 rows (приблизительно)
 /*!40000 ALTER TABLE `flight_crews` DISABLE KEYS */;
 INSERT IGNORE INTO `flight_crews` (`flight_id`, `role`, `user_id`) VALUES
 	(1, 'pilot', 1),
@@ -1373,6 +1373,24 @@ CREATE TABLE IF NOT EXISTS `hull_slots` (
 -- Дамп данных таблицы magellan.hull_slots: ~0 rows (приблизительно)
 /*!40000 ALTER TABLE `hull_slots` DISABLE KEYS */;
 /*!40000 ALTER TABLE `hull_slots` ENABLE KEYS */;
+
+
+-- Дамп структуры для таблица magellan.hull_vectors
+DROP TABLE IF EXISTS `hull_vectors`;
+CREATE TABLE IF NOT EXISTS `hull_vectors` (
+  `node_id` int(11) NOT NULL,
+  `node_type_code` varchar(50) NOT NULL,
+  `vector` varchar(16) NOT NULL,
+  UNIQUE KEY `node_id_node_type_code` (`node_id`,`node_type_code`),
+  KEY `node_id` (`node_id`),
+  KEY `FK_hull_vectors_node_types` (`node_type_code`),
+  CONSTRAINT `FK_hull_vectors_node_types` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_hull_vectors_nodes` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Частотные вектора корпусов';
+
+-- Дамп данных таблицы magellan.hull_vectors: ~0 rows (приблизительно)
+/*!40000 ALTER TABLE `hull_vectors` DISABLE KEYS */;
+/*!40000 ALTER TABLE `hull_vectors` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.models
@@ -1469,6 +1487,7 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   `mult_large` float NOT NULL DEFAULT '1',
   `increase_direction` tinyint(1) NOT NULL DEFAULT '1',
   `hull_boost` tinyint(1) NOT NULL DEFAULT '1',
+  `is_hidden` tinyint(1) NOT NULL DEFAULT '0',
   UNIQUE KEY `Индекс 2` (`node_code`,`parameter_code`),
   KEY `node_code` (`node_code`),
   KEY `Индекс 3` (`parameter_code`),
@@ -1478,81 +1497,81 @@ CREATE TABLE IF NOT EXISTS `model_has_parameters` (
 
 -- Дамп данных таблицы magellan.model_has_parameters: ~74 rows (приблизительно)
 /*!40000 ALTER TABLE `model_has_parameters` DISABLE KEYS */;
-INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`, `mult_small`, `mult_large`, `increase_direction`, `hull_boost`) VALUES
-	('fuel_tank', 'az_level', 100, 1, 1, 1, 1),
-	('fuel_tank', 'fuel_protection', 3, 1, 1, 1, 1),
-	('fuel_tank', 'fuel_volume', 800, 1, 1, 1, 0),
-	('fuel_tank', 'radiation_def', 80, 1, 1, 1, 1),
-	('fuel_tank', 'volume', 378, 0.52, 1.7, -1, 1),
-	('fuel_tank', 'weight', 1000, 1, 1, -1, 1),
-	('hull', 'az_level', 100, 1, 1, 1, 1),
-	('hull', 'brand_lapse', 16, 1, 1, 1, 1),
-	('hull', 'configurability', 16, 1, 1, 1, 1),
-	('hull', 'volume', 2000, 0.52, 1.7, 1, 1),
-	('hull', 'weight', 1000, 1, 1, -1, 1),
-	('lss', 'air_prepare_speed', 2, 1, 1, 1, 1),
-	('lss', 'air_volume', 2050, 0.8, 1.2, 1, 1),
-	('lss', 'az_level', 100, 1, 1, 1, 1),
-	('lss', 'co2_level', 50, 1, 1, 1, 0),
-	('lss', 'lightness', 0, 1, 1, 1, 0),
-	('lss', 'thermal_def', 4, 1, 1, 1, 1),
-	('lss', 'volume', 273, 0.52, 1.7, -1, 1),
-	('lss', 'weight', 1000, 1, 1, -1, 1),
-	('march_engine', 'accel', 16, 1.4, 0.6, 1, 1),
-	('march_engine', 'accel_rev', 0, 1.4, 0.6, 1, 1),
-	('march_engine', 'az_level', 100, 1, 1, 1, 1),
-	('march_engine', 'heat_prod', 83, 1, 1, -1, 1),
-	('march_engine', 'slowdown', 16, 1.4, 0.6, 1, 0),
-	('march_engine', 'slowdown_rev', 0, 1.4, 0.6, 1, 0),
-	('march_engine', 'thrust', 700, 0.5, 1.6, 1, 1),
-	('march_engine', 'thrust_rev', 0, 0.5, 1.6, 1, 1),
-	('march_engine', 'volume', 315, 0.52, 1.7, -1, 1),
-	('march_engine', 'weight', 1000, 1, 1, -1, 1),
-	('radar', 'angle_change', 0.8, 1, 1, 1, 0),
-	('radar', 'angle_max', 30, 1, 1, 1, 1),
-	('radar', 'angle_min', 25, 1, 1, -1, 1),
-	('radar', 'az_level', 100, 1, 1, 1, 1),
-	('radar', 'range_change', 0.8, 1, 1, 1, 0),
-	('radar', 'range_max', 30, 1, 1, 1, 1),
-	('radar', 'rotate_speed', 10, 1, 1, 1, 1),
-	('radar', 'volume', 210, 0.52, 1.7, -1, 1),
-	('radar', 'weight', 1000, 1, 1, -1, 1),
-	('scaner', 'az_level', 100, 1, 1, 1, 1),
-	('scaner', 'drop_range', 20, 0.8, 1.2, 1, 1),
-	('scaner', 'drop_speed', 38, 0.9, 1.1, 1, 1),
-	('scaner', 'scan_range', 42, 0.8, 1.2, 1, 1),
-	('scaner', 'scan_speed', 2.5, 0.9, 1.1, 1, 1),
-	('scaner', 'volume', 147, 0.52, 1.7, -1, 1),
-	('scaner', 'weight', 1000, 1, 1, -1, 1),
-	('shields', 'az_level', 100, 1, 1, 1, 1),
-	('shields', 'desinfect_level', 50, 0.9, 1.1, 1, 0),
-	('shields', 'heat_capacity', 382.5, 0.7, 1.3, 1, 1),
-	('shields', 'heat_reflection', 8, 0.8, 1.2, 1, 1),
-	('shields', 'heat_sink', 85, 0.7, 1.3, 1, 1),
-	('shields', 'mechanical_def', 90, 1, 1, 1, 1),
-	('shields', 'radiation_def', 7, 0.8, 1.2, 1, 1),
-	('shields', 'volume', 315, 0.52, 1.7, -1, 1),
-	('shields', 'weight', 1000, 1, 1, -1, 1),
-	('shunter', 'az_level', 100, 1, 1, 1, 1),
-	('shunter', 'heat_prod', 92, 1, 1, -1, 1),
-	('shunter', 'strafe_accel', 0, 1.4, 0.6, 1, 1),
-	('shunter', 'strafe_max', 0, 0.5, 1.6, 1, 1),
-	('shunter', 'strafe_slow', 0, 1.4, 0.6, 1, 0),
-	('shunter', 'turn_accel', 80, 0.6, 1.4, 1, 1),
-	('shunter', 'turn_max', 45, 1.4, 0.8, 1, 1),
-	('shunter', 'turn_slow', 80, 1.4, 0.6, 1, 0),
-	('shunter', 'volume', 210, 0.52, 1.7, -1, 1),
-	('shunter', 'weight', 1000, 1, 1, -1, 1),
-	('warp_engine', 'az_level', 100, 1, 1, 1, 1),
-	('warp_engine', 'consumption', 0.12, 1, 1, -1, 1),
-	('warp_engine', 'distort_accel', 3, 1, 1, 1, 1),
-	('warp_engine', 'distort_level', 800, 1, 1, 1, 1),
-	('warp_engine', 'distort_slowdown', 3, 1, 1, 1, 1),
-	('warp_engine', 'turn_consumption', 1.1, 1, 1, -1, 0),
-	('warp_engine', 'turn_speed', 0.8, 1, 1, 1, 1),
-	('warp_engine', 'volume', 378, 0.52, 1.7, -1, 1),
-	('warp_engine', 'warp_enter_consumption', 30, 1, 1, -1, 1),
-	('warp_engine', 'weight', 1000, 1, 1, -1, 1);
+INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_value`, `mult_small`, `mult_large`, `increase_direction`, `hull_boost`, `is_hidden`) VALUES
+	('fuel_tank', 'az_level', 100, 1, 1, 1, 1, 0),
+	('fuel_tank', 'fuel_protection', 3, 1, 1, 1, 1, 0),
+	('fuel_tank', 'fuel_volume', 800, 1, 1, 1, 0, 0),
+	('fuel_tank', 'radiation_def', 80, 1, 1, 1, 1, 0),
+	('fuel_tank', 'volume', 378, 0.52, 1.7, -1, 1, 0),
+	('fuel_tank', 'weight', 1000, 1, 1, -1, 1, 0),
+	('hull', 'az_level', 100, 1, 1, 1, 1, 0),
+	('hull', 'brand_lapse', 16, 1, 1, 1, 1, 0),
+	('hull', 'configurability', 16, 1, 1, 1, 1, 0),
+	('hull', 'volume', 2000, 0.52, 1.7, 1, 1, 0),
+	('hull', 'weight', 1000, 1, 1, -1, 1, 0),
+	('lss', 'air_speed', 2, 1, 1, 1, 1, 1),
+	('lss', 'air_volume', 2050, 0.8, 1.2, 1, 1, 0),
+	('lss', 'az_level', 100, 1, 1, 1, 1, 0),
+	('lss', 'co2_level', 50, 1, 1, 1, 0, 0),
+	('lss', 'lightness', 0, 1, 1, 1, 0, 0),
+	('lss', 'thermal_def', 4, 1, 1, 1, 1, 0),
+	('lss', 'volume', 273, 0.52, 1.7, -1, 1, 0),
+	('lss', 'weight', 1000, 1, 1, -1, 1, 0),
+	('march_engine', 'accel', 16, 1.4, 0.6, 1, 1, 0),
+	('march_engine', 'accel_rev', 0, 1.4, 0.6, 1, 1, 0),
+	('march_engine', 'az_level', 100, 1, 1, 1, 1, 0),
+	('march_engine', 'heat_prod', 83, 1, 1, -1, 1, 0),
+	('march_engine', 'slowdown', 16, 1.4, 0.6, 1, 0, 0),
+	('march_engine', 'slowdown_rev', 0, 1.4, 0.6, 1, 0, 0),
+	('march_engine', 'thrust', 700, 0.5, 1.6, 1, 1, 0),
+	('march_engine', 'thrust_rev', 0, 0.5, 1.6, 1, 1, 0),
+	('march_engine', 'volume', 315, 0.52, 1.7, -1, 1, 0),
+	('march_engine', 'weight', 1000, 1, 1, -1, 1, 0),
+	('radar', 'angle_change', 0.8, 1, 1, 1, 0, 0),
+	('radar', 'angle_max', 30, 1, 1, 1, 1, 0),
+	('radar', 'angle_min', 25, 1, 1, -1, 1, 0),
+	('radar', 'az_level', 100, 1, 1, 1, 1, 0),
+	('radar', 'range_change', 0.8, 1, 1, 1, 0, 0),
+	('radar', 'range_max', 30, 1, 1, 1, 1, 0),
+	('radar', 'rotate_speed', 10, 1, 1, 1, 1, 0),
+	('radar', 'volume', 210, 0.52, 1.7, -1, 1, 0),
+	('radar', 'weight', 1000, 1, 1, -1, 1, 0),
+	('scaner', 'az_level', 100, 1, 1, 1, 1, 0),
+	('scaner', 'drop_range', 20, 0.8, 1.2, 1, 1, 0),
+	('scaner', 'drop_speed', 38, 0.9, 1.1, 1, 1, 0),
+	('scaner', 'scan_range', 42, 0.8, 1.2, 1, 1, 0),
+	('scaner', 'scan_speed', 2.5, 0.9, 1.1, 1, 1, 0),
+	('scaner', 'volume', 147, 0.52, 1.7, -1, 1, 0),
+	('scaner', 'weight', 1000, 1, 1, -1, 1, 0),
+	('shields', 'az_level', 100, 1, 1, 1, 1, 0),
+	('shields', 'desinfect_level', 50, 0.9, 1.1, 1, 0, 0),
+	('shields', 'heat_capacity', 382.5, 0.7, 1.3, 1, 1, 0),
+	('shields', 'heat_reflection', 8, 0.8, 1.2, 1, 1, 0),
+	('shields', 'heat_sink', 85, 0.7, 1.3, 1, 1, 0),
+	('shields', 'mechanical_def', 90, 1, 1, 1, 1, 0),
+	('shields', 'radiation_def', 7, 0.8, 1.2, 1, 1, 0),
+	('shields', 'volume', 315, 0.52, 1.7, -1, 1, 0),
+	('shields', 'weight', 1000, 1, 1, -1, 1, 0),
+	('shunter', 'az_level', 100, 1, 1, 1, 1, 0),
+	('shunter', 'heat_prod', 92, 1, 1, -1, 1, 0),
+	('shunter', 'strafe_accel', 0, 1.4, 0.6, 1, 1, 0),
+	('shunter', 'strafe_max', 0, 0.5, 1.6, 1, 1, 0),
+	('shunter', 'strafe_slow', 0, 1.4, 0.6, 1, 0, 0),
+	('shunter', 'turn_accel', 80, 0.6, 1.4, 1, 1, 0),
+	('shunter', 'turn_max', 45, 1.4, 0.8, 1, 1, 0),
+	('shunter', 'turn_slow', 80, 1.4, 0.6, 1, 0, 0),
+	('shunter', 'volume', 210, 0.52, 1.7, -1, 1, 0),
+	('shunter', 'weight', 1000, 1, 1, -1, 1, 0),
+	('warp_engine', 'az_level', 100, 1, 1, 1, 1, 0),
+	('warp_engine', 'consumption', 0.12, 1, 1, -1, 1, 0),
+	('warp_engine', 'distort_accel', 3, 1, 1, 1, 1, 0),
+	('warp_engine', 'distort_level', 800, 1, 1, 1, 1, 0),
+	('warp_engine', 'distort_slowdown', 3, 1, 1, 1, 1, 0),
+	('warp_engine', 'turn_consumption', 1.1, 1, 1, -1, 0, 0),
+	('warp_engine', 'turn_speed', 0.8, 1, 1, 1, 1, 0),
+	('warp_engine', 'volume', 378, 0.52, 1.7, -1, 1, 0),
+	('warp_engine', 'warp_enter_consumption', 30, 1, 1, -1, 1, 0),
+	('warp_engine', 'weight', 1000, 1, 1, -1, 1, 0);
 /*!40000 ALTER TABLE `model_has_parameters` ENABLE KEYS */;
 
 
@@ -2225,7 +2244,7 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`, `short_name`) VALUES
 	(33, 'thermal_def', 'Тепловая защита', 'Тепловая защита'),
 	(34, 'co2_level', 'Поддержание уровня СО2', 'Поддержание СО2'),
 	(35, 'air_volume', 'Запас воздуха', 'Запас воздуха'),
-	(36, 'air_prepare_speed', 'Скорость выдачи воздуха', 'Выдача воздуха'),
+	(36, 'air_speed', 'Скорость выдачи воздуха', 'Выдача воздуха'),
 	(37, 'lightness', 'Освещение', 'Освещение'),
 	(38, 'desinfect_level', 'Уровень дезинфекции', 'Дезинфекция'),
 	(39, 'mechanical_def', 'Механическая защита', 'Скорость ремонта'),
@@ -2596,7 +2615,8 @@ DROP VIEW IF EXISTS `v_model_params`;
 CREATE TABLE `v_model_params` (
 	`model_id` INT(11) NOT NULL,
 	`parameter_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`value` DOUBLE(19,2) NULL
+	`value` DOUBLE(19,2) NULL,
+	`is_hidden` TINYINT(1) NOT NULL
 ) ENGINE=MyISAM;
 
 
@@ -2622,7 +2642,8 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_model_params` AS s
 	round(
 		coalesce(mp.value, mhp.def_value)*
 		if(m.size='small', mhp.mult_small, if(m.size='large', mhp.mult_large,1))
-	,2) value
+	,2) value,
+	mhp.is_hidden
 from models m
 join model_has_parameters mhp on m.node_type_code = mhp.node_code
 left join model_parameters mp on mhp.parameter_code = mp.parameter_code and mp.model_id = m.id ;

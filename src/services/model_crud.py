@@ -80,7 +80,7 @@ def read_models(self, params):
     ids = {"model_id": [model['id'] for model in models]}
     params_where = db.construct_where(ids)
     ids = db.construct_params(ids)
-    all_params = db.fetchAll("select * from v_model_params where " + params_where, ids)
+    all_params = db.fetchAll("select * from v_model_params where is_hidden=0 and " + params_where, ids)
 
     all_nodes = db.fetchAll("""
         select id, model_id, name, az_level, status_code, date_created,

@@ -1,6 +1,8 @@
 import json
 
 import requests
+from numpy import unique
+from numpy.random import choice
 from services.db import DB
 
 
@@ -41,3 +43,9 @@ def modernize_date(date):
 
 def api_fail(msg):
     return {"status": "fail", "errors": msg}
+
+
+def gen_array_by_weight(array, cnt):
+    sumvals = sum(array.values())
+    generated =choice(list(array.keys()), cnt, p=[i/sumvals for i in array.values()])
+    return dict(zip(*unique(generated, return_counts=True)))
