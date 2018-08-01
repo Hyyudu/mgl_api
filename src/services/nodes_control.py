@@ -130,8 +130,7 @@ def get_all_params(self, data):
     return db.fetchAll('select * from v_node_parameter_list')
 
 
-def create_hull(model: Dict, node_id: int):
-    # создать слоты
+def generate_slots(amount):
     detail_distribution = OrderedDict({
         "sum2": 6,
         "sum3": 8,
@@ -142,19 +141,35 @@ def create_hull(model: Dict, node_id: int):
         "con3": 8,
         "con4": 4,
     })
-    slots = gen_array_by_weight(detail_distribution, model['params'].get('configurability'))
-    db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
+    slots = gen_array_by_weight(detail_distribution, amount)
+    return slots
 
-    # создать бонусы/пенальти
+
+def generate_hull_perks(size):
     params_to_boost = db.fetchAll('''select node_code, parameter_code, increase_direction 
-        from model_has_parameters where hull_boost=1''')
+            from model_has_parameters where hull_boost=1''')
     param_dict = defaultdict(Dict)
     for row in params_to_boost:
         param_dict[row['node_code']][row['parameter_code']] = row['increase_direction']
-    if model['size'] == 'small':
+    if size == 'small':
         perks = [1, 1, -1]
-    elif model['size'] == 'large':
+    elif size == 'large':
         perks = [1, -1, -1]
     else:
-        perks = [1,-1] if randint(0, 1) else [1,1, -1, -1]
+        perks = [1, -1] if randint(0, 1) else [1, 1, -1, -1]
+    out = []
+    for dir in perks:
+        node_type_code = choice(param_dict.keys())
+        parameter = choice(param_dict[node_type_code].keys())
+        value = (20 if randint(1,4)==4 else 10) * dir * param_dict[node_type_code][parameter]
+        out.append({"node_type_code": node_type_code, 'parameter_code': parameter, 'value': value})
+
+def create_hull(model: Dict, node_id: int):
+    # создать слоты
+    slots = generate_slots(model['params'].get('configurability'))
+
+    # создать бонусы/пенальти
+    perks = generate_hull_perks(model['size'])
+
+    db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
     # создать частотные рисунки

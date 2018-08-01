@@ -14,7 +14,7 @@ def mcc_dashboard(self, params):
         flight['departure'] = modernize_date(flight['departure'])
         flight['crew'] = []
     crews = db.fetchAll("""
-    select f.flight_id, f.role, u.name
+    select f.flight_id, f.role, u.name, u.id user_id
 from flight_crews f 
 join users u on f.user_id = u.id
     where f.flight_id in """ + str(flight_ids).replace(",)", ")"))
@@ -23,3 +23,15 @@ join users u on f.user_id = u.id
         del crew['flight_id']
         flight['crew'].append(crew)
     return flights
+
+
+def mcc_set_crew(self, params):
+    pass
+
+
+def mcc_set_passenger(self, params):
+    pass
+
+
+def mcc_remove(self, params):
+    pass

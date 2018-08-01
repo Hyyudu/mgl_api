@@ -2,7 +2,7 @@ from handlers.ApiHandler import ApiHandler
 from handlers.ModelsHandler import (
     PingHandler,
 )
-
+from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
 from services.mcc import mcc_dashboard
 from services.misc import read_users_from_alice
@@ -11,7 +11,6 @@ from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
     reserve_node,
 )
-
 
 url = lambda uri, func: (uri, ApiHandler, {"func": func})
 
@@ -34,6 +33,8 @@ app_urls = [
     url("/economics/add_pump", add_pump),
     url("/economics/read_pumps", read_pumps),
     url("/mcc/dashboard", mcc_dashboard),
+    url("/boosts/read", boosts_read),
+    url("/boosts/use", boost_use),
 
     ("/ping", PingHandler),
 ]

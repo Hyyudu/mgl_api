@@ -63,7 +63,9 @@ def getfunc(functext):
     # очищаем вход
     st = re.sub("[^ABCDabcd \(\)\!\+]", "", functext, len(functext))
     # добавляем and между перемножающимися скобками или в конструкциях вида a(b+c)
-    st = re.sub(r"([abcdABCD\)])\s*\(", r"\1 and (", st)
+    st = re.sub(r"([abcdABCD\)])\s*\(", r"\1 & (", st)
+    st = re.sub(r"\)\s*([abcdABCD])", r") & \1", st)
+    st = re.sub(r"\)\s*\(", r") & (", st)
     # заменяем отрицания
     st = st.replace("!", " not ")
     # заменяем дизъюнкции
@@ -78,6 +80,8 @@ def getfunc(functext):
         st = re.sub("(?<!\w)" + c.lower() + "(?!\w)", " not " + c + " ", st)
     # убираем дублирующиеся пробелы
     st = re.sub(" +", " ", st)
+    # заменяем & на and, раньше нельзя, чтобы "a" в and не путалось с переменной
+    st = st.replace("&", "and")
     # print(st)
     f = lambda A, B, C, D: bool(eval(st))
     try:
