@@ -1,9 +1,10 @@
-from collections import OrderedDict
+import json
+from random import randint, choice
+from collections import OrderedDict, defaultdict
 from typing import Dict, Any
-from numpy.random import choice
 
 from services.db import DB
-from services.misc import modernize_date, api_fail
+from services.misc import modernize_date, api_fail, gen_array_by_weight
 from services.model_crud import read_models
 
 
@@ -130,6 +131,7 @@ def get_all_params(self, data):
 
 
 def create_hull(model: Dict, node_id: int):
+    # создать слоты
     detail_distribution = OrderedDict({
         "sum2": 6,
         "sum3": 8,
@@ -140,13 +142,19 @@ def create_hull(model: Dict, node_id: int):
         "con3": 8,
         "con4": 4,
     })
-    dd = detail_distribution
-    weights = [i/sum(dd.values()) for i in dd.values()]
-    slots = choice(
-        list(detail_distribution.keys()),
-        model['params'].get('configurability'),
-        p=weights,
-        replace=True,
-    )
+    slots = gen_array_by_weight(detail_distribution, model['params'].get('configurability'))
+    db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
+
     # создать бонусы/пенальти
+    params_to_boost = db.fetchAll('''select node_code, parameter_code, increase_direction 
+        from model_has_parameters where hull_boost=1''')
+    param_dict = defaultdict(Dict)
+    for row in params_to_boost:
+        param_dict[row['node_code']][row['parameter_code']] = row['increase_direction']
+    if model['size'] == 'small':
+        perks = [1, 1, -1]
+    elif model['size'] == 'large':
+        perks = [1, -1, -1]
+    else:
+        perks = [1,-1] if randint(0, 1) else [1,1, -1, -1]
     # создать частотные рисунки

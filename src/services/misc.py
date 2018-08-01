@@ -2,7 +2,7 @@ import json
 
 import requests
 from numpy import unique
-from numpy.random import choice
+from random import choices
 from services.db import DB
 
 
@@ -45,7 +45,7 @@ def api_fail(msg):
     return {"status": "fail", "errors": msg}
 
 
-def gen_array_by_weight(array, cnt):
+def gen_array_by_weight(array, cnt=1):
     sumvals = sum(array.values())
-    generated =choice(list(array.keys()), cnt, p=[i/sumvals for i in array.values()])
+    generated =choices(list(array.keys()), k=cnt, weights=[i/sumvals for i in array.values()])
     return dict(zip(*unique(generated, return_counts=True)))
