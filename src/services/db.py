@@ -52,10 +52,12 @@ class DB:
                 for key, val in item.items()}
             yield item
 
-    def fetchAll(self, sql, data=None):
+    def fetchAll(self, sql, data=None, associate=''):
         self.query(sql, data or {})
         result = [item for item in self.get_result()]
         self.cnx.commit()
+        if associate:
+            result = {item[associate]: item for item in result}
         return result
 
     def fetchRow(self, sql, data=None):

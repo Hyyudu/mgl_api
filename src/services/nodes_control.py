@@ -1,23 +1,14 @@
-from collections import OrderedDict
+import json
+from random import randint, choice
+from collections import OrderedDict, defaultdict
 from typing import Dict, Any
 
 from services.db import DB
-from services.misc import modernize_date, api_fail
+from services.misc import modernize_date, api_fail, gen_array_by_weight
 from services.model_crud import read_models
 
 
 db = DB()
-detail_distribution = OrderedDict({
-    "sum2": 6,
-    "sum3": 8,
-    "sum4": 3,
-    "sum5": 1,
-    "inv": 4,
-    "con2": 6,
-    "con3": 8,
-    "con4": 2,
-})
-
 
 def create_node(self, params):
     """ params: {model_id: int, password: str} """
@@ -31,17 +22,19 @@ def create_node(self, params):
         raise Exception("No model with id {}".format(model_id))
     model = model[0]
     existing_nodes = db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
+    insert_data = {
+        "model_id": model_id,
+        "name": "",
+        "az_level": model['params']['az_level'],
+        "password": params.get('password', ''),
+        'premium_expires': None if not existing_nodes else model['premium_expires']
+    }
+    node_id = db.insert('nodes', insert_data)
     if model['node_type_code'] != 'hull':
-        insert_data = {
-            "model_id": model_id,
-            "name": "",
-            "az_level": model['params']['az_level'],
-            "password": params.get('password', ''),
-            'premium_expires': None if not existing_nodes else model['premium_expires']
-        }
-        new_id = db.insert('nodes', insert_data)
-        result = db.fetchRow('select * from nodes where id=:id', {"id": new_id})
+        result = db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
+    else:
+        return create_hull(model, node_id)
 
 
 def get_nearest_flight_for_supercargo(user_id):
@@ -98,7 +91,10 @@ where n.id=:node_id""", reserve_result)
         db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
                  reserve_result)
     db.insert('builds', reserve_result)
-    db.query('update nodes set status_code="reserved" where id=:node_id', reserve_result, need_commit=True)
+    db.query("""update nodes 
+        set status_code="reserved", 
+            connected_to_hull_id = null 
+        where id=:node_id""", reserve_result, need_commit=True)
     return {"status": "ok"}
 
 
@@ -128,3 +124,52 @@ def check_password(self, data):
     if row.get('password') != data.get('password'):
         return api_fail('Пароль неверен')
     return {"result": "ok"}
+
+
+def get_all_params(self, data):
+    return db.fetchAll('select * from v_node_parameter_list')
+
+
+def generate_slots(amount):
+    detail_distribution = OrderedDict({
+        "sum2": 6,
+        "sum3": 8,
+        "sum4": 3,
+        "sum5": 1,
+        "inv": 2,
+        "con2": 6,
+        "con3": 8,
+        "con4": 4,
+    })
+    slots = gen_array_by_weight(detail_distribution, amount)
+    return slots
+
+
+def generate_hull_perks(size):
+    params_to_boost = db.fetchAll('''select node_code, parameter_code, increase_direction 
+            from model_has_parameters where hull_boost=1''')
+    param_dict = defaultdict(Dict)
+    for row in params_to_boost:
+        param_dict[row['node_code']][row['parameter_code']] = row['increase_direction']
+    if size == 'small':
+        perks = [1, 1, -1]
+    elif size == 'large':
+        perks = [1, -1, -1]
+    else:
+        perks = [1, -1] if randint(0, 1) else [1, 1, -1, -1]
+    out = []
+    for dir in perks:
+        node_type_code = choice(param_dict.keys())
+        parameter = choice(param_dict[node_type_code].keys())
+        value = (20 if randint(1,4)==4 else 10) * dir * param_dict[node_type_code][parameter]
+        out.append({"node_type_code": node_type_code, 'parameter_code': parameter, 'value': value})
+
+def create_hull(model: Dict, node_id: int):
+    # создать слоты
+    slots = generate_slots(model['params'].get('configurability'))
+
+    # создать бонусы/пенальти
+    perks = generate_hull_perks(model['size'])
+
+    db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
+    # создать частотные рисунки
