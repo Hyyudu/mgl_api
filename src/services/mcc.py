@@ -48,3 +48,9 @@ def mcc_remove(self, params):
     deleted = db.query("delete from flight_crews where flight_id = :flight_id and user_id = :user_id",
                        params, need_commit=True)
     return api_ok(deleted=deleted)
+
+
+def mcc_add_flight(self, params):
+    """ params = {"departure": "2018-08-16 15:00:00", "dock": 2} """
+    db.insert('flights', params)
+    return api_ok()

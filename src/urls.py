@@ -4,21 +4,27 @@ from handlers.ModelsHandler import (
 )
 from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
-from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove
-from services.users import read_users_from_alice, users_list
+from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight
 from services.model_crud import add_model, read_model, read_models, delete_model
 from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
     reserve_node,
 )
+from services.users import read_users_from_alice, users_list
 
-url = lambda uri, func: (uri, ApiHandler, {"func": func})
+
+def url(uri, func, kwargs=None):
+    init_params = {"func": func}
+    if kwargs:
+        init_params.update(kwargs)
+    return (uri, ApiHandler, init_params)
+
+
 
 app_urls = [
     url("/get-params", get_all_params),
-    ("/model/add", ApiHandler, {
-        "func": add_model,
-        "get_exception_text": lambda self, e: "Model with this ID already exists" if e.errno == 1062 else None
+    url("/model/add", add_model, {
+        "get_exception_text": lambda self, e: "Модель с таким ID уже создана" if e.errno == 1062 else None
     }),
     url("/model/read", read_model),
     url("/model/read_all", read_models),
@@ -36,6 +42,9 @@ app_urls = [
     url("/mcc/dashboard", mcc_dashboard),
     url("/mcc/set_crew", mcc_set_crew),
     url("/mcc/add_passenger", mcc_add_passenger),
+    url("/mcc/add_flight", mcc_add_flight, {
+        "get_exception_text": lambda self, e: "В это время в этом доке уже намечен полет" if e.errno == 1062 else None
+    }),
     url("/mcc/remove", mcc_remove),
     url("/boosts/read", boosts_read),
     url("/boosts/use", boost_use),

@@ -13,7 +13,7 @@ class ApiHandler(RequestHandler):
             setattr(self, key, val)
 
     def get_exception_text(self, e):
-        pass
+        return ''
 
     async def post(self):
         try:
@@ -25,7 +25,7 @@ class ApiHandler(RequestHandler):
             out = self.func(self, req)
             self.write(json.dumps(out, indent=4))
         except Exception as e:
-            err_text = self.get_exception_text(e)
+            err_text = self.get_exception_text(self, e)
             if err_text:
                 self.write(json.dumps(api_fail(err_text)))
             else:
