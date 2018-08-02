@@ -5,7 +5,7 @@ from handlers.ModelsHandler import (
 from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
 from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove
-from services.misc import read_users_from_alice
+from services.users import read_users_from_alice, users_list
 from services.model_crud import add_model, read_model, read_models, delete_model
 from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
@@ -29,6 +29,7 @@ app_urls = [
     url("/node/get_my_reserved", get_my_reserved_nodes),
     url("/node/reserve", reserve_node),
     url("/users/refresh", read_users_from_alice),
+    url("/users/list", users_list),
     url("/economics/resources", resource_list),
     url("/economics/add_pump", add_pump),
     url("/economics/read_pumps", read_pumps),
