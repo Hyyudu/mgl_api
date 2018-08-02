@@ -164,6 +164,11 @@ def generate_hull_perks(size):
         value = (20 if randint(1,4)==4 else 10) * dir * param_dict[node_type_code][parameter]
         out.append({"node_type_code": node_type_code, 'parameter_code': parameter, 'value': value})
 
+
+def generate_hull_vectors(model):
+    distinction = model['params'].get('configurability') - model['params'].get('brand_lapse')
+
+
 def create_hull(model: Dict, node_id: int):
     # создать слоты
     slots = generate_slots(model['params'].get('configurability'))
@@ -171,5 +176,6 @@ def create_hull(model: Dict, node_id: int):
     # создать бонусы/пенальти
     perks = generate_hull_perks(model['size'])
 
-    db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
+    # db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
     # создать частотные рисунки
+    vectors = generate_hull_vectors(model)

@@ -1,5 +1,5 @@
 from services.db import DB
-from services.misc import modernize_date
+from services.misc import modernize_date, api_ok, api_fail
 
 
 db = DB()
@@ -26,12 +26,25 @@ join users u on f.user_id = u.id
 
 
 def mcc_set_crew(self, params):
-    pass
+    """ params = {"flight_id": 1, "role": "pilot", "user_id": 2} """
+    db.query("""delete from flight_crews 
+        where flight_id = :flight_id and (role=:role or user_id=:user_id)""", params, need_commit=True)
+    db.insert('flight_crews', params)
+    return api_ok()
 
 
-def mcc_set_passenger(self, params):
-    pass
+def mcc_add_passenger(self, params):
+    """ params = {"flight_id": 1, "user_id": 2} """
+    cnt = db.fetchOne('select count(*) from flight_crews where flight_id=:flight_id and role="_other"')
+    if cnt >= 5:
+        return api_fail("В полет разрешается брать не более 5 пассажиров!")
+    params['role'] = "_other"
+    db.insert('flight_crews', params)
+    return api_ok()
 
 
 def mcc_remove(self, params):
-    pass
+    """ params = {"flight_id": 1, "user_id": 2} """
+    deleted = db.query("delete from flight_crews where flight_id = :flight_id and user_id = :user_id",
+                       params, need_commit=True)
+    return api_ok(deleted=deleted)

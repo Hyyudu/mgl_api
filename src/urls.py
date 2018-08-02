@@ -4,7 +4,7 @@ from handlers.ModelsHandler import (
 )
 from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
-from services.mcc import mcc_dashboard
+from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove
 from services.misc import read_users_from_alice
 from services.model_crud import add_model, read_model, read_models, delete_model
 from services.nodes_control import (
@@ -33,6 +33,9 @@ app_urls = [
     url("/economics/add_pump", add_pump),
     url("/economics/read_pumps", read_pumps),
     url("/mcc/dashboard", mcc_dashboard),
+    url("/mcc/set_crew", mcc_set_crew),
+    url("/mcc/add_passenger", mcc_add_passenger),
+    url("/mcc/remove", mcc_remove),
     url("/boosts/read", boosts_read),
     url("/boosts/use", boost_use),
 
