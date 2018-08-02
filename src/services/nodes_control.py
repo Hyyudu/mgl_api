@@ -1,14 +1,14 @@
-import json
-from random import randint, choice
 from collections import OrderedDict, defaultdict
+from random import randint, choice
 from typing import Dict, Any
 
 from services.db import DB
-from services.misc import modernize_date, api_fail, gen_array_by_weight
+from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list
 from services.model_crud import read_models
 
 
 db = DB()
+
 
 def create_node(self, params):
     """ params: {model_id: int, password: str} """
@@ -49,6 +49,7 @@ def get_nearest_flight_for_supercargo(user_id):
 
 
 def check_reserve_node(data):
+    """ data = {user_id: int, node_id: int, password: str} """
     flight = get_nearest_flight_for_supercargo(data.get('user_id', 0))
     if not flight:
         return api_fail("Вы не назначены ни на какой полет в качестве суперкарго")
@@ -74,9 +75,9 @@ def check_reserve_node(data):
     return {"flight_id": flight['id'], "node_id": data['node_id']}
 
 
-def reserve_node(self, data):
-    """ data = {"user_id": int, "node_id": int, "password": str} """
-    reserve_result = check_reserve_node(data)
+def reserve_node(self, params):
+    """ params = {"user_id": int, "node_id": int, "password": str} """
+    reserve_result = check_reserve_node(params)
     if 'errors' in reserve_result:
         return reserve_result
     reserved_data = db.fetchRow("""
@@ -98,11 +99,11 @@ where n.id=:node_id""", reserve_result)
     return {"status": "ok"}
 
 
-def get_my_reserved_nodes(self, data) -> Dict[str, Any]:
-    """ data: {"user_id": int} """
-    flight = get_nearest_flight_for_supercargo(data.get('user_id'))
+def get_my_reserved_nodes(self, params) -> Dict[str, Any]:
+    """ params: {"user_id": int} """
+    flight = get_nearest_flight_for_supercargo(params.get('user_id'))
     if not flight:
-        return api_fail("Суперкарго {} не назначен ни на какой полет".format(data.get('user_id')))
+        return api_fail("Суперкарго {} не назначен ни на какой полет".format(params.get('user_id')))
     nodes = db.fetchDict(
         "select node_type_code, node_id from builds where flight_id=:id",
         flight, "node_type_code", "node_id"
@@ -112,7 +113,7 @@ def get_my_reserved_nodes(self, data) -> Dict[str, Any]:
 
 def set_password(self, data):
     """ {node_id: int, password: string} """
-    affected = db.update('nodes', {"id": data.get('node_id', 0), 'password': data.get('password','')}, 'id=:id')
+    affected = db.update('nodes', {"id": data.get('node_id', 0), 'password': data.get('password', '')}, 'id=:id')
     return {"result": "ok", "affected": affected}
 
 
@@ -148,7 +149,7 @@ def generate_slots(amount):
 def generate_hull_perks(size):
     params_to_boost = db.fetchAll('''select node_code, parameter_code, increase_direction 
             from model_has_parameters where hull_boost=1''')
-    param_dict = defaultdict(Dict)
+    param_dict = defaultdict(dict)
     for row in params_to_boost:
         param_dict[row['node_code']][row['parameter_code']] = row['increase_direction']
     if size == 'small':
@@ -159,14 +160,26 @@ def generate_hull_perks(size):
         perks = [1, -1] if randint(0, 1) else [1, 1, -1, -1]
     out = []
     for dir in perks:
-        node_type_code = choice(param_dict.keys())
-        parameter = choice(param_dict[node_type_code].keys())
-        value = (20 if randint(1,4)==4 else 10) * dir * param_dict[node_type_code][parameter]
+        node_type_code = choice(list(param_dict.keys()))
+        parameter = choice(list(param_dict[node_type_code].keys()))
+        value = (20 if randint(1, 4) == 4 else 10) * dir * param_dict[node_type_code][parameter]
         out.append({"node_type_code": node_type_code, 'parameter_code': parameter, 'value': value})
+    return out
 
 
 def generate_hull_vectors(model):
-    distinction = model['params'].get('configurability') - model['params'].get('brand_lapse')
+    distinction = model['params'].get('configurability',0) - model['params'].get('brand_lapse',0)
+    node_types = node_type_list()
+    params = {
+        "size": model.get('size'),
+        "level": model.get('level'),
+        "company": model.get("company")
+    }
+    base_vectors_sql = "select node_code, vector from base_freq_vectors where "+db.construct_where(params)
+    params = db.construct_params(params)
+    base_vectors = db.fetchDict(base_vectors_sql, params, 'node_code', 'vector')
+    return base_vectors
+
 
 
 def create_hull(model: Dict, node_id: int):

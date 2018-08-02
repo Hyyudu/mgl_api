@@ -3,9 +3,10 @@ from collections import defaultdict
 from random import randint
 
 from convert_start_nodes import roundTo
-from src.sync.magellan import get_func_vector, getfunc, table_view, count_elements
-from src.sync.nodes_data import node_names, node_params, param_names
+from services.sync import xor, getfunc
 from src.sync.desync_penalties import desync_penalties
+from src.sync.magellan import get_func_vector, table_view, count_elements
+from src.sync.nodes_data import node_names, node_params, param_names
 
 
 class Sync:
@@ -18,11 +19,6 @@ class Sync:
 
     def get_rand_vector(self):
         return bin(2 ** 16 + randint(0, 2 ** 16 - 1))[-16:]
-
-    def xor(self, freq_vectors) -> str:
-        zp = zip(*freq_vectors)
-        arr = [str(x.count('1') % 2) for x in zp]
-        return "".join(arr)
 
     def mask(self, vector, total):
         return "".join([vector[i] if c == '1' else '*' for i, c in enumerate(list(total))])
@@ -108,7 +104,8 @@ class Sync:
             syst_vector = self.freq_vectors[syst]
             print(node_names[syst] + ": вектор частот ")
             lst = [["Система", "Вектор частот"], "-"] + [
-                [node_names[sys] + ' ' + self.systems[sys].get('name'), self.mask(syst_vector[sys], syst_vector['total'])]
+                [node_names[sys] + ' ' + self.systems[sys].get('name'),
+                 self.mask(syst_vector[sys], syst_vector['total'])]
                 for sys in syst_vector.keys()
                 if sys not in ('total', 'correct', 'result')
             ] + ["=", ["Суммарно", syst_vector['total']]]
@@ -120,21 +117,23 @@ class Sync:
     def cmd_system_affected(self, args):
         avail = list(self.freq_vectors.keys())
         if len(args) < 2:
-            print("Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
+            print(
+                "Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
             return
         if args[1] not in avail:
-            print("Указан код несуществующей системы: "+args[1])
-            print("Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
+            print("Указан код несуществующей системы: " + args[1])
+            print(
+                "Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
             return
         syst = self.systems[args[1]]
         sys_code = syst['type']
-        print(node_names[syst['type']]+' '+syst['name'])
-        lst = [["Параметр", "Штатное значение", "Текущее значение"], "-",]
+        print(node_names[syst['type']] + ' ' + syst['name'])
+        lst = [["Параметр", "Штатное значение", "Текущее значение"], "-", ]
         for param, val in syst['params'].items():
             arr = [param_names[param], val]
             func = desync_penalties[syst['type']].get(param, lambda s: 0)
             percent = 100 + func(self.freq_vectors[sys_code]['result'])
-            arr.append("{}% ({})".format(percent, roundTo(val*percent/100)))
+            arr.append("{}% ({})".format(percent, roundTo(val * percent / 100)))
             lst.append(arr)
         table_view(lst)
 
@@ -208,7 +207,7 @@ class Sync:
         self.corrections[syst] = functext
         fvs = self.freq_vectors[syst]
         fvs['correct'] = vector
-        fvs['result'] = self.xor([fvs['total'], vector])
+        fvs['result'] = xor([fvs['total'], vector])
         if functext:
             print("{}: установлена корректирующая функция {} (частотный вектор {})".format(
                 node_names[syst],
@@ -240,8 +239,8 @@ class Sync:
             for sys, fv in sysdata['freq_vectors'].items():
                 self.freq_vectors[sys][system] = fv
         for sys, sysdata in self.freq_vectors.items():
-            self.freq_vectors[sys]['total'] = self.xor(sysdata.values())
-            self.freq_vectors[sys]['correct'] = '0'*16
+            self.freq_vectors[sys]['total'] = xor(sysdata.values())
+            self.freq_vectors[sys]['correct'] = '0' * 16
             self.freq_vectors[sys]['result'] = self.freq_vectors[sys]['total']
 
     def show_corrections(self, systems=[]):

@@ -1,16 +1,12 @@
 import re
 from collections import defaultdict
 from itertools import product
-from random import shuffle, random
+
+from services.misc import group
+from services.sync import getfunc
+
 
 sample_func = '!((aBC+Ad)(B+C+aD) + Bd + !(AbcD + bc))'
-
-
-def get_rand_func(size):
-    src = list('abcd')
-    shuffle(src)
-    src = [c if random() < 0.5 else c.upper() for c in src[:size]]
-    return "".join(src) if random() < 0.5 else "+".join(src)
 
 
 def count_elements(st):
@@ -52,44 +48,6 @@ def count_elements(st):
         res['+'] = dict(res['+'])
         res['*'] = dict(res['*'])
         return res
-
-
-def group(lst, n):
-    """ Группировка элементов последовательности по count элементов """
-    return [lst[i:i + n] for i in range(0, len(lst), n)]
-
-
-def getfunc(functext):
-    # очищаем вход
-    st = re.sub("[^ABCDabcd \(\)\!\+]", "", functext, len(functext))
-    # добавляем and между перемножающимися скобками или в конструкциях вида a(b+c)
-    st = re.sub(r"([abcdABCD\)])\s*\(", r"\1 & (", st)
-    st = re.sub(r"\)\s*([abcdABCD])", r") & \1", st)
-    st = re.sub(r"\)\s*\(", r") & (", st)
-    # заменяем отрицания
-    st = st.replace("!", " not ")
-    # заменяем дизъюнкции
-    st = st.replace("+", " or ")
-    # Находим все конъюнктивные группы и меняем их
-    p = re.findall("[abcdx]+", st, re.I)
-    p.sort(key=len, reverse=True)
-    for group in p:
-        st = st.replace(group, " and ".join(list(group)))
-    # заменяем a на not A и т.д.
-    for c in list("ABCD"):
-        st = re.sub("(?<!\w)" + c.lower() + "(?!\w)", " not " + c + " ", st)
-    # убираем дублирующиеся пробелы
-    st = re.sub(" +", " ", st)
-    # заменяем & на and, раньше нельзя, чтобы "a" в and не путалось с переменной
-    st = st.replace("&", "and")
-    # print(st)
-    f = lambda A, B, C, D: bool(eval(st))
-    try:
-        get_func_vector(f)
-    except SyntaxError:
-        print("Введенный вами код " + functext + " не является правильной логической функцией")
-    else:
-        return f
 
 
 def get_func_vector(func):
