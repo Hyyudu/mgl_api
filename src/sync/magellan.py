@@ -1,9 +1,7 @@
 import re
 from collections import defaultdict
-from itertools import product
 
 from services.misc import group
-from services.sync import getfunc
 
 
 sample_func = '!((aBC+Ad)(B+C+aD) + Bd + !(AbcD + bc))'
@@ -48,12 +46,6 @@ def count_elements(st):
         res['+'] = dict(res['+'])
         res['*'] = dict(res['*'])
         return res
-
-
-def get_func_vector(func):
-    if not callable(func):
-        func = getfunc(func)
-    return "".join([str(int(func(A, B, C, D))) for A, B, C, D in product([0, 1], [0, 1], [0, 1], [0, 1])][::-1])
 
 
 def table_view(data, free_space_right=4, free_space_left=1, column_separator="|"):

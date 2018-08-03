@@ -1,9 +1,8 @@
 import re
+from itertools import product
 from random import shuffle, choice, randint
 from typing import List
 from collections import Counter
-
-from sync.magellan import get_func_vector
 
 
 def xor(freq_vectors: List[str]) -> str:
@@ -63,3 +62,11 @@ def getfunc(functext):
         print("Введенный вами код " + functext + " не является правильной логической функцией")
     else:
         return f
+
+
+def get_func_vector(func):
+    if func == "":
+        return "0"*16
+    if not callable(func):
+        func = getfunc(func)
+    return "".join([str(int(func(A, B, C, D))) for A, B, C, D in product([0, 1], [0, 1], [0, 1], [0, 1])][::-1])

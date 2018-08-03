@@ -67,7 +67,8 @@ def apply_companies_perks(model):
     return model
 
 
-def read_models(self, params):
+def read_models(self=None, params=None):
+    params = params or {}
     sql = "SELECT * from models WHERE 1=1"
     add_where = db.construct_where(params)
     if add_where:

@@ -1,6 +1,9 @@
-from src.services.sync import get_rand_func
+import json
 
+from services.nodes_control import create_node
+from services.model_crud import read_models
 
-for l in range(2, 9):
-    for i in range(5):
-        print(get_rand_func(l))
+# models = read_models()
+# for i, model in enumerate(models):
+#     print("Creating {} of {}".format(i, len(models)))
+#     create_node(None, {"model_id": model['id']})

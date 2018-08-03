@@ -1,7 +1,6 @@
 from random import randint, shuffle
 
-from src.sync.magellan import get_func_vector
-from services.sync import get_rand_func
+from services.sync import get_rand_func, get_func_vector
 from src.sync.sync import Sync
 
 S = Sync()

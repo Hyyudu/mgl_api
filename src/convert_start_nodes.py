@@ -4,6 +4,8 @@ from random import uniform
 
 from numpy import interp
 
+from src.services.model_crud import add_model
+
 
 def roundTo(val, prec=3):
     return round(val, prec - len(str(int(val))))
@@ -102,7 +104,6 @@ def get_model_params(model1):
     model['level'] = 2 if advance > 0.85 else 1 if advance > 0.45 else 0
 
     for name, arr in est.items():
-
         val = interp(model['params'].get(name, 0), list(arr.keys()), list(arr.values()))
         accuracy = 0.02
         val = roundTo(val * (uniform(1 - accuracy, 1 + accuracy)))
@@ -110,21 +111,10 @@ def get_model_params(model1):
             val = round(val)
         model['params'][name] = val
 
-    print(json.dumps(model))
+    return model
 
 
-model = {
-    "company": "mst",
-    "node_type_code": "radar",
-    "name": "МСТ-КР-2",
-    "size": "medium",
-    "params": {
-        "scan_speed": -1,
-        "scan_range": -1,
-        "drop_speed": 1,
-        "drop_range": 4,
-        "volume": 0,
-    }
-}
 if __name__ == "__main__":
-    get_model_params(model)
+    from start_nodes import start_nodes
+    for model in start_nodes:
+        add_model(None, get_model_params(model))

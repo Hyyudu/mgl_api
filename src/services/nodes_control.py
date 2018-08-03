@@ -1,10 +1,12 @@
+import json
 from collections import OrderedDict, defaultdict
 from random import randint, choice
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from services.db import DB
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list
 from services.model_crud import read_models
+from services.sync import get_rand_func, xor, get_func_vector
 
 
 db = DB()
@@ -127,11 +129,11 @@ def check_password(self, data):
     return {"result": "ok"}
 
 
-def get_all_params(self, data):
+def get_all_params(self, data) -> List[Dict[str, Any]]:
     return db.fetchAll('select * from v_node_parameter_list')
 
 
-def generate_slots(amount):
+def generate_slots(amount: int) -> Dict[str, int]:
     detail_distribution = OrderedDict({
         "sum2": 6,
         "sum3": 8,
@@ -146,7 +148,7 @@ def generate_slots(amount):
     return slots
 
 
-def generate_hull_perks(size):
+def generate_hull_perks(size: int) -> List[Dict[str, Any]]:
     params_to_boost = db.fetchAll('''select node_code, parameter_code, increase_direction 
             from model_has_parameters where hull_boost=1''')
     param_dict = defaultdict(dict)
@@ -167,28 +169,55 @@ def generate_hull_perks(size):
     return out
 
 
-def generate_hull_vectors(model):
-    distinction = model['params'].get('configurability',0) - model['params'].get('brand_lapse',0)
+def generate_hull_vectors(model: Dict) -> List[Dict[str, Any]]:
+    distinction = model['params'].get('configurability', 0) - model['params'].get('brand_lapse', 0)
     node_types = node_type_list()
     params = {
         "size": model.get('size'),
         "level": model.get('level'),
         "company": model.get("company")
     }
-    base_vectors_sql = "select node_code, vector from base_freq_vectors where "+db.construct_where(params)
+    base_vectors_sql = "select node_code, vector from base_freq_vectors where " + db.construct_where(params)
     params = db.construct_params(params)
-    base_vectors = db.fetchDict(base_vectors_sql, params, 'node_code', 'vector')
-    return base_vectors
-
+    vectors = db.fetchDict(base_vectors_sql, params, 'node_code', 'vector')
+    lapse_functions = {}
+    if distinction > 0:
+        lapse = gen_array_by_weight(node_types, distinction)
+        lapse_functions = {system: get_rand_func(size) for system, size in lapse.items()}
+        for system, func in lapse_functions.items():
+            vectors[system] = xor([vectors[system], get_func_vector(func)])
+    ret = [
+        {
+            "node_type_code": system,
+            "vector": vector,
+            "lapse_func": lapse_functions.get(system, ''),
+            # "lapse_vector": get_func_vector(lapse_functions.get(system, ''))
+        }
+        for system, vector in vectors.items()
+    ]
+    return ret
 
 
 def create_hull(model: Dict, node_id: int):
+    node_name = model['name']+"-"+str(node_id)
+    db.update('nodes', {"name": node_name, "id": node_id}, "id=:id")
+    node = db.fetchRow('select * from nodes where id=:id', {"id": node_id})
+    model['params']['configurability'] = round(model['params']['configurability'])
+    model['params']['brand_lapse'] = round(model['params']['brand_lapse'])
     # создать слоты
-    slots = generate_slots(model['params'].get('configurability'))
+    node['slots'] = generate_slots(model['params'].get('configurability'))
+    db.insert('hull_slots', {"hull_id": node_id, "slots_json": json.dumps(node['slots'])})
 
     # создать бонусы/пенальти
-    perks = generate_hull_perks(model['size'])
+    node['perks'] = generate_hull_perks(model['size'])
+    for perk in node['perks']:
+        perk['hull_id'] = node_id
+        db.insert('hull_perks', perk)
 
-    # db.insert('hull_slots', {'hull_id': node_id, 'slots': json.dumps(slots)})
     # создать частотные рисунки
-    vectors = generate_hull_vectors(model)
+    node['vectors'] = generate_hull_vectors(model)
+    for vector in node['vectors']:
+        vector['hull_id'] = node_id
+        db.insert('hull_vectors', vector)
+
+    return node

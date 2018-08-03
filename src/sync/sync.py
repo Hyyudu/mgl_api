@@ -3,9 +3,9 @@ from collections import defaultdict
 from random import randint
 
 from convert_start_nodes import roundTo
-from services.sync import xor, getfunc
+from services.sync import xor, getfunc, get_func_vector
 from src.sync.desync_penalties import desync_penalties
-from src.sync.magellan import get_func_vector, table_view, count_elements
+from src.sync.magellan import table_view, count_elements
 from src.sync.nodes_data import node_names, node_params, param_names
 
 
