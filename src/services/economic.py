@@ -1,5 +1,6 @@
 from services.db import DB
-from services.misc import api_fail
+from services.misc import api_fail, api_ok
+from services.model_crud import get_model_upkeep_price
 
 
 db = DB()
@@ -51,6 +52,30 @@ def read_pumps(self, params):
         pumps[res['pump_id']]['resources'][res['resource_code']] = res['value']
     return pumps
 
+
+def stop_pump(self, params):
+    """ params {pump_id: int} """
+    db.query("update pumps set date_end=Now() where id=:pump_id", params, need_commit=True)
+    return api_ok()
+
+
 def resource_list(self, params):
     """ no params """
     return db.fetchAll('select * from resources')
+
+
+def add_node_upkeep_pump(node_id):
+    model = db.fetchRow("""select m.id, m.name, m.company
+from models m join nodes n on m.id = n.model_id
+where n.id = :node_id""", {"node_id": node_id})
+    upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
+    pump = {
+        "company": model['company'],
+        "section": "nodes",
+        "entity_id": node_id,
+        "comment": "Поддержка узла {} модели {}".format(node_id, model['name']),
+        "is_income": 0,
+        "resources": upkeep_price
+    }
+    add_pump(None, pump)
+    return pump

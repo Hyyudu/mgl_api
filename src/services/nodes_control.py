@@ -4,9 +4,9 @@ from random import randint, choice
 from typing import Dict, Any, List
 
 from services.db import DB
-from services.economic import add_pump
+from services.economic import add_node_upkeep_pump
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
-from services.model_crud import read_models, get_model_upkeep_price
+from services.model_crud import read_models
 from services.sync import get_rand_func, xor, get_func_vector
 
 
@@ -34,6 +34,7 @@ def create_node(self, params):
         'premium_expires': None if not existing_nodes else model['premium_expires']
     }
     node_id = self.db.insert('nodes', insert_data)
+    add_node_upkeep_pump(node_id)
     if model['node_type_code'] != 'hull':
         result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
@@ -230,18 +231,3 @@ def create_hull(model: Dict, node_id: int):
     return node
 
 
-def add_node_upkeep_pump(node_id):
-    model = db.fetchRow("""select m.id, m.name, m.company
-from models m join nodes n on m.id = n.model_id
-where n.id = :node_id""", {"node_id": node_id})
-    upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
-    pump = {
-        "company": model['company'],
-        "section": "nodes",
-        "entity_id": node_id,
-        "comment": "Поддержка узла {} модели {}".format(node_id, model['name']),
-        "is_income": 0,
-        "resources": upkeep_price
-    }
-    add_pump(None, pump)
-    return pump
