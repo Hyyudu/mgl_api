@@ -1,5 +1,5 @@
-from collections import Counter
-from random import choices
+from collections import  defaultdict
+from random import choices, randint
 
 from services.db import DB
 
@@ -34,12 +34,18 @@ def api_ok(**kwargs):
     return res
 
 
-def gen_array_by_weight(array, cnt=1):
+def gen_array_by_weight(array, cnt=1, min_step=1, max_step=1):
+    left = cnt
     if type(array) != dict:
         array = dict.fromkeys(array, 1)
     sumvals = sum(array.values())
-    generated = choices(list(array.keys()), k=cnt, weights=[i / sumvals for i in array.values()])
-    ret = dict(Counter(generated))
+    ret = defaultdict(int)
+    while left > 0:
+        choice = choices(list(array.keys()), k=1, weights=[i / sumvals for i in array.values()])[0]
+        amount = min(left, randint(min_step, max_step))
+        ret[choice] += amount
+        left -= amount
+    ret = dict(ret)
     return ret if cnt > 1 else list(ret.keys())[0]
 
 

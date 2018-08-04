@@ -6,7 +6,7 @@ from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
 from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight, mcc_set_all_crew
 from services.misc import url_params
-from services.model_crud import add_model, read_model, read_models, delete_model
+from services.model_crud import add_model, read_model, read_models, delete_model, get_model_upkeep_price
 from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
     reserve_node,
@@ -34,6 +34,7 @@ app_urls = [
     url("/model/read", read_model),
     url("/model/read_all", read_models),
     url("/model/delete", delete_model),
+    url("/model/get_upkeep_price", get_model_upkeep_price),
     url("/node/create", create_node),
     url("/node/set_password", set_password),
     url("/node/check_password", check_password),

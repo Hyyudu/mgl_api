@@ -68,6 +68,7 @@ def apply_companies_perks(model):
 
     return model
 
+
 @inject_db
 def read_models(self=None, params=None):
     """ params = {<name>: str, <node_type_code>: str/list[str], <level>: int/list[int], <size>: str/list[str],
@@ -125,3 +126,9 @@ def calc_weight(node_type: str, size: str, volume: float) -> float:
     hull_weight_add = {"small": 0, "medium": 900, "large": 3000}
     weight = volume * densities[node_type]
     return round(weight + hull_weight_add[size] if node_type == 'hull' else weight * node_weight_multiplier)
+
+
+def get_model_upkeep_price(self, params):
+    """ params: {"model_id": int} """
+    return db.fetchDict('select resource_code, amount from models_upkeep where model_id=:model_id',
+                        params, 'resource_code', 'amount')

@@ -298,7 +298,7 @@ start_nodes = [
     },
     {
         "company": "kkg",
-        "size": "madium",
+        "size": "medium",
         "node_type_code": "warp_engine",
         "name": "Fortus-M",
         "params": {}
@@ -422,9 +422,9 @@ start_nodes = [
     },
     {
         "company": "mat",
-        "size": "?",
+        "size": "medium",
         "node_type_code": "scaner",
-        "name": "?",
+        "name": "МарсСкан",
         "params": {}
     },
     {

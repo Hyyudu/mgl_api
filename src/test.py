@@ -1,17 +1,6 @@
 import json
 
-
-def decor(func):
-    def wrapper(a, b):
-        if a is None:
-            a =5
-        return func(a,b)
-
-    return wrapper
+from services.misc import gen_array_by_weight
 
 
-@decor
-def foo(a=None, b=None):
-    return [a,b]
-
-print(foo(None,2))
+print(gen_array_by_weight(['a','b','c','d'], 33, min_step=3, max_step=5))

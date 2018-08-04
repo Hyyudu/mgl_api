@@ -1,13 +1,13 @@
-import json
+from collections import defaultdict
 from copy import deepcopy
-from random import uniform
-from re import escape
+from random import uniform, shuffle
 
 from numpy import interp
-from services.misc import DBHolder
+from services.db import DB
+from services.misc import gen_array_by_weight
 from services.nodes_control import create_node
-
 from src.services.model_crud import add_model
+from start_nodes import start_nodes
 
 
 def roundTo(val, prec=3):
@@ -118,11 +118,62 @@ def get_model_params(model1):
 
 
 if __name__ == "__main__" and False:
-    from start_nodes import start_nodes
-    for model in start_nodes:
-        if  model['node_type_code'] == 'lss':
+    """ Создание начальных моделей и узлов """
+    for i, model in enumerate(start_nodes):
+        if i >= 73:
+            print("{} of {}. {} - {}".format(i, len(start_nodes), model['company'], model['name']))
             ret = add_model(None, get_model_params(model))
             create_node(None, {"model_id": ret['data']['id']})
 
-if __name__ == "__main__":
-    bounds = {system: None for system in estimates}
+if __name__ == "__main__" and False:
+    """ Расчет затрат на апкип начальных узлов """
+    bounds = {}
+    resources = ['aluminium', 'iron', 'magnesium', 'nickel', 'titan']
+    for system, params in estimates.items():
+        bounds[system] = {"min": 0, "max": 0}
+        for param, diap in params.items():
+            if system == 'hull' and param == 'volume':
+                bounds[system]["min"] += -3
+                bounds[system]["max"] += 5
+            else:
+                bounds[system]["min"] += min(diap.keys())
+                bounds[system]["max"] += max(diap.keys())
+    for system, vals in bounds.items():
+        vals['len'] = vals['max'] - vals['min']
+        vals['zero_percent'] = round(100 * (-vals['min']) / vals['len'])
+    # print(json.dumps(bounds, indent=4))
+    company_expenses = defaultdict(dict)
+    for node in start_nodes:
+        bound = bounds[node['node_type_code']]
+        percent = round(100 * (sum(node['params'].values()) - bound['min']) / bound['len'])
+        company_expenses[node['company']][node['name']] = round(percent * 1.86)
+    for company, nodes in company_expenses.items():
+        total = dict.fromkeys(resources, 0)
+        for node_name, amount in nodes.items():
+            hereres = resources[:]
+            shuffle(hereres)
+            hereres = hereres[1:]
+            nodes[node_name] = gen_array_by_weight(hereres, amount, round(amount / 25), round(amount / 15))
+            for key, val in nodes[node_name].items():
+                total[key] += val
+        nodes['total'] = total
+
+    if all([max(vals['total'].values()) < 500 for vals in company_expenses.values()]):
+        db = DB()
+        model_ids = db.fetchDict('select name, id from models', {}, 'name', 'id')
+        ins_data = []
+        for company, models in company_expenses.items():
+            for model, expences in models.items():
+                if model != 'total':
+                    for res, amount in expences.items():
+                        ins_data.append({
+                            "model_id": model_ids[model],
+                            "resource_code": res,
+                            "amount": amount,
+                        })
+        print(ins_data)
+        db.insert('models_upkeep', ins_data)
+    # for company, nodes in company_expenses.items():
+    #     print(company)
+    #     for node_name, price in nodes.items():
+    #         print("      ", node_name, ":", price)

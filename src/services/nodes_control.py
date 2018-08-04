@@ -4,12 +4,14 @@ from random import randint, choice
 from typing import Dict, Any, List
 
 from services.db import DB
+from services.economic import add_pump
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
-from services.model_crud import read_models
+from services.model_crud import read_models, get_model_upkeep_price
 from services.sync import get_rand_func, xor, get_func_vector
 
 
 db = DB()
+
 
 @inject_db
 def create_node(self, params):
@@ -160,12 +162,17 @@ def generate_hull_perks(size: int) -> List[Dict[str, Any]]:
         perks = [1, -1, -1]
     else:
         perks = [1, -1] if randint(0, 1) else [1, 1, -1, -1]
-    out = []
-    for dir in perks:
-        node_type_code = choice(list(param_dict.keys()))
-        parameter = choice(list(param_dict[node_type_code].keys()))
-        value = (20 if randint(1, 4) == 4 else 10) * dir * param_dict[node_type_code][parameter]
-        out.append({"node_type_code": node_type_code, 'parameter_code': parameter, 'value': value})
+    while True:
+        out = []
+        outset = []
+        for dir in perks:
+            node_type_code = choice(list(param_dict.keys()))
+            parameter = choice(list(param_dict[node_type_code].keys()))
+            value = (20 if randint(1, 4) == 4 else 10) * dir * param_dict[node_type_code][parameter]
+            out.append({"node_type_code": node_type_code, 'parameter_code': parameter, 'value': value})
+            outset.append(node_type_code + "." + parameter)
+        if len(outset) == len(set(outset)):
+            break
     return out
 
 
@@ -199,7 +206,7 @@ def generate_hull_vectors(model: Dict) -> List[Dict[str, Any]]:
 
 
 def create_hull(model: Dict, node_id: int):
-    node_name = model['name']+"-"+str(node_id)
+    node_name = model['name'] + "-" + str(node_id)
     db.update('nodes', {"name": node_name, "id": node_id}, "id=:id")
     node = db.fetchRow('select * from nodes where id=:id', {"id": node_id})
     model['params']['configurability'] = round(model['params']['configurability'])
@@ -221,3 +228,20 @@ def create_hull(model: Dict, node_id: int):
         db.insert('hull_vectors', vector)
 
     return node
+
+
+def add_node_upkeep_pump(node_id):
+    model = db.fetchRow("""select m.id, m.name, m.company
+from models m join nodes n on m.id = n.model_id
+where n.id = :node_id""", {"node_id": node_id})
+    upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
+    pump = {
+        "company": model['company'],
+        "section": "nodes",
+        "entity_id": node_id,
+        "comment": "Поддержка узла {} модели {}".format(node_id, model['name']),
+        "is_income": 0,
+        "resources": upkeep_price
+    }
+    add_pump(None, pump)
+    return pump
