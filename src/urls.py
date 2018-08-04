@@ -5,12 +5,14 @@ from handlers.PingHandler import (
 from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
 from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight, mcc_set_all_crew
+from services.misc import url_params
 from services.model_crud import add_model, read_model, read_models, delete_model
 from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
     reserve_node,
 )
 from services.users import read_users_from_alice, users_list
+from tornado.web import RequestHandler
 
 
 def url(uri, func, kwargs=None):
@@ -20,6 +22,9 @@ def url(uri, func, kwargs=None):
     return (uri, ApiHandler, init_params)
 
 
+class UrlsHandler(RequestHandler):
+    def get(self):
+        self.write("<xmp>"+url_params(app_urls)+"</xmp>")
 
 app_urls = [
     url("/get-params", get_all_params),
@@ -51,4 +56,8 @@ app_urls = [
     url("/boosts/use", boost_use),
 
     ("/ping", PingHandler),
+    ("/urls_params", UrlsHandler)
 ]
+
+
+

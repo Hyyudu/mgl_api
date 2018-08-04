@@ -114,13 +114,13 @@ def get_my_reserved_nodes(self, params) -> Dict[str, Any]:
 
 
 def set_password(self, data):
-    """ {node_id: int, password: string} """
+    """ params: {node_id: int, password: string} """
     affected = db.update('nodes', {"id": data.get('node_id', 0), 'password': data.get('password', '')}, 'id=:id')
     return {"result": "ok", "affected": affected}
 
 
 def check_password(self, data):
-    """ {node_id: int, password: string} """
+    """ params: {node_id: int, password: string} """
     row = db.fetchRow('select id, password from nodes where id=:node_id', data)
     if not row:
         return api_fail("Неверный ID узла: {}".format(data.get('node_id', '')))

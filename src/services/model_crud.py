@@ -6,7 +6,7 @@ db = DB()
 
 
 def add_model(self, data):
-    """ data: {<id>, name, level, description, size, node_type_code, company, {params}} """
+    """ params: {<id>, name, level, description, size, node_type_code, company, {params}} """
     avail_vendors = db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
@@ -31,6 +31,7 @@ def add_model(self, data):
 
 
 def read_model(self, data):
+    """ params = {id: int} """
     model = db.fetchRow('select * from models where id=:id', data)
     if not model:
         return api_fail("Model with id {} not found".format(data.get('id')))
@@ -41,6 +42,7 @@ def read_model(self, data):
 
 
 def delete_model(self, data):
+    """ params = {id: int} """
     db.query('delete from nodes where model_id=:id', data, need_commit=True)
     db.query('delete from model_parameters where model_id=:id', data, need_commit=True)
     deleted = db.query('delete from models where id=:id', data, need_commit=True)
@@ -68,6 +70,8 @@ def apply_companies_perks(model):
 
 @inject_db
 def read_models(self=None, params=None):
+    """ params = {<name>: str, <node_type_code>: str/list[str], <level>: int/list[int], <size>: str/list[str],
+        <company>: str/list[str]} """
     params = params or {}
     sql = "SELECT * from models WHERE 1=1"
     add_where = db.construct_where(params)

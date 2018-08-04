@@ -6,7 +6,7 @@ db = DB()
 
 
 def add_pump(self, data):
-    """ data: {company, section, comment, is_income, amount, resources {code: value} } """
+    """ params: {company, section, comment, is_income, amount, resources {code: value} } """
     avail_vendors = db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
@@ -31,6 +31,7 @@ def add_pump(self, data):
 
 
 def read_pumps(self, params):
+    """ params= {<company>: str/list[str], <section>: str/list[str], <is_income>: 1/0 }"""
     sql = """SELECT * from pumps WHERE date_begin < Now()
         and (date_end is null or date_end = 0 or date_end > Now() )
     """
@@ -50,5 +51,6 @@ def read_pumps(self, params):
         pumps[res['pump_id']]['resources'][res['resource_code']] = res['value']
     return pumps
 
-def resource_list(self, data):
+def resource_list(self, params):
+    """ no params """
     return db.fetchAll('select * from resources')

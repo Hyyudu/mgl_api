@@ -53,4 +53,15 @@ def inject_db(func):
         if not obj:
             obj = DBHolder()
         return func(obj, params)
+    wrapper.__doc__ = func.__doc__
     return wrapper
+
+
+def url_params(app_urls):
+    ret = ""
+    for item in app_urls:
+        ret += item[0] + "\n"
+        if len(item) > 2:
+            ret += (item[2].get('func').__doc__ or "")
+        ret += "\n\n"
+    return ret

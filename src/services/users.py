@@ -33,4 +33,5 @@ def read_users_from_alice(self, params):
 
 
 def users_list(self, params):
+    """ no params """
     return db.fetchAll('select id, name from users where is_active=1 order by 1')

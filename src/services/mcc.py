@@ -6,6 +6,7 @@ db = DB()
 
 
 def mcc_dashboard(self, params):
+    """ no params"""
     flights = self.db.fetchAll("""
     select * from flights 
     where status in ('prepare', 'freight')""", associate='id')
