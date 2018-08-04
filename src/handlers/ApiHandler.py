@@ -1,6 +1,7 @@
 import json
 from json import JSONDecodeError
 
+from services.db import DB
 from services.misc import api_fail
 from tornado.web import RequestHandler
 
@@ -11,6 +12,7 @@ class ApiHandler(RequestHandler):
     def initialize(self, **kwargs):
         for key, val in kwargs.items():
             setattr(self, key, val)
+        self.db = DB()
 
     def get_exception_text(self, e):
         return ''

@@ -1,5 +1,5 @@
 from handlers.ApiHandler import ApiHandler
-from handlers.ModelsHandler import (
+from handlers.PingHandler import (
     PingHandler,
 )
 from services.boosts import boosts_read, boost_use

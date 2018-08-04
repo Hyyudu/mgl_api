@@ -73,17 +73,17 @@ def read_models(self=None, params=None):
     add_where = db.construct_where(params)
     if add_where:
         sql += " and " + add_where
-    params = db.construct_params(params)
-    models = db.fetchAll(sql, params)
+    params = self.db.construct_params(params)
+    models = self.db.fetchAll(sql, params)
     if not models:
         return []
 
     ids = {"model_id": [model['id'] for model in models]}
-    params_where = db.construct_where(ids)
-    ids = db.construct_params(ids)
-    all_params = db.fetchAll("select * from v_model_params where is_hidden=0 and " + params_where, ids)
+    params_where = self.db.construct_where(ids)
+    ids = self.db.construct_params(ids)
+    all_params = self.db.fetchAll("select * from v_model_params where is_hidden=0 and " + params_where, ids)
 
-    all_nodes = db.fetchAll("""
+    all_nodes = self.db.fetchAll("""
         select id, model_id, name, az_level, status_code, date_created,
             if (password is not null and (
                 premium_expires = 0

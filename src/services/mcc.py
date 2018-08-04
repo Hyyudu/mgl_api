@@ -6,14 +6,14 @@ db = DB()
 
 
 def mcc_dashboard(self, params):
-    flights = db.fetchAll("""
+    flights = self.db.fetchAll("""
     select * from flights 
     where status in ('prepare', 'freight')""", associate='id')
     flight_ids = tuple(flights.keys())
     for flight in flights.values():
         flight['departure'] = modernize_date(flight['departure'])
         flight['crew'] = []
-    crews = db.fetchAll("""
+    crews = self.db.fetchAll("""
     select f.flight_id, f.role, u.name, u.id user_id
 from flight_crews f 
 join users u on f.user_id = u.id
