@@ -1,8 +1,11 @@
 import json
 from copy import deepcopy
 from random import uniform
+from re import escape
 
 from numpy import interp
+from services.misc import DBHolder
+from services.nodes_control import create_node
 
 from src.services.model_crud import add_model
 
@@ -86,8 +89,8 @@ estimates = {
     "lss": {
         "thermal_def": {-3: 4, 0: 10, 5: 20},  # термическая защита
         "co2_level": {-2: 50, 0: 100, 4: 200},  # поддержание уровня CO2
-        "air_volume": {0: 0},  # поддержание давления
-        "air_speed": {0: 0},  # поддержание давления
+        "air_volume": {-2: 2050, 0: 2200, 4: 2500},  # поддержание давления
+        "air_speed": {-3: 2, 5: 2},  # поддержание давления
         "lightness": {-1: 0, 1: 20, 2: 36.5},  # уровень освещения
         "volume": {-1: 273, 0: 240, 2: 208},  # масса/объем
     }
@@ -114,7 +117,12 @@ def get_model_params(model1):
     return model
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and False:
     from start_nodes import start_nodes
     for model in start_nodes:
-        add_model(None, get_model_params(model))
+        if  model['node_type_code'] == 'lss':
+            ret = add_model(None, get_model_params(model))
+            create_node(None, {"model_id": ret['data']['id']})
+
+if __name__ == "__main__":
+    bounds = {system: None for system in estimates}

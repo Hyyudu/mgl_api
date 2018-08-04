@@ -4,14 +4,14 @@ from random import randint, choice
 from typing import Dict, Any, List
 
 from services.db import DB
-from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list
+from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
 from services.model_crud import read_models
 from services.sync import get_rand_func, xor, get_func_vector
 
 
 db = DB()
 
-
+@inject_db
 def create_node(self, params):
     """ params: {model_id: int, password: str} """
     model_id = params.get('model_id')
@@ -23,7 +23,7 @@ def create_node(self, params):
     if len(model) < 0:
         raise Exception("No model with id {}".format(model_id))
     model = model[0]
-    existing_nodes = db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
+    existing_nodes = self.db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
     insert_data = {
         "model_id": model_id,
         "name": "",
@@ -31,9 +31,9 @@ def create_node(self, params):
         "password": params.get('password', ''),
         'premium_expires': None if not existing_nodes else model['premium_expires']
     }
-    node_id = db.insert('nodes', insert_data)
+    node_id = self.db.insert('nodes', insert_data)
     if model['node_type_code'] != 'hull':
-        result = db.fetchRow('select * from nodes where id=:id', {"id": node_id})
+        result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
     else:
         return create_hull(model, node_id)

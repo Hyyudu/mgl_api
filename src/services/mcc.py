@@ -45,6 +45,16 @@ def mcc_add_passenger(self, params):
     return api_ok()
 
 
+def mcc_set_all_crew(self, params):
+    """ params = {"flight_id": int, "crew": [{"role": "pilot", "user_id": 1}, {"role": "radist", "user_id": 2}] }"""
+    if not db.fetchRow('select * from flights where id=:flight_id', params):
+        return api_fail("Полет с указанным номером не существует")
+    db.query("delete from flight_crews where flight_id=:flight_id", params, need_commit=True)
+    for item in params['crew']:
+        item['flight_id'] = params['flight_id']
+    db.insert('flight_crews', params['crew'])
+    return api_ok(crew=params['crew'])
+
 def mcc_remove(self, params):
     """ params = {"flight_id": 1, "user_id": 2} """
     deleted = db.query("delete from flight_crews where flight_id = :flight_id and user_id = :user_id",
@@ -54,5 +64,5 @@ def mcc_remove(self, params):
 
 def mcc_add_flight(self, params):
     """ params = {"departure": "2018-08-16 15:00:00", "dock": 2} """
-    db.insert('flights', params)
-    return api_ok()
+    params['flight_id'] = db.insert('flights', params)
+    return api_ok(flight=params)

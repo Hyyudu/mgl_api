@@ -1,5 +1,5 @@
 from services.db import DB
-from services.misc import api_fail
+from services.misc import api_fail, inject_db
 
 
 db = DB()
@@ -66,7 +66,7 @@ def apply_companies_perks(model):
 
     return model
 
-
+@inject_db
 def read_models(self=None, params=None):
     params = params or {}
     sql = "SELECT * from models WHERE 1=1"

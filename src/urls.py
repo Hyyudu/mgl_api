@@ -4,7 +4,7 @@ from handlers.PingHandler import (
 )
 from services.boosts import boosts_read, boost_use
 from services.economic import read_pumps, resource_list, add_pump
-from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight
+from services.mcc import mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight, mcc_set_all_crew
 from services.model_crud import add_model, read_model, read_models, delete_model
 from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
@@ -46,6 +46,7 @@ app_urls = [
         "get_exception_text": lambda self, e: "В это время в этом доке уже намечен полет" if e.errno == 1062 else None
     }),
     url("/mcc/remove", mcc_remove),
+    url("/mcc/set_all_crew", mcc_set_all_crew),
     url("/boosts/read", boosts_read),
     url("/boosts/use", boost_use),
 

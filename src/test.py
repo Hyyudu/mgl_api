@@ -1,9 +1,17 @@
 import json
 
-from services.nodes_control import create_node
-from services.model_crud import read_models
 
-# models = read_models()
-# for i, model in enumerate(models):
-#     print("Creating {} of {}".format(i, len(models)))
-#     create_node(None, {"model_id": model['id']})
+def decor(func):
+    def wrapper(a, b):
+        if a is None:
+            a =5
+        return func(a,b)
+
+    return wrapper
+
+
+@decor
+def foo(a=None, b=None):
+    return [a,b]
+
+print(foo(None,2))

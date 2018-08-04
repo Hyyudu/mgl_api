@@ -1,9 +1,16 @@
-from random import choices
 from collections import Counter
+from random import choices
+
 from services.db import DB
 
 
 db = DB()
+
+
+class DBHolder():
+    def __init__(self):
+        self.db = DB()
+
 
 def node_type_list(without_hull=True):
     ret = db.fetchColumn("select code from node_types")
@@ -31,7 +38,7 @@ def gen_array_by_weight(array, cnt=1):
     if type(array) != dict:
         array = dict.fromkeys(array, 1)
     sumvals = sum(array.values())
-    generated =choices(list(array.keys()), k=cnt, weights=[i/sumvals for i in array.values()])
+    generated = choices(list(array.keys()), k=cnt, weights=[i / sumvals for i in array.values()])
     ret = dict(Counter(generated))
     return ret if cnt > 1 else list(ret.keys())[0]
 
@@ -39,3 +46,11 @@ def gen_array_by_weight(array, cnt=1):
 def group(lst, n):
     """ Группировка элементов последовательности по count элементов """
     return [lst[i:i + n] for i in range(0, len(lst), n)]
+
+
+def inject_db(func):
+    def wrapper(obj, params):
+        if not obj:
+            obj = DBHolder()
+        return func(obj, params)
+    return wrapper
