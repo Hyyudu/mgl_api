@@ -20,7 +20,7 @@ def node_type_list(without_hull=True):
 
 
 def modernize_date(date):
-    return date.replace("2018", "2435")
+    return date.replace("2018", "2349")
 
 
 def api_fail(msg):
@@ -71,3 +71,7 @@ def url_params(app_urls):
             ret += (item[2].get('func').__doc__ or "")
         ret += "\n\n"
     return ret
+
+
+def roundTo(val, prec=3):
+    return round(val, prec - len(str(int(val))))

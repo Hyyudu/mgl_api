@@ -4,14 +4,10 @@ from random import uniform, shuffle
 
 from numpy import interp
 from services.db import DB
-from services.misc import gen_array_by_weight
+from services.misc import gen_array_by_weight, roundTo
 from services.nodes_control import create_node
 from src.services.model_crud import add_model
 from start_nodes import start_nodes
-
-
-def roundTo(val, prec=3):
-    return round(val, prec - len(str(int(val))))
 
 
 estimates = {

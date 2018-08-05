@@ -1,8 +1,12 @@
 import re
+from collections import Counter
 from itertools import product
 from random import shuffle, choice, randint
 from typing import List
-from collections import Counter
+
+from services.desync_penalties import desync_penalties
+from services.misc import inject_db, roundTo
+from services.model_crud import read_models
 
 
 def xor(freq_vectors: List[str]) -> str:
@@ -20,14 +24,14 @@ def get_rand_func(size):
     # Если функция тождественно сводится к 0 - перезапуск
     if '+' not in ret and max(Counter(ret.lower()).values()) > 1:
         return get_rand_func(size)
-    braces = randint(0, 2)+size > 5
+    braces = randint(0, 2) + size > 5
     if braces:
         while True:
-            br_from = randint(0, len(ret)-2)
-            br_to = randint(br_from, len(ret)-1)
+            br_from = randint(0, len(ret) - 2)
+            br_to = randint(br_from, len(ret) - 1)
             if not ret[br_from:].startswith('+') and not ret[:br_to].endswith('+') and (br_to - br_from > 1):
                 break
-        ret = ret[:br_from]+ "("+ret[br_from:br_to] + ")" + ret[br_to:]
+        ret = ret[:br_from] + "(" + ret[br_from:br_to] + ")" + ret[br_to:]
     return ret
 
 
@@ -66,7 +70,31 @@ def getfunc(functext):
 
 def get_func_vector(func):
     if func == "":
-        return "0"*16
+        return "0" * 16
     if not callable(func):
         func = getfunc(func)
     return "".join([str(int(func(A, B, C, D))) for A, B, C, D in product([0, 1], [0, 1], [0, 1], [0, 1])][::-1])
+
+
+@inject_db
+def get_node_vector(self, params):
+    """ params: {node_id: int} """
+    return self.db.fetchOne("""
+    select fv.vector
+from base_freq_vectors fv
+join models m on fv.company = m.company and fv.node_code = m.node_type_code 
+	and fv.`level` = m.`level` and fv.size = m.size
+join nodes n on n.model_id = m.id
+where n.id = :node_id""", params)
+
+
+def get_node_params_with_desync(vector, params=None, node_id=None, node_type_code=None):
+    if not params or not node_type_code:
+        model = read_models(None, {"node_id": node_id})[0]
+        params = model['params']
+        node_type_code = model['node_type_code']
+    for param, val in params.items():
+        func = desync_penalties[node_type_code].get(param, lambda s: 0)
+        percent = 100 + func(vector)
+        params[param] = roundTo(val * percent / 100)
+    return params

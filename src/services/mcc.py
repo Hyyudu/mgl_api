@@ -1,5 +1,5 @@
 from services.db import DB
-from services.misc import modernize_date, api_ok, api_fail
+from services.misc import modernize_date, api_ok, api_fail, inject_db
 
 
 db = DB()
@@ -56,6 +56,7 @@ def mcc_set_all_crew(self, params):
     db.insert('flight_crews', params['crew'])
     return api_ok(crew=params['crew'])
 
+
 def mcc_remove(self, params):
     """ params = {"flight_id": 1, "user_id": 2} """
     deleted = db.query("delete from flight_crews where flight_id = :flight_id and user_id = :user_id",
@@ -67,3 +68,24 @@ def mcc_add_flight(self, params):
     """ params = {"departure": "2018-08-16 15:00:00", "dock": 2} """
     params['flight_id'] = db.insert('flights', params)
     return api_ok(flight=params)
+
+
+@inject_db
+def get_nearest_flight_for_role(self, params):
+    """ params: {user_id: int, role: string}  """
+    flight = self.db.fetchRow("""
+        select f.* from flights f
+        join flight_crews fc on f.id = fc.flight_id
+        where fc.role=:role and fc.user_id = :user_id
+        and departure > Now()
+        order by departure asc 
+        limit 1""", params)
+    return flight
+
+
+def get_nearest_flight_for_supercargo(self, user_id):
+    return get_nearest_flight_for_role(self, {"user_id": user_id, "role": 'supercargo'})
+
+
+def get_nearest_flight_for_engineer(self, user_id):
+    return get_nearest_flight_for_role(self, {"user_id": user_id, "role": 'engineer'})

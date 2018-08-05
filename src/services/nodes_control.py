@@ -5,9 +5,10 @@ from typing import Dict, Any, List
 
 from services.db import DB
 from services.economic import add_node_upkeep_pump
+from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
 from services.model_crud import read_models
-from services.sync import get_rand_func, xor, get_func_vector
+from services.sync import get_rand_func, xor, get_func_vector, get_node_vector, get_node_params_with_desync
 
 
 db = DB()
@@ -42,20 +43,9 @@ def create_node(self, params):
         return create_hull(model, node_id)
 
 
-def get_nearest_flight_for_supercargo(user_id):
-    flight = db.fetchRow("""
-        select f.* from flights f
-        join flight_crews fc on f.id = fc.flight_id
-        where fc.role='supercargo' and fc.user_id = :user_id
-        and departure > Now()
-        order by departure asc 
-        limit 1""", {"user_id": user_id})
-    return flight
-
-
 def check_reserve_node(data):
     """ data = {user_id: int, node_id: int, password: str} """
-    flight = get_nearest_flight_for_supercargo(data.get('user_id', 0))
+    flight = get_nearest_flight_for_supercargo(None, data.get('user_id', 0))
     if not flight:
         return api_fail("Вы не назначены ни на какой полет в качестве суперкарго")
     flight['departure'] = modernize_date(flight['departure'])
@@ -82,31 +72,40 @@ def check_reserve_node(data):
 
 def reserve_node(self, params):
     """ params = {"user_id": int, "node_id": int, "password": str} """
-    reserve_result = check_reserve_node(params)
-    if 'errors' in reserve_result:
-        return reserve_result
-    reserved_data = db.fetchRow("""
+    build_item = check_reserve_node(params)
+    if 'errors' in build_item:
+        return build_item
+    already_reserved = db.fetchRow("""
     select m.node_type_code, b.node_id
 from nodes n
 join models m on n.model_id = m.id
 left join builds b on b.node_type_code = m.node_type_code and b.flight_id=:flight_id
-where n.id=:node_id""", reserve_result)
-    reserve_result['node_type_code'] = reserved_data['node_type_code']
-    if reserved_data.get('node_id'):
-        db.query('update nodes set status_code="free" where id=:node_id', reserved_data)
+where n.id=:node_id""", build_item)
+    build_item['node_type_code'] = already_reserved['node_type_code']
+    if already_reserved.get('node_id'):
+        # Убираем ранее зарезервированный нод
+        db.query('update nodes set status_code="free" where id=:node_id', already_reserved)
         db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
-                 reserve_result)
-    db.insert('builds', reserve_result)
+                 build_item)
+    if build_item['node_type_code'] != 'hull':
+        # рассчитываем вектора
+        build_item['vector'] = build_item['total'] = get_node_vector(None, params)
+        build_item['correction'] = "0"*16
+        build_item['params_json'] = json.dumps(get_node_params_with_desync(
+            vector=build_item['vector'],
+            node_id=params['node_id']
+        ))
+    db.insert('builds', build_item)
     db.query("""update nodes 
         set status_code="reserved", 
             connected_to_hull_id = null 
-        where id=:node_id""", reserve_result, need_commit=True)
+        where id=:node_id""", build_item, need_commit=True)
     return {"status": "ok"}
 
 
 def get_my_reserved_nodes(self, params) -> Dict[str, Any]:
     """ params: {"user_id": int} """
-    flight = get_nearest_flight_for_supercargo(params.get('user_id'))
+    flight = get_nearest_flight_for_supercargo(None, params.get('user_id'))
     if not flight:
         return api_fail("Суперкарго {} не назначен ни на какой полет".format(params.get('user_id')))
     nodes = db.fetchDict(

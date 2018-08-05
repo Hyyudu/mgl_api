@@ -1,5 +1,5 @@
 from services.db import DB
-from services.misc import api_fail, inject_db
+from services.misc import api_fail, inject_db, roundTo
 
 
 db = DB()
@@ -52,7 +52,7 @@ def delete_model(self, data):
 def apply_companies_perks(model):
     if model['company'] == 'pre':
         if model['node_type_code'] == 'warp_engine':
-            model['params']['distort_level'] *= 1.1
+            model['params']['distort_level'] *= 1.12
         if model['node_type_code'] != 'hull':
             model['params']['volume'] *= 0.92
         else:
@@ -66,19 +66,31 @@ def apply_companies_perks(model):
             for field in ['thermal_def', 'co2_level', 'air_volume', 'air_speed']:
                 model['params'][field] *= 1.09
 
+    elif model['company'] == 'mat':
+        node_type = model['node_type_code']
+        if node_type == 'march_engine':
+            model['params']['thrust'] *= 1.12
+        elif node_type == 'shunter':
+            model['params']['strafe'] *= 1.12
+        elif node_type == 'fuel_tank':
+            model['params']['fuel_volume'] *= 1.12
+
     return model
 
 
 @inject_db
 def read_models(self=None, params=None):
     """ params = {<name>: str, <node_type_code>: str/list[str], <level>: int/list[int], <size>: str/list[str],
-        <company>: str/list[str]} """
+        <company>: str/list[str], <node_id>: int} """
     params = params or {}
-    sql = "SELECT * from models WHERE 1=1"
-    add_where = db.construct_where(params)
-    if add_where:
-        sql += " and " + add_where
-    params = self.db.construct_params(params)
+    sql = "SELECT m.* from models m "
+    if 'node_id' in params:
+        sql += " join nodes n on n.model_id = m.id WHERE n.id = :node_id"
+    else:
+        add_where = db.construct_where(params)
+        if add_where:
+            sql += " where " + add_where
+        params = self.db.construct_params(params)
     models = self.db.fetchAll(sql, params)
     if not models:
         return []
@@ -106,6 +118,7 @@ def read_models(self=None, params=None):
             model['size'],
             model['params']['volume']
         )
+        model['params'] = {key: roundTo(val) for key, val in model['params'].items()}
         model['nodes'] = [node for node in all_nodes if node['model_id'] == model['id']]
     return models
 
@@ -125,7 +138,7 @@ def calc_weight(node_type: str, size: str, volume: float) -> float:
     node_weight_multiplier = 1.2
     hull_weight_add = {"small": 0, "medium": 900, "large": 3000}
     weight = volume * densities[node_type]
-    return round(weight + hull_weight_add[size] if node_type == 'hull' else weight * node_weight_multiplier)
+    return roundTo(weight + hull_weight_add[size] if node_type == 'hull' else weight * node_weight_multiplier)
 
 
 def get_model_upkeep_price(self, params):

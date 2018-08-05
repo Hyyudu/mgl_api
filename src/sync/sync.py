@@ -2,9 +2,10 @@ import json
 from collections import defaultdict
 from random import randint
 
-from convert_start_nodes import roundTo
-from services.sync import xor, getfunc, get_func_vector
-from src.sync.desync_penalties import desync_penalties
+import requests
+from config import SERVICE_URL
+from services.misc import api_fail
+from src.services.sync import xor, getfunc, get_func_vector
 from src.sync.magellan import table_view, count_elements
 from src.sync.nodes_data import node_names, node_params, param_names
 
@@ -17,11 +18,27 @@ class Sync:
         self.corrections = {}
         self.slots = {}
 
+    def send_post(self, url, data):
+        try:
+            url = SERVICE_URL + url
+            r = requests.post(url, json=data)
+            return json.reads(r.text)
+        except requests.exceptions.ConnectionError:
+            return api_fail("Удаленный сервер не ответил на адрес " + url)
+
+    def get_data_for_engineer(self):
+        pass
+        # Получить ближайший вылет инженера
+        # Получить список узлов для вылета и их синхронизацию
+
     def get_rand_vector(self):
         return bin(2 ** 16 + randint(0, 2 ** 16 - 1))[-16:]
 
     def mask(self, vector, total):
         return "".join([vector[i] if c == '1' else '*' for i, c in enumerate(list(total))])
+
+    def get_operator_id(self):
+        return 3
 
     def cmd_system(self, args):
         if not args:
@@ -129,12 +146,12 @@ class Sync:
         sys_code = syst['type']
         print(node_names[syst['type']] + ' ' + syst['name'])
         lst = [["Параметр", "Штатное значение", "Текущее значение"], "-", ]
-        for param, val in syst['params'].items():
-            arr = [param_names[param], val]
-            func = desync_penalties[syst['type']].get(param, lambda s: 0)
-            percent = 100 + func(self.freq_vectors[sys_code]['result'])
-            arr.append("{}% ({})".format(percent, roundTo(val * percent / 100)))
-            lst.append(arr)
+        # for param, val in syst['params'].items():
+        #     arr = [param_names[param], val]
+        #     func = desync_penalties[syst['type']].get(param, lambda s: 0)
+        #     percent = 100 + func(self.freq_vectors[sys_code]['result'])
+        #     arr.append("{}% ({})".format(percent, roundTo(val * percent / 100)))
+        #     lst.append(arr)
         table_view(lst)
 
     def cmd_system_params(self, args):
@@ -291,5 +308,7 @@ class Sync:
 
 if __name__ == "__main__":
     s = Sync()
+    s.engineer_id = s.get_operator_id()
+    data = s.get_data_for_engineer()
     s.load_data()
     s.terminal()
