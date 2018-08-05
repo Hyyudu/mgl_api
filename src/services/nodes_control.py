@@ -52,11 +52,12 @@ def check_reserve_node(data):
     if flight.get('status', '') == 'freight':
         return api_fail("""Вы назначены суперкарго на полет №{id} (вылет {departure}, док №{dock}).
     В настоящее время ваш корабль уже зафрахтован, внесение изменений в конструкцию невозможно""".format(**flight))
-    node = db.fetchRow("""select n.*, ns.name status,
+    node = db.fetchRow("""select n.*, ns.name status, m.node_type_code,
             (n.premium_expires > Now() or n.premium_expires = 0 or n.premium_expires is null) as is_premium
          from nodes n 
             left join node_statuses ns on n.status_code = ns.code
-         where id=:node_id""", data)
+            left join models m on m.id = n.model_id
+         where n.id=:node_id""", data)
     if not node:
         return api_fail("Узел с бортовым номером {} не существует и никогда не существовал".format(data.get('node_id')))
     if node.get('status_code') != 'free':
@@ -67,6 +68,10 @@ def check_reserve_node(data):
             return api_fail("Этот узел находится в премиум-доступе. Выясните у создателей пароль доступа")
         elif data.get('password') != node.get('password'):
             return api_fail('Ваш пароль для доступа к этому узлу неверен')
+    if node['node_type_code'] != 'hull':
+        flight_has_hull = db.fetchRow('select * from builds where flight_id=:id and node_type_code="hull"', flight)
+        if not flight_has_hull:
+            return api_fail("Сначала необходимо зарезервировать корпус!")
     return {"flight_id": flight['id'], "node_id": data['node_id']}
 
 
