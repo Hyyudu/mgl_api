@@ -8,12 +8,23 @@ db = DB()
 def mcc_dashboard(self, params):
     """ no params"""
     flights = self.db.fetchAll("""
-    select * from flights 
-    where status in ('prepare', 'freight')""", associate='id')
+    SELECT f.*, n.id node_id, n.name node_name, m.name model_name
+    FROM flights f
+        LEFT JOIN builds b on f.id = b.flight_id and b.node_type_code = 'hull'
+        LEFT JOIN nodes n on b.node_id = n.id
+        LEFT JOIN models m on n.model_id = m.id
+    WHERE status in ('prepare', 'freight')""", associate='id')
     flight_ids = tuple(flights.keys())
     for flight in flights.values():
         flight['departure'] = modernize_date(flight['departure'])
         flight['crew'] = []
+        if flight['node_name'] and flight['model_name']:
+            flight['ship'] = (
+                "{node_name}, класс {model_name}".format(**flight)
+                if flight.get('node_name', '') != '{model_name}-{node_id}'.format(**flight)
+                else flight.get('node_name', '')
+            )
+        del(flight['node_name'], flight['model_name'])
     crews = self.db.fetchAll("""
     select f.flight_id, f.role, u.name, u.id user_id
 from flight_crews f 

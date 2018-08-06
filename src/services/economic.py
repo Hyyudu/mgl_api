@@ -64,10 +64,11 @@ def resource_list(self, params):
     return db.fetchAll('select * from resources')
 
 
-def add_node_upkeep_pump(node_id):
-    model = db.fetchRow("""select m.id, m.name, m.company
-from models m join nodes n on m.id = n.model_id
-where n.id = :node_id""", {"node_id": node_id})
+def add_node_upkeep_pump(node_id, model = None):
+    if not model:
+        model = db.fetchRow("""select m.id, m.name, m.company
+    from models m join nodes n on m.id = n.model_id
+    where n.id = :node_id""", {"node_id": node_id})
     upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
     pump = {
         "company": model['company'],

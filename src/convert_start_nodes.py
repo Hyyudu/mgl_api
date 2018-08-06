@@ -113,13 +113,13 @@ def get_model_params(model1):
     return model
 
 
+
 if __name__ == "__main__" and False:
     """ Создание начальных моделей и узлов """
     for i, model in enumerate(start_nodes):
-        if i >= 73:
-            print("{} of {}. {} - {}".format(i, len(start_nodes), model['company'], model['name']))
-            ret = add_model(None, get_model_params(model))
-            create_node(None, {"model_id": ret['data']['id']})
+        print("{} of {}. {} - {}".format(i, len(start_nodes), model['company'], model['name']))
+        ret = add_model(None, get_model_params(model))
+        # create_node(None, {"model_id": ret['data']['id']})
 
 if __name__ == "__main__" and False:
     """ Расчет затрат на апкип начальных узлов """
@@ -169,6 +169,8 @@ if __name__ == "__main__" and False:
                         })
         print(ins_data)
         db.insert('models_upkeep', ins_data)
+    else:
+        print("Rerun")
     # for company, nodes in company_expenses.items():
     #     print(company)
     #     for node_name, price in nodes.items():

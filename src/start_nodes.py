@@ -422,10 +422,42 @@ start_nodes = [
     },
     {
         "company": "mat",
+        "size": "small",
+        "node_type_code": "scaner",
+        "name": "Зорге",
+        "params": {
+            "scan_speed": -3,  # скорость сканирования
+            "scan_range": 5,  # дальность сканирования
+            "drop_speed": 0,  # скорость сброса груза
+            "drop_range": -2,  # дальность сброса груза
+            "volume": 0,  # масса/объем
+        }
+    },
+    {
+        "company": "mat",
         "size": "medium",
         "node_type_code": "scaner",
-        "name": "МарсСкан",
-        "params": {}
+        "name": "Чапмен",
+        "params": {
+            "scan_speed": -3,  # скорость сканирования
+            "scan_range": 5,  # дальность сканирования
+            "drop_speed": 0,  # скорость сброса груза
+            "drop_range": -2,  # дальность сброса груза
+            "volume": 0,  # масса/объем
+        }
+    },
+    {
+        "company": "mat",
+        "size": "large",
+        "node_type_code": "scaner",
+        "name": "Сноуден",
+        "params": {
+            "scan_speed": -3,  # скорость сканирования
+            "scan_range": 5,  # дальность сканирования
+            "drop_speed": 0,  # скорость сброса груза
+            "drop_range": -2,  # дальность сброса груза
+            "volume": 0,  # масса/объем
+        }
     },
     {
         "company": "gd",

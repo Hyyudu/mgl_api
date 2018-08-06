@@ -14,7 +14,7 @@ class ApiHandler(RequestHandler):
             setattr(self, key, val)
         self.db = DB()
 
-    def get_exception_text(self, e):
+    def get_exception_text(self, e, data):
         return ''
 
     async def post(self):
