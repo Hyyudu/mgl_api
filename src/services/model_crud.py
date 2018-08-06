@@ -71,7 +71,7 @@ def apply_companies_perks(model):
         if node_type == 'march_engine':
             model['params']['thrust'] *= 1.12
         elif node_type == 'shunter':
-            model['params']['strafe'] *= 1.12
+            model['params']['strafe'] = 1.12 * model['params'].get('strafe', 0)
         elif node_type == 'fuel_tank':
             model['params']['fuel_volume'] *= 1.12
 
