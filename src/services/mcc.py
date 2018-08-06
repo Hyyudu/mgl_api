@@ -51,9 +51,10 @@ def mcc_set_all_crew(self, params):
     if not db.fetchRow('select * from flights where id=:flight_id', params):
         return api_fail("Полет с указанным номером не существует")
     db.query("delete from flight_crews where flight_id=:flight_id", params, need_commit=True)
-    for item in params['crew']:
-        item['flight_id'] = params['flight_id']
-    db.insert('flight_crews', params['crew'])
+    if params['crew']:
+        for item in params['crew']:
+            item['flight_id'] = params['flight_id']
+        db.insert('flight_crews', params['crew'])
     return api_ok(crew=params['crew'])
 
 
