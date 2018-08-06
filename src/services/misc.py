@@ -23,8 +23,11 @@ def modernize_date(date):
     return date.replace("2018", "2349")
 
 
-def api_fail(msg):
-    return {"status": "fail", "errors": msg}
+def api_fail(msg, **kwargs):
+    res = {"status": "fail", "errors": msg}
+    if kwargs:
+        res.update(kwargs)
+    return res
 
 
 def api_ok(**kwargs):

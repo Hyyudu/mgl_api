@@ -28,10 +28,11 @@ class ApiHandler(RequestHandler):
             self.write(json.dumps(out, indent=4))
         except Exception as e:
             err_text = self.get_exception_text(self, e)
-            if err_text:
-                self.write(json.dumps(api_fail(err_text)))
-            else:
+            fail_args = {"msg": err_text} if err_text else {"msg": str(e), "args": e.args}
+            self.write(json.dumps(api_fail(**fail_args)))
+            if not err_text:
                 raise e
+
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
