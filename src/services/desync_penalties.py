@@ -27,7 +27,7 @@ desync_penalties = {
         "turn_speed":       lambda s: -15 * (s[1:8:2]+s[0]).count('1'),
     },
     "scaner": {
-        "drop_range":       lambda s: -10 * s[1::2].count('1'),
+        "drop_range":       lambda s: -10 * s[::2].count('1'),
         "drop_speed":       lambda s: -10 * s[8:].count('1'),
         "scan_range":       lambda s: -10 * s[:8].count('1'),
         "scan_speed":       lambda s: -10 * s[1::2].count('1'),

@@ -93,8 +93,14 @@ def get_node_params_with_desync(vector, params=None, node_id=None, node_type_cod
         model = read_models(None, {"node_id": node_id})[0]
         params = model['params']
         node_type_code = model['node_type_code']
+    desync_percents = get_desync_percent(vector, node_type_code)
     for param, val in params.items():
-        func = desync_penalties[node_type_code].get(param, lambda s: 0)
-        percent = 100 + func(vector)
-        params[param] = roundTo(val * percent / 100)
+        params[param] = roundTo(val * desync_percents[param] / 100)
     return params
+
+
+def get_desync_percent(vector, node_type_code):
+    ret = {}
+    for param, func in desync_penalties[node_type_code].items():
+        ret[param] = 100+func(vector)
+    return ret
