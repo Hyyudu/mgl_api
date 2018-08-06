@@ -1,9 +1,10 @@
 import json
 
 import requests
-from services.misc import db
+from services.misc import inject_db
 
 
+@inject_db
 def read_users_from_alice(self, params):
     req = {
         "selector": {
@@ -27,11 +28,12 @@ def read_users_from_alice(self, params):
             }
             for user in users['docs']
         ]
-    db.query('update users set is_active=0')
-    db.insert('users', ins_data, on_duplicate_key_update="is_active=1")
-    return {"status": "ok", "affected": db.affected_rows()}
+    self.db.query('update users set is_active=0')
+    self.db.insert('users', ins_data, on_duplicate_key_update="is_active=1")
+    return {"status": "ok", "affected": self.db.affected_rows()}
 
 
+@inject_db
 def users_list(self, params):
     """ no params """
-    return db.fetchAll('select id, name from users where is_active=1 order by 1')
+    return self.db.fetchAll('select id, name from users where is_active=1 order by 1')

@@ -1,18 +1,15 @@
-from services.db import DB
 from services.misc import api_fail, inject_db, roundTo
 
 
-db = DB()
-
-
+@inject_db
 def add_model(self, data):
     """ params: {<id>, name, level, description, size, node_type_code, company, {params}} """
-    avail_vendors = db.fetchColumn('select code from companies')
+    avail_vendors = self.db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
-    new_model_id = db.insert('models', data)
-    db.query('update models set premium_expires = created + interval 3 hour where id=:id', {"id": new_model_id})
-    model_params = db.fetchDict(
+    new_model_id = self.db.insert('models', data)
+    self.db.query('update models set premium_expires = created + interval 3 hour where id=:id', {"id": new_model_id})
+    model_params = self.db.fetchDict(
         'select parameter_code, def_value from model_has_parameters where node_code=:node_type_code',
         data, 'parameter_code', 'def_value')
     insert_parameters = [
@@ -24,28 +21,30 @@ def add_model(self, data):
         for code, def_value in model_params.items()
     ]
     data['id'] = new_model_id
-    db.insert('model_parameters', insert_parameters)
+    self.db.insert('model_parameters', insert_parameters)
 
     data['params'] = {param['parameter_code']: param['value'] for param in insert_parameters}
     return {"status": "ok", "data": data}
 
 
+@inject_db
 def read_model(self, data):
     """ params = {id: int} """
-    model = db.fetchRow('select * from models where id=:id', data)
+    model = self.db.fetchRow('select * from models where id=:id', data)
     if not model:
         return api_fail("Model with id {} not found".format(data.get('id')))
-    model['params'] = db.fetchDict('select parameter_code, value from v_model_params where model_id=:id', data,
-                                   'parameter_code', 'value')
+    model['params'] = self.db.fetchDict('select parameter_code, value from v_model_params where model_id=:id', data,
+                                        'parameter_code', 'value')
     model = apply_companies_perks(model)
     return {"status": "ok", "data": model}
 
 
+@inject_db
 def delete_model(self, data):
     """ params = {id: int} """
-    db.query('delete from nodes where model_id=:id', data, need_commit=True)
-    db.query('delete from model_parameters where model_id=:id', data, need_commit=True)
-    deleted = db.query('delete from models where id=:id', data, need_commit=True)
+    self.db.query('delete from nodes where model_id=:id', data, need_commit=True)
+    self.db.query('delete from model_parameters where model_id=:id', data, need_commit=True)
+    deleted = self.db.query('delete from models where id=:id', data, need_commit=True)
     return {"status": "ok", "deleted": deleted.rowcount}
 
 
@@ -87,7 +86,7 @@ def read_models(self=None, params=None):
     if 'node_id' in params:
         sql += " join nodes n on n.model_id = m.id WHERE n.id = :node_id"
     else:
-        add_where = db.construct_where(params)
+        add_where = self.db.construct_where(params)
         if add_where:
             sql += " where " + add_where
         params = self.db.construct_params(params)
@@ -108,6 +107,12 @@ def read_models(self=None, params=None):
                 or premium_expires > Now()
             ), 1, 0) is_premium 
         from nodes where """ + params_where, ids)
+    node_ids = (node['id'] for node in all_nodes)
+
+    hull_perks = self.db.fetchAll(f"""
+    SELECT node_type_code, parameter_code, value
+    FROM hull_perks
+    where hull_id  in {str(node_ids).replace(',)', ')')} """)
 
     for model in models:
         model['params'] = {item['parameter_code']: item['value'] for item in all_params
@@ -141,7 +146,8 @@ def calc_weight(node_type: str, size: str, volume: float) -> float:
     return roundTo(weight + hull_weight_add[size] if node_type == 'hull' else weight * node_weight_multiplier)
 
 
+@inject_db
 def get_model_upkeep_price(self, params):
     """ params: {"model_id": int} """
-    return db.fetchDict('select resource_code, amount from models_upkeep where model_id=:model_id',
-                        params, 'resource_code', 'amount')
+    return self.db.fetchDict('select resource_code, amount from models_upkeep where model_id=:model_id',
+                             params, 'resource_code', 'amount')

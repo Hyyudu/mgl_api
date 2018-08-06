@@ -3,7 +3,6 @@ from collections import OrderedDict, defaultdict
 from random import randint, choice
 from typing import Dict, Any, List
 
-from services.db import DB
 from services.economic import add_node_upkeep_pump
 from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
@@ -11,20 +10,17 @@ from services.model_crud import read_models
 from services.sync import get_rand_func, xor, get_func_vector, get_node_vector, get_node_params_with_desync
 
 
-db = DB()
-
-
 @inject_db
 def create_node(self, params):
     """ params: {model_id: int, password: str} """
-    model_id = params.get('model_id')
+    model_id = params.get('model_id', 0)
     if not model_id:
         raise Exception("Model id not specified!")
     model_id_dict = {"id": model_id}
     model = read_models(None, model_id_dict)
 
     if len(model) < 0:
-        raise Exception("No model with id {}".format(model_id))
+        raise Exception(f"No model with id {model_id}")
     model = model[0]
     existing_nodes = self.db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
     insert_data = {
@@ -35,15 +31,15 @@ def create_node(self, params):
         'premium_expires': None if not existing_nodes else model['premium_expires']
     }
     node_id = self.db.insert('nodes', insert_data)
-    add_node_upkeep_pump(node_id)
+    add_node_upkeep_pump(self, node_id)
     if model['node_type_code'] != 'hull':
         result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
     else:
-        return create_hull(model, node_id)
+        return create_hull(self, model, node_id)
 
-
-def check_reserve_node(data):
+@inject_db
+def check_reserve_node(self, data):
     """ data = {user_id: int, node_id: int, password: str} """
     flight = get_nearest_flight_for_supercargo(None, data.get('user_id', 0))
     if not flight:
@@ -52,7 +48,7 @@ def check_reserve_node(data):
     if flight.get('status', '') == 'freight':
         return api_fail("""Вы назначены суперкарго на полет №{id} (вылет {departure}, док №{dock}).
     В настоящее время ваш корабль уже зафрахтован, внесение изменений в конструкцию невозможно""".format(**flight))
-    node = db.fetchRow("""select n.*, ns.name status, m.node_type_code,
+    node = self.db.fetchRow("""select n.*, ns.name status, m.node_type_code,
             (n.premium_expires > Now() or n.premium_expires = 0 or n.premium_expires is null) as is_premium
          from nodes n 
             left join node_statuses ns on n.status_code = ns.code
@@ -69,18 +65,18 @@ def check_reserve_node(data):
         elif data.get('password') != node.get('password'):
             return api_fail('Ваш пароль для доступа к этому узлу неверен')
     if node['node_type_code'] != 'hull':
-        flight_has_hull = db.fetchRow('select * from builds where flight_id=:id and node_type_code="hull"', flight)
+        flight_has_hull = self.db.fetchRow('select * from builds where flight_id=:id and node_type_code="hull"', flight)
         if not flight_has_hull:
             return api_fail("Сначала необходимо зарезервировать корпус!")
     return {"flight_id": flight['id'], "node_id": data['node_id']}
 
-
+@inject_db
 def reserve_node(self, params):
     """ params = {"user_id": int, "node_id": int, "password": str} """
-    build_item = check_reserve_node(params)
+    build_item = check_reserve_node(self, params)
     if 'errors' in build_item:
         return build_item
-    already_reserved = db.fetchRow("""
+    already_reserved = self.db.fetchRow("""
     select m.node_type_code, b.node_id
 from nodes n
 join models m on n.model_id = m.id
@@ -89,8 +85,8 @@ where n.id=:node_id""", build_item)
     build_item['node_type_code'] = already_reserved['node_type_code']
     if already_reserved.get('node_id'):
         # Убираем ранее зарезервированный нод
-        db.query('update nodes set status_code="free" where id=:node_id', already_reserved)
-        db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
+        self.db.query('update nodes set status_code="free" where id=:node_id', already_reserved)
+        self.db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
                  build_item)
     if build_item['node_type_code'] != 'hull':
         # рассчитываем вектора
@@ -100,44 +96,44 @@ where n.id=:node_id""", build_item)
             vector=build_item['vector'],
             node_id=params['node_id']
         ))
-    db.insert('builds', build_item)
-    db.query("""update nodes 
+    self.db.insert('builds', build_item)
+    self.db.query("""update nodes 
         set status_code="reserved", 
             connected_to_hull_id = null 
         where id=:node_id""", build_item, need_commit=True)
     return {"status": "ok"}
 
-
+@inject_db
 def get_my_reserved_nodes(self, params) -> Dict[str, Any]:
     """ params: {"user_id": int} """
     flight = get_nearest_flight_for_supercargo(None, params.get('user_id'))
     if not flight:
         return api_fail("Суперкарго {} не назначен ни на какой полет".format(params.get('user_id')))
-    nodes = db.fetchDict(
+    nodes = self.db.fetchDict(
         "select node_type_code, node_id from builds where flight_id=:id",
         flight, "node_type_code", "node_id"
     )
     return {"result": "ok", "flight": flight, "nodes": nodes}
 
-
+@inject_db
 def set_password(self, data):
     """ params: {node_id: int, password: string} """
-    affected = db.update('nodes', {"id": data.get('node_id', 0), 'password': data.get('password', '')}, 'id=:id')
+    affected = self.db.update('nodes', {"id": data.get('node_id', 0), 'password': data.get('password', '')}, 'id=:id')
     return {"result": "ok", "affected": affected}
 
-
+@inject_db
 def check_password(self, data):
     """ params: {node_id: int, password: string} """
-    row = db.fetchRow('select id, password from nodes where id=:node_id', data)
+    row = self.db.fetchRow('select id, password from nodes where id=:node_id', data)
     if not row:
         return api_fail("Неверный ID узла: {}".format(data.get('node_id', '')))
     if row.get('password') != data.get('password'):
         return api_fail('Пароль неверен')
     return {"result": "ok"}
 
-
+@inject_db
 def get_all_params(self, data) -> List[Dict[str, Any]]:
-    return db.fetchAll('select * from v_node_parameter_list')
+    return self.db.fetchAll('select * from v_node_parameter_list')
 
 
 def generate_slots(amount: int) -> Dict[str, int]:
@@ -154,9 +150,9 @@ def generate_slots(amount: int) -> Dict[str, int]:
     slots = gen_array_by_weight(detail_distribution, amount)
     return slots
 
-
-def generate_hull_perks(size: int) -> List[Dict[str, Any]]:
-    params_to_boost = db.fetchAll('''select node_code, parameter_code, increase_direction 
+@inject_db
+def generate_hull_perks(self, size: int) -> List[Dict[str, Any]]:
+    params_to_boost = self.db.fetchAll('''select node_code, parameter_code, increase_direction 
             from model_has_parameters where hull_boost=1''')
     param_dict = defaultdict(dict)
     for row in params_to_boost:
@@ -180,8 +176,8 @@ def generate_hull_perks(size: int) -> List[Dict[str, Any]]:
             break
     return out
 
-
-def generate_hull_vectors(model: Dict) -> List[Dict[str, Any]]:
+@inject_db
+def generate_hull_vectors(self, model: Dict) -> List[Dict[str, Any]]:
     distinction = model['params'].get('configurability', 0) - model['params'].get('brand_lapse', 0)
     node_types = node_type_list()
     params = {
@@ -189,9 +185,9 @@ def generate_hull_vectors(model: Dict) -> List[Dict[str, Any]]:
         "level": model.get('level'),
         "company": model.get("company")
     }
-    base_vectors_sql = "select node_code, vector from base_freq_vectors where " + db.construct_where(params)
-    params = db.construct_params(params)
-    vectors = db.fetchDict(base_vectors_sql, params, 'node_code', 'vector')
+    base_vectors_sql = "select node_code, vector from base_freq_vectors where " + self.db.construct_where(params)
+    params = self.db.construct_params(params)
+    vectors = self.db.fetchDict(base_vectors_sql, params, 'node_code', 'vector')
     lapse_functions = {}
     if distinction > 0:
         lapse = gen_array_by_weight(node_types, distinction)
@@ -209,28 +205,28 @@ def generate_hull_vectors(model: Dict) -> List[Dict[str, Any]]:
     ]
     return ret
 
-
-def create_hull(model: Dict, node_id: int):
+@inject_db
+def create_hull(self, model: Dict, node_id: int):
     node_name = model['name'] + "-" + str(node_id)
-    db.update('nodes', {"name": node_name, "id": node_id}, "id=:id")
-    node = db.fetchRow('select * from nodes where id=:id', {"id": node_id})
+    self.db.update('nodes', {"name": node_name, "id": node_id}, "id=:id")
+    node = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
     model['params']['configurability'] = round(model['params']['configurability'])
     model['params']['brand_lapse'] = round(model['params']['brand_lapse'])
     # создать слоты
     node['slots'] = generate_slots(model['params'].get('configurability'))
-    db.insert('hull_slots', {"hull_id": node_id, "slots_json": json.dumps(node['slots'])})
+    self.db.insert('hull_slots', {"hull_id": node_id, "slots_json": json.dumps(node['slots'])})
 
     # создать бонусы/пенальти
-    node['perks'] = generate_hull_perks(model['size'])
+    node['perks'] = generate_hull_perks(self, model['size'])
     for perk in node['perks']:
         perk['hull_id'] = node_id
-        db.insert('hull_perks', perk)
+        self.db.insert('hull_perks', perk)
 
     # создать частотные рисунки
-    node['vectors'] = generate_hull_vectors(model)
+    node['vectors'] = generate_hull_vectors(self, model)
     for vector in node['vectors']:
         vector['hull_id'] = node_id
-        db.insert('hull_vectors', vector)
+        self.db.insert('hull_vectors', vector)
 
     return node
 
