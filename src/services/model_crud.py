@@ -80,7 +80,7 @@ def apply_companies_perks(model):
 
 
 @inject_db
-def read_models(self=None, params=None):
+def read_models(self=None, params=None, read_nodes = True):
     """ params = {<name>: str, <node_type_code>: str/list[str], <level>: int/list[int], <size>: str/list[str],
         <company>: str/list[str], <node_id>: int} """
     params = params or {}
@@ -100,38 +100,38 @@ def read_models(self=None, params=None):
     params_where = self.db.construct_where(ids)
     ids = self.db.construct_params(ids)
     all_params = self.db.fetchAll("select * from v_model_params where is_hidden=0 and " + params_where, ids)
+    if read_nodes:
+        all_nodes = self.db.fetchAll("""
+            select n.id, n.model_id, n.name, n.az_level, n.status_code, n.date_created, m.node_type_code,
+                if (n.password is not null and (
+                    n.premium_expires = 0
+                    or n.premium_expires is null
+                    or n.premium_expires > Now()
+                ), 1, 0) is_premium 
+            from nodes n
+            join models m on m.id = n.model_id
+            where """ + params_where, ids, 'id')
+        if all_nodes:
+            hull_ids = (id for id, node in all_nodes.items() if node['node_type_code'] == 'hull')
+            if hull_ids:
+                node_ids = str(tuple(hull_ids)).replace(",)", ")")
 
-    all_nodes = self.db.fetchAll("""
-        select n.id, n.model_id, n.name, n.az_level, n.status_code, n.date_created, m.node_type_code,
-            if (n.password is not null and (
-                n.premium_expires = 0
-                or n.premium_expires is null
-                or n.premium_expires > Now()
-            ), 1, 0) is_premium 
-        from nodes n
-        join models m on m.id = n.model_id
-        where """ + params_where, ids, 'id')
-    if all_nodes:
-        hull_ids = (id for id, node in all_nodes.items() if node['node_type_code'] == 'hull')
-        if hull_ids:
-            node_ids = str(tuple(hull_ids)).replace(",)", ")")
+                hull_data_sql = f"""
+                SELECT hp.hull_id, 
+                    group_concat(concat(nt.name, ', ', lower(p.short_name), ': ', hp.value, '%') separator "<br>\n") perks,
+                    hs.slots_json
+                FROM hull_perks hp
+                    JOIN node_types nt on hp.node_type_code = nt.code
+                    JOIN parameters_list p on hp.parameter_code = p.code
+                    JOIN hull_slots hs on hp.hull_id = hs.hull_id
+                WHERE hp.hull_id  in {node_ids} 
+                GROUP by hp.hull_id
+                """
+                hull_data = self.db.fetchAll(hull_data_sql, {}, 'hull_id')
 
-            hull_data_sql = f"""
-            SELECT hp.hull_id, 
-                group_concat(concat(nt.name, ', ', lower(p.short_name), ': ', hp.value, '%') separator "<br>\n") perks,
-                hs.slots_json
-            FROM hull_perks hp
-                JOIN node_types nt on hp.node_type_code = nt.code
-                JOIN parameters_list p on hp.parameter_code = p.code
-                JOIN hull_slots hs on hp.hull_id = hs.hull_id
-            WHERE hp.hull_id  in {node_ids} 
-            GROUP by hp.hull_id
-            """
-            hull_data = self.db.fetchAll(hull_data_sql, {}, 'hull_id')
-
-            for hull_id, data in hull_data.items():
-                all_nodes[hull_id]['perks'] = data['perks']
-                all_nodes[hull_id]['slots'] = json.loads(data['slots_json'])
+                for hull_id, data in hull_data.items():
+                    all_nodes[hull_id]['perks'] = data['perks']
+                    all_nodes[hull_id]['slots'] = json.loads(data['slots_json'])
 
     for model in models:
         model['params'] = {item['parameter_code']: item['value'] for item in all_params
@@ -143,7 +143,8 @@ def read_models(self=None, params=None):
             model['params']['volume']
         )
         model['params'] = {key: roundTo(val) for key, val in model['params'].items()}
-        model['nodes'] = [node for node in all_nodes.values() if node['model_id'] == model['id']]
+        if read_nodes:
+            model['nodes'] = [node for node in all_nodes.values() if node['model_id'] == model['id']]
     return models
 
 

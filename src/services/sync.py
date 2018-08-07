@@ -90,7 +90,7 @@ where n.id = :node_id""", params)
 
 def get_node_params_with_desync(vector, params=None, node_id=None, node_type_code=None):
     if not params or not node_type_code:
-        model = read_models(None, {"node_id": node_id})[0]
+        model = read_models(None, {"node_id": node_id}, read_nodes=False)[0]
         params = model['params']
         node_type_code = model['node_type_code']
     desync_percents = get_desync_percent(vector, node_type_code)

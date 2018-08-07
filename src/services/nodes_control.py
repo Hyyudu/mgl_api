@@ -17,7 +17,7 @@ def create_node(self, params):
     if not model_id:
         raise Exception("Model id not specified!")
     model_id_dict = {"id": model_id}
-    model = read_models(None, model_id_dict)
+    model = read_models(None, model_id_dict, read_nodes=False)
 
     if len(model) < 0:
         raise Exception(f"No model with id {model_id}")
