@@ -34,6 +34,8 @@ class DB:
 
             return self.cursor
         except Exception as e:
+            print("Error executing query: "+sql)
+            print(data)
             e.sql = sql
             raise e
 

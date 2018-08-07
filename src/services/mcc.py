@@ -85,6 +85,17 @@ def mcc_add_flight(self, params):
 
 
 @inject_db
+def mcc_assign_flight(self, params):
+    """ params = {"flight_id": int, "company": mat/mst/gd/pre/kkg/ideo} """
+    company = params.get('company', '')
+    if company not in ('mat', 'mst', 'gd', 'pre', 'kkg', 'ideo'):
+        return api_fail("Неверный код компании")
+    params['id'] = params['flight_id']
+    self.db.update('flights', params, "id=:id")
+    return api_ok(updated=self.db.affected_rows())
+
+
+@inject_db
 def get_nearest_flight_for_role(self, params):
     """ params: {user_id: int, role: string}  """
     flight = self.db.fetchRow("""
