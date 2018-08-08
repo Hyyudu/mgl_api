@@ -95,7 +95,7 @@ def get_node_params_with_desync(vector, params=None, node_id=None, node_type_cod
         node_type_code = model['node_type_code']
     desync_percents = get_desync_percent(vector, node_type_code)
     for param, val in params.items():
-        params[param] = roundTo(val * desync_percents[param] / 100)
+        params[param] = roundTo(val * desync_percents.get(param, 100) / 100)
     return params
 
 

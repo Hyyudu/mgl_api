@@ -3,7 +3,7 @@ from handlers.PingHandler import (
     PingHandler,
 )
 from services.boosts import boosts_read, boost_use
-from services.economic import read_pumps, resource_list, add_pump, stop_pump
+from services.economic import read_pumps, resource_list, add_pump, stop_pump, set_mine
 from services.mcc import (
     mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight, mcc_set_all_crew,
     get_nearest_flight_for_role,
@@ -50,6 +50,7 @@ app_urls = [
     url("/economics/add_pump", add_pump),
     url("/economics/read_pumps", read_pumps),
     url("/economics/stop_pump", stop_pump),
+    url("/economics/set_mine", set_mine),
     url("/mcc/dashboard", mcc_dashboard),
     url("/mcc/set_crew", mcc_set_crew),
     url("/mcc/add_passenger", mcc_add_passenger),

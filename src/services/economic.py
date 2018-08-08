@@ -66,6 +66,11 @@ def resource_list(self, params):
 
 
 @inject_db
+def add_model_upkeep_pump(self, model_id):
+    pass
+
+
+@inject_db
 def add_node_upkeep_pump(self, node_id, model=None):
     if not model:
         model = self.db.fetchRow("""select m.id, m.name, m.company
@@ -79,6 +84,21 @@ def add_node_upkeep_pump(self, node_id, model=None):
         "comment": "Поддержка узла {} модели {}".format(node_id, model['name']),
         "is_income": 0,
         "resources": upkeep_price
+    }
+    add_pump(self, pump)
+    return pump
+
+
+@inject_db
+def set_mine(self, params):
+    """ params: {"entity_id": str, "company": str, "resources": [str]} """
+    pump = {
+        "company": params['company'],
+        "section": "mines",
+        "entity_id": params['entity_id'],
+        "comment": "Шахта на планете {entity_id}".format(params),
+        "is_income": 1,
+        "resources": params['resources']
     }
     add_pump(self, pump)
     return pump

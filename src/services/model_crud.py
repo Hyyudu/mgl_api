@@ -9,8 +9,10 @@ def add_model(self, data):
     avail_vendors = self.db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
+    # Добавляем модель
     new_model_id = self.db.insert('models', data)
-    self.db.query('update models set premium_expires = created + interval 3 hour where id=:id', {"id": new_model_id})
+    # Устанавливаем ей вау-период
+    self.db.query('update models set premium_expires = created + interval 2 hour where id=:id', {"id": new_model_id})
     model_params = self.db.fetchDict(
         'select parameter_code, def_value from model_has_parameters where node_code=:node_type_code',
         data, 'parameter_code', 'def_value')
