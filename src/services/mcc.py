@@ -5,7 +5,8 @@ from services.misc import modernize_date, api_ok, api_fail, inject_db
 def mcc_dashboard(self, params):
     """ no params"""
     flights = self.db.fetchAll("""
-    SELECT f.*, n.id node_id, n.name node_name, m.name model_name
+    SELECT f.id, f.dock, f.status, f.company, date_format(f.departure, "%d.%m.%Y %H:%i") departure, 
+        n.id node_id, n.name node_name, m.name model_name
     FROM flights f
         LEFT JOIN builds b on f.id = b.flight_id and b.node_type_code = 'hull'
         LEFT JOIN nodes n on b.node_id = n.id
