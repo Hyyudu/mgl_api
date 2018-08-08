@@ -1941,7 +1941,9 @@ CREATE TABLE IF NOT EXISTS `builds` (
 -- Дамп данных таблицы magellan.builds: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
 INSERT IGNORE INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `total`, `params_json`) VALUES
-	(1, 'hull', 174, '', '', '', NULL);
+	(1, 'hull', 174, '', '', '', NULL),
+	(1, 'shields', 161, '1101100001001111', '0000000000000000', '1101100001001111', '{"az_level": 100.0, "desinfect_level": 32.0, "heat_capacity": 421.0, "heat_reflection": 5.2, "heat_sink": 69.1, "mechanical_def": 6.08, "radiation_def": 4.55, "volume": 237.0, "weight": 171.0}'),
+	(1, 'scaner', 141, '1111000100111100', '0000000000000000', '1111000100111100', '{"az_level": 100.0, "drop_range": 12.0, "drop_speed": 24.6, "scan_range": 30.0, "scan_speed": 12.5, "volume": 131.0, "weight": 62.9}');
 /*!40000 ALTER TABLE `builds` ENABLE KEYS */;
 
 
@@ -1977,7 +1979,7 @@ CREATE TABLE IF NOT EXISTS `flights` (
   UNIQUE KEY `departure_dock` (`departure`,`dock`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
 
--- Дамп данных таблицы magellan.flights: ~3 rows (приблизительно)
+-- Дамп данных таблицы magellan.flights: ~6 rows (приблизительно)
 /*!40000 ALTER TABLE `flights` DISABLE KEYS */;
 INSERT IGNORE INTO `flights` (`id`, `departure`, `dock`, `status`, `company`) VALUES
 	(1, '2018-08-20 12:00:00', 1, 'prepare', 'mat'),
@@ -2017,20 +2019,22 @@ INSERT IGNORE INTO `flight_crews` (`flight_id`, `role`, `user_id`) VALUES
 -- Дамп структуры для таблица magellan.flight_luggage
 DROP TABLE IF EXISTS `flight_luggage`;
 CREATE TABLE IF NOT EXISTS `flight_luggage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `flight_id` int(11) NOT NULL,
   `cargo_type` enum('mine','module','beacon') NOT NULL,
   `owner` enum('mst','mat','gd','kkg','pre') DEFAULT NULL,
   `volume` float NOT NULL,
   `weight` float NOT NULL,
   `amount` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
   KEY `flight_id` (`flight_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- Дамп данных таблицы magellan.flight_luggage: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `flight_luggage` DISABLE KEYS */;
-INSERT IGNORE INTO `flight_luggage` (`flight_id`, `cargo_type`, `owner`, `volume`, `weight`, `amount`) VALUES
-	(1, 'beacon', NULL, 350, 175, 2),
-	(1, 'mine', 'mat', 700, 350, 1);
+INSERT IGNORE INTO `flight_luggage` (`id`, `flight_id`, `cargo_type`, `owner`, `volume`, `weight`, `amount`) VALUES
+	(1, 1, 'beacon', NULL, 350, 175, 2),
+	(2, 1, 'mine', 'mat', 700, 350, 1);
 /*!40000 ALTER TABLE `flight_luggage` ENABLE KEYS */;
 
 
@@ -2235,6 +2239,21 @@ INSERT IGNORE INTO `hull_vectors` (`hull_id`, `node_type_code`, `vector`, `lapse
 /*!40000 ALTER TABLE `hull_vectors` ENABLE KEYS */;
 
 
+-- Дамп структуры для таблица magellan.luggages
+DROP TABLE IF EXISTS `luggages`;
+CREATE TABLE IF NOT EXISTS `luggages` (
+  `code` enum('mine','module','beacon') NOT NULL COMMENT 'Код типа груза',
+  `company` enum('mst','mat','gd','kkg','pre') DEFAULT NULL COMMENT 'Код компании-владельца (для шахт)',
+  `vaild_since` datetime NOT NULL COMMENT 'Дата начала актуализации параметров',
+  `weight` float NOT NULL,
+  `volume` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Дамп данных таблицы magellan.luggages: ~0 rows (приблизительно)
+/*!40000 ALTER TABLE `luggages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `luggages` ENABLE KEYS */;
+
+
 -- Дамп структуры для таблица magellan.models
 DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
@@ -2302,7 +2321,7 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 	(145, 'МСТ-КР-2', 'scaner', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
 	(146, 'E-2 Hawkeye', 'scaner', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
 	(147, 'Invenirus-S', 'scaner', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
-	(148, 'Invenirus-M', 'scaner', 0, '', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
+	(148, 'Invenirus-M', 'scaner', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
 	(149, 'Invenirus-L', 'scaner', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:28', '2018-08-07 00:35:28'),
 	(150, 'Нагасаки', 'fuel_tank', 0, 'small', NULL, 'mat', '2018-08-06 21:35:28', '2018-08-07 00:35:28'),
 	(151, 'Волоколамск', 'fuel_tank', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:28', '2018-08-07 00:35:28'),
@@ -3700,7 +3719,7 @@ INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`,
 	(138, 138, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(139, 139, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(140, 140, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
-	(141, 141, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
+	(141, 141, '', 100, 'reserved', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(142, 142, '', 100, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(143, 143, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(144, 144, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
@@ -3720,7 +3739,7 @@ INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`,
 	(158, 158, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(159, 159, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(160, 160, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
-	(161, 161, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
+	(161, 161, '', 100, 'reserved', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
 	(162, 162, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
 	(163, 163, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(164, 164, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
