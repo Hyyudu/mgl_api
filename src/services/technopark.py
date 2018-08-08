@@ -1,11 +1,13 @@
 import json
 
-from services.misc import inject_db
+from services.misc import inject_db, api_fail
 
 
 @inject_db
 def get_flight_params(self, params):
     """ params = {flight_id: int}"""
+    if not 'flight_id' in params:
+        return api_fail('Этот url надо вызывать через POST и передавать в тело {"flight_id": int}')
     nodes = self.db.fetchAll("""
 select b.node_type_code, n.name ship_name, m.name model_name, m.company, b.params_json
 from builds b
