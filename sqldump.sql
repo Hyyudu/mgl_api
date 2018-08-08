@@ -1938,7 +1938,7 @@ CREATE TABLE IF NOT EXISTS `builds` (
   CONSTRAINT `FK_builds_nodes` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Состав кораблей, которые суперкарго собирают ';
 
--- Дамп данных таблицы magellan.builds: ~1 rows (приблизительно)
+-- Дамп данных таблицы magellan.builds: ~3 rows (приблизительно)
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
 INSERT IGNORE INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `total`, `params_json`) VALUES
 	(1, 'hull', 174, '', '', '', NULL),
@@ -1974,7 +1974,7 @@ CREATE TABLE IF NOT EXISTS `flights` (
   `departure` datetime NOT NULL,
   `dock` tinyint(4) NOT NULL,
   `status` enum('prepare','freight','space','returned','lost') NOT NULL DEFAULT 'prepare',
-  `company` enum('mat','mst','gd','pre','kkg','ideo') NOT NULL DEFAULT 'ideo',
+  `company` enum('mat','mst','gd','pre','kkg') NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `departure_dock` (`departure`,`dock`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
@@ -1984,10 +1984,10 @@ CREATE TABLE IF NOT EXISTS `flights` (
 INSERT IGNORE INTO `flights` (`id`, `departure`, `dock`, `status`, `company`) VALUES
 	(1, '2018-08-20 12:00:00', 1, 'prepare', 'mat'),
 	(2, '2018-08-20 15:00:00', 3, 'prepare', 'mst'),
-	(3, '2018-04-24 22:51:42', 2, 'returned', 'ideo'),
+	(3, '2018-04-24 22:51:42', 2, 'returned', 'kkg'),
 	(4, '2018-08-16 15:00:00', 2, 'prepare', 'gd'),
 	(11, '2018-08-17 15:00:00', 3, 'prepare', 'pre'),
-	(12, '2018-08-17 15:00:00', 5, 'prepare', 'ideo');
+	(12, '2018-08-17 15:00:00', 5, 'prepare', 'kkg');
 /*!40000 ALTER TABLE `flights` ENABLE KEYS */;
 
 
@@ -3674,7 +3674,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   KEY `FK_model_id` (`model_id`),
   CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
+) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
 -- Дамп данных таблицы magellan.nodes: ~95 rows (приблизительно)
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
@@ -3900,7 +3900,7 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   PRIMARY KEY (`id`),
   KEY `FK_resource_flows_resource_sections` (`section`),
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
 -- Дамп данных таблицы magellan.pumps: ~102 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
@@ -4006,7 +4006,10 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 	(100, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '193', 'Поддержка узла 193 модели Гален', 0),
 	(101, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '194', 'Поддержка узла 194 модели Гиппократ', 0),
 	(102, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '195', 'Поддержка узла 195 модели Авиценна', 0),
-	(103, 'mat', '2018-08-07 22:55:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели Восход', 0);
+	(103, 'mat', '2018-08-07 22:55:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели Восход', 0),
+	(104, 'mat', '2018-08-08 21:44:11', NULL, 'nodes', '197', 'Поддержка узла 197 модели Восход', 0),
+	(105, 'mat', '2018-08-08 21:44:32', NULL, 'nodes', '198', 'Поддержка узла 198 модели Нинья', 0),
+	(106, 'mat', '2018-08-08 21:45:32', NULL, 'nodes', '199', 'Поддержка узла 199 модели Нинья', 0);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
 
 
@@ -4430,7 +4433,19 @@ INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(103, 'aluminium', 20),
 	(103, 'iron', 23),
 	(103, 'nickel', 6),
-	(103, 'titan', 20);
+	(103, 'titan', 20),
+	(104, 'aluminium', 20),
+	(104, 'iron', 23),
+	(104, 'nickel', 6),
+	(104, 'titan', 20),
+	(105, 'aluminium', 21),
+	(105, 'iron', 19),
+	(105, 'magnesium', 32),
+	(105, 'titan', 21),
+	(106, 'aluminium', 21),
+	(106, 'iron', 19),
+	(106, 'magnesium', 32),
+	(106, 'titan', 21);
 /*!40000 ALTER TABLE `pump_resources` ENABLE KEYS */;
 
 
@@ -4487,6 +4502,8 @@ CREATE TABLE IF NOT EXISTS `technologies` (
   `name` varchar(100) NOT NULL,
   `opened_at` datetime DEFAULT NULL,
   `level` int(11) NOT NULL DEFAULT '1',
+  `is_available` tinyint(4) NOT NULL DEFAULT '0',
+  `description` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
