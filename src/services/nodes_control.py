@@ -74,6 +74,7 @@ def check_reserve_node(self, data):
 def reserve_node(self, params):
     """ params = {"user_id": int, "node_id": int, "password": str} """
     build_item = check_reserve_node(self, params)
+    # build_item =  {"flight_id":int, "node_id": int}
     if 'errors' in build_item:
         return build_item
     already_reserved = self.db.fetchRow("""
@@ -96,6 +97,17 @@ where n.id=:node_id""", build_item)
             vector=build_item['vector'],
             node_id=params['node_id']
         ))
+    else:
+        model = read_models(self, {"node_id": build_item['node_id']})[0]
+        hull_params = {
+            "weight": model['params']['weight'],
+            "volume": model['params']['volume'],
+            "az_level": model['nodes'][0]['az_level']
+        }
+        build_item['params_json'] = json.dumps({
+            key: {"percent": 100, "value": value}
+            for key, value in hull_params.items()
+        })
     self.db.insert('builds', build_item)
     self.db.query("""update nodes 
         set status_code="reserved", 

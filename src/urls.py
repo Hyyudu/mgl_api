@@ -15,6 +15,8 @@ from services.nodes_control import (
     create_node, get_all_params, set_password, check_password, get_my_reserved_nodes,
     reserve_node,
 )
+from services.tech import create_tech
+from services.technopark import get_flight_params
 from services.users import read_users_from_alice, users_list
 from tornado.web import RequestHandler
 
@@ -39,18 +41,26 @@ app_urls = [
     url("/model/read_all", read_models),
     url("/model/delete", delete_model),
     url("/model/get_upkeep_price", get_model_upkeep_price),
+
     url("/node/create", create_node),
     url("/node/set_password", set_password),
     url("/node/check_password", check_password),
     url("/node/get_my_reserved", get_my_reserved_nodes),
     url("/node/reserve", reserve_node),
+
+    url("/tech/create", create_tech),
+
+    url("/technopark/get_flight_params", get_flight_params),
+
     url("/users/refresh", read_users_from_alice),
     url("/users/list", users_list),
+
     url("/economics/resources", resource_list),
     url("/economics/add_pump", add_pump),
     url("/economics/read_pumps", read_pumps),
     url("/economics/stop_pump", stop_pump),
     url("/economics/set_mine", set_mine),
+
     url("/mcc/dashboard", mcc_dashboard),
     url("/mcc/set_crew", mcc_set_crew),
     url("/mcc/add_passenger", mcc_add_passenger),
@@ -61,6 +71,8 @@ app_urls = [
     url("/mcc/assign_flight", mcc_assign_flight),
     url("/mcc/set_all_crew", mcc_set_all_crew),
     url('/mcc/get_nearest_flight_for_role', get_nearest_flight_for_role),
+
+
     url("/boosts/read", boosts_read),
     url("/boosts/use", boost_use),
 

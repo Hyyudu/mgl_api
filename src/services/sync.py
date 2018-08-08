@@ -80,12 +80,12 @@ def get_func_vector(func):
 def get_node_vector(self, params):
     """ params: {node_id: int} """
     return self.db.fetchOne("""
-    select fv.vector
-from base_freq_vectors fv
-join models m on fv.company = m.company and fv.node_code = m.node_type_code 
-	and fv.`level` = m.`level` and fv.size = m.size
-join nodes n on n.model_id = m.id
-where n.id = :node_id""", params)
+    SELECT fv.vector
+    FROM base_freq_vectors fv
+        JOIN models m on fv.company = m.company and fv.node_code = m.node_type_code 
+            and fv.`level` = m.`level` and fv.size = m.size
+        JOIN nodes n on n.model_id = m.id
+    WHERE n.id = :node_id""", params)
 
 
 def get_node_params_with_desync(vector, params=None, node_id=None, node_type_code=None):
@@ -95,12 +95,13 @@ def get_node_params_with_desync(vector, params=None, node_id=None, node_type_cod
         node_type_code = model['node_type_code']
     desync_percents = get_desync_percent(vector, node_type_code)
     for param, val in params.items():
-        params[param] = roundTo(val * desync_percents.get(param, 100) / 100)
+        percent = desync_percents.get(param, 100)
+        params[param] = {"percent": percent, "value": roundTo(val * percent / 100)}
     return params
 
 
 def get_desync_percent(vector, node_type_code):
     ret = {}
     for param, func in desync_penalties[node_type_code].items():
-        ret[param] = 100+func(vector)
+        ret[param] = 100 + func(vector)
     return ret

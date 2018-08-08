@@ -1941,9 +1941,9 @@ CREATE TABLE IF NOT EXISTS `builds` (
 -- Дамп данных таблицы magellan.builds: ~3 rows (приблизительно)
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
 INSERT IGNORE INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `total`, `params_json`) VALUES
-	(1, 'hull', 174, '', '', '', NULL),
-	(1, 'shields', 161, '1101100001001111', '0000000000000000', '1101100001001111', '{"az_level": 100.0, "desinfect_level": 32.0, "heat_capacity": 421.0, "heat_reflection": 5.2, "heat_sink": 69.1, "mechanical_def": 6.08, "radiation_def": 4.55, "volume": 237.0, "weight": 171.0}'),
-	(1, 'scaner', 141, '1111000100111100', '0000000000000000', '1111000100111100', '{"az_level": 100.0, "drop_range": 12.0, "drop_speed": 24.6, "scan_range": 30.0, "scan_speed": 12.5, "volume": 131.0, "weight": 62.9}');
+	(1, 'scaner', 142, '0011000111111100', '0000000000000000', '0011000111111100', '{"az_level": {"percent": 100, "value": 100.0}, "drop_range": {"percent": 60, "value": 14.4}, "drop_speed": {"percent": 40, "value": 18.0}, "scan_range": {"percent": 70, "value": 50.4}, "scan_speed": {"percent": 50, "value": 13.8}, "volume": {"percent": 100, "value": 218.0}, "weight": {"percent": 100, "value": 104.0}}'),
+	(1, 'shields', 162, '1101100000011010', '0000000000000000', '1101100000011010', '{"az_level": {"percent": 100, "value": 100.0}, "desinfect_level": {"percent": 64, "value": 56.3}, "heat_capacity": {"percent": 86, "value": 509.0}, "heat_reflection": {"percent": 60, "value": 7.2}, "heat_sink": {"percent": 70, "value": 88.9}, "mechanical_def": {"percent": 84, "value": 8.4}, "radiation_def": {"percent": 79, "value": 9.48}, "volume": {"percent": 100, "value": 476.0}, "weight": {"percent": 100, "value": 343.0}}'),
+	(1, 'hull', 177, '', '', '', '{"weight": {"percent": 100, "value": 3620.0}, "volume": {"percent": 100, "value": 3080.0}, "az_level": {"percent": 100, "value": 115}}');
 /*!40000 ALTER TABLE `builds` ENABLE KEYS */;
 
 
@@ -2021,20 +2021,17 @@ DROP TABLE IF EXISTS `flight_luggage`;
 CREATE TABLE IF NOT EXISTS `flight_luggage` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `flight_id` int(11) NOT NULL,
-  `cargo_type` enum('mine','module','beacon') NOT NULL,
-  `owner` enum('mst','mat','gd','kkg','pre') DEFAULT NULL,
-  `volume` float NOT NULL,
-  `weight` float NOT NULL,
-  `amount` tinyint(4) NOT NULL DEFAULT '1',
+  `code` enum('mine','module','beacon') NOT NULL,
+  `company` enum('mst','mat','gd','kkg','pre') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `flight_id` (`flight_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- Дамп данных таблицы magellan.flight_luggage: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `flight_luggage` DISABLE KEYS */;
-INSERT IGNORE INTO `flight_luggage` (`id`, `flight_id`, `cargo_type`, `owner`, `volume`, `weight`, `amount`) VALUES
-	(1, 1, 'beacon', NULL, 350, 175, 2),
-	(2, 1, 'mine', 'mat', 700, 350, 1);
+INSERT IGNORE INTO `flight_luggage` (`id`, `flight_id`, `code`, `company`) VALUES
+	(1, 1, 'beacon', NULL),
+	(2, 1, 'mine', 'mat');
 /*!40000 ALTER TABLE `flight_luggage` ENABLE KEYS */;
 
 
@@ -2245,12 +2242,23 @@ CREATE TABLE IF NOT EXISTS `luggages` (
   `code` enum('mine','module','beacon') NOT NULL COMMENT 'Код типа груза',
   `company` enum('mst','mat','gd','kkg','pre') DEFAULT NULL COMMENT 'Код компании-владельца (для шахт)',
   `vaild_since` datetime NOT NULL COMMENT 'Дата начала актуализации параметров',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `weight` float NOT NULL,
   `volume` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.luggages: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.luggages: ~9 rows (приблизительно)
 /*!40000 ALTER TABLE `luggages` DISABLE KEYS */;
+INSERT IGNORE INTO `luggages` (`code`, `company`, `vaild_since`, `created_at`, `weight`, `volume`) VALUES
+	('beacon', NULL, '2018-08-08 23:09:13', '2018-08-08 23:16:08', 175, 350),
+	('mine', 'mst', '2018-08-08 23:10:30', '2018-08-08 23:16:08', 350, 700),
+	('mine', 'mat', '2018-08-08 23:10:30', '2018-08-08 23:16:08', 350, 700),
+	('mine', 'gd', '2018-08-08 23:10:30', '2018-08-08 23:16:08', 350, 700),
+	('mine', 'kkg', '2018-08-08 23:10:30', '2018-08-08 23:16:08', 350, 700),
+	('mine', 'pre', '2018-08-08 23:10:30', '2018-08-08 23:16:08', 350, 700),
+	('module', NULL, '2018-08-08 23:11:55', '2018-08-08 23:16:08', 600, 1200),
+	('mine', 'pre', '2018-07-08 23:10:30', '2018-08-08 23:16:08', 400, 800),
+	('mine', 'pre', '2019-07-08 23:10:30', '2018-08-08 23:16:08', 300, 600);
 /*!40000 ALTER TABLE `luggages` ENABLE KEYS */;
 
 
@@ -3674,7 +3682,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   KEY `FK_model_id` (`model_id`),
   CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
+) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
 -- Дамп данных таблицы magellan.nodes: ~95 rows (приблизительно)
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
@@ -3719,8 +3727,8 @@ INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`,
 	(138, 138, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(139, 139, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(140, 140, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
-	(141, 141, '', 100, 'reserved', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
-	(142, 142, '', 100, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
+	(141, 141, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
+	(142, 142, '', 100, 'reserved', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(143, 143, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(144, 144, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(145, 145, '', 115, 'free', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
@@ -3739,8 +3747,8 @@ INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`,
 	(158, 158, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(159, 159, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(160, 160, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
-	(161, 161, '', 100, 'reserved', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
-	(162, 162, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
+	(161, 161, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
+	(162, 162, '', 100, 'reserved', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
 	(163, 163, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(164, 164, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(165, 165, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
@@ -3752,10 +3760,10 @@ INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`,
 	(171, 171, '', 100, 'free', '2018-08-06 21:38:57', NULL, '', '2018-08-06 21:58:03'),
 	(172, 172, 'Нинья-172', 100, 'free', '2018-08-06 21:38:58', NULL, '', '2018-08-06 21:58:03'),
 	(173, 173, 'Пинта-173', 100, 'free', '2018-08-06 21:38:59', NULL, '', '2018-08-06 21:58:03'),
-	(174, 174, 'Санта-Мария-174', 100, 'reserved', '2018-08-06 21:39:00', NULL, '', '2018-08-06 21:58:03'),
+	(174, 174, 'Санта-Мария-174', 100, 'free', '2018-08-06 21:39:00', NULL, '', '2018-08-06 21:58:03'),
 	(175, 175, 'Adventureland-175', 115, 'free', '2018-08-06 21:39:01', NULL, '', '2018-08-06 21:58:03'),
 	(176, 176, 'Mickey\'s Toontown-176', 115, 'free', '2018-08-06 21:39:02', NULL, '', '2018-08-06 21:58:03'),
-	(177, 177, 'Ленинград-5-177', 115, 'free', '2018-08-06 21:39:03', NULL, '', '2018-08-06 21:58:03'),
+	(177, 177, 'Ленинград-5-177', 115, 'reserved', '2018-08-06 21:39:03', NULL, '', '2018-08-06 21:58:03'),
 	(178, 178, 'Ленинград-3-178', 115, 'free', '2018-08-06 21:39:04', NULL, '', '2018-08-06 21:58:03'),
 	(179, 179, 'МСТ-М4-179', 115, 'free', '2018-08-06 21:39:04', NULL, '', '2018-08-06 21:58:03'),
 	(180, 180, 'Unity-180', 100, 'free', '2018-08-06 21:39:06', NULL, '', '2018-08-06 21:58:03'),
@@ -3900,9 +3908,9 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   PRIMARY KEY (`id`),
   KEY `FK_resource_flows_resource_sections` (`section`),
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~102 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~105 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
 	(1, 'mat', '2018-07-28 13:20:38', NULL, 'mines', NULL, 'Шахты Мицубиси Автоваз Технолоджис на планетах Ойкумены', 1),
@@ -4009,7 +4017,8 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 	(103, 'mat', '2018-08-07 22:55:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели Восход', 0),
 	(104, 'mat', '2018-08-08 21:44:11', NULL, 'nodes', '197', 'Поддержка узла 197 модели Восход', 0),
 	(105, 'mat', '2018-08-08 21:44:32', NULL, 'nodes', '198', 'Поддержка узла 198 модели Нинья', 0),
-	(106, 'mat', '2018-08-08 21:45:32', NULL, 'nodes', '199', 'Поддержка узла 199 модели Нинья', 0);
+	(106, 'mat', '2018-08-08 21:45:32', NULL, 'nodes', '199', 'Поддержка узла 199 модели Нинья', 0),
+	(107, 'mst', '2018-08-08 23:38:42', NULL, 'nodes', '200', 'Поддержка узла 200 модели Ленинград-5', 0);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
 
 
@@ -4025,7 +4034,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~406 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~418 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(1, 'aluminium', 500),
@@ -4445,7 +4454,11 @@ INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(106, 'aluminium', 21),
 	(106, 'iron', 19),
 	(106, 'magnesium', 32),
-	(106, 'titan', 21);
+	(106, 'titan', 21),
+	(107, 'aluminium', 26),
+	(107, 'iron', 58),
+	(107, 'nickel', 30),
+	(107, 'titan', 63);
 /*!40000 ALTER TABLE `pump_resources` ENABLE KEYS */;
 
 
@@ -4728,6 +4741,17 @@ INSERT IGNORE INTO `users` (`id`, `name`, `company_id`, `is_active`) VALUES
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 
+-- Дамп структуры для представление magellan.v_luggages
+DROP VIEW IF EXISTS `v_luggages`;
+-- Создание временной таблицы для обработки ошибок зависимостей представлений
+CREATE TABLE `v_luggages` (
+	`code` ENUM('mine','module','beacon') NOT NULL COMMENT 'Код типа груза' COLLATE 'utf8_general_ci',
+	`company` ENUM('mst','mat','gd','kkg','pre') NULL COMMENT 'Код компании-владельца (для шахт)' COLLATE 'utf8_general_ci',
+	`weight` FLOAT NOT NULL,
+	`volume` FLOAT NOT NULL
+) ENGINE=MyISAM;
+
+
 -- Дамп структуры для представление magellan.v_model_params
 DROP VIEW IF EXISTS `v_model_params`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
@@ -4749,6 +4773,17 @@ CREATE TABLE `v_node_parameter_list` (
 	`param_name` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
 	`param_short_name` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci'
 ) ENGINE=MyISAM;
+
+
+-- Дамп структуры для представление magellan.v_luggages
+DROP VIEW IF EXISTS `v_luggages`;
+-- Удаление временной таблицы и создание окончательной структуры представления
+DROP TABLE IF EXISTS `v_luggages`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_luggages` AS select distinct code, company, weight, volume
+from luggages l
+where l.vaild_since < Now()
+group by code, company
+order by l.vaild_since desc ;
 
 
 -- Дамп структуры для представление magellan.v_model_params

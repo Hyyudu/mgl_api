@@ -103,7 +103,7 @@ def read_models(self=None, params=None, read_nodes = True):
     ids = self.db.construct_params(ids)
     all_params = self.db.fetchAll("select * from v_model_params where is_hidden=0 and " + params_where, ids)
     if read_nodes:
-        all_nodes = self.db.fetchAll("""
+        nodes_sql = """
             select n.id, n.model_id, n.name, n.az_level, n.status_code, n.date_created, m.node_type_code,
                 if (n.password is not null and (
                     n.premium_expires = 0
@@ -112,9 +112,12 @@ def read_models(self=None, params=None, read_nodes = True):
                 ), 1, 0) is_premium 
             from nodes n
             join models m on m.id = n.model_id
-            where """ + params_where, ids, 'id')
+            where """ + params_where
+        if 'node_id' in params:
+            nodes_sql += f" and n.id={int(params['node_id'])}"
+        all_nodes = self.db.fetchAll(nodes_sql, ids, 'id')
         if all_nodes:
-            hull_ids = (id for id, node in all_nodes.items() if node['node_type_code'] == 'hull')
+            hull_ids = [id for id, node in all_nodes.items() if node['node_type_code'] == 'hull']
             if hull_ids:
                 node_ids = str(tuple(hull_ids)).replace(",)", ")")
 
