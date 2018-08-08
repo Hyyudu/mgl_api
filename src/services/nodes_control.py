@@ -36,7 +36,7 @@ def create_node(self, params):
         result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
     else:
-        return create_hull(self, model, node_id)
+        return create_hull(self, model, node_id=node_id)
 
 @inject_db
 def check_reserve_node(self, data):
