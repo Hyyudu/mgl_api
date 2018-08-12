@@ -165,3 +165,10 @@ def unload_luggage(self, params):
     else:
         self.db.query("update flight_luggage set amount = amount-1 where " + where, params, need_commit=True)
     return api_ok()
+
+
+@inject_db
+def get_luggage(self, params):
+    """ params = {flight_id: int} """
+    return self.db.fetchAll('select code, company, planet_id, amount from flight_luggage where flight_id=:flight_id',
+                            params)

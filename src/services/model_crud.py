@@ -1,4 +1,5 @@
 import json
+from typing import List
 
 from services.misc import api_fail, inject_db, roundTo
 
@@ -82,7 +83,7 @@ def apply_companies_perks(model):
 
 
 @inject_db
-def read_models(self=None, params=None, read_nodes = True):
+def read_models(self=None, params=None, read_nodes=True):
     """ params = {<name>: str, <node_type_code>: str/list[str], <level>: int/list[int], <size>: str/list[str],
         <company>: str/list[str], <node_id>: int} """
     params = params or {}
@@ -176,3 +177,16 @@ def get_model_upkeep_price(self, params):
     """ params: {"model_id": int} """
     return self.db.fetchDict('select resource_code, amount from models_upkeep where model_id=:model_id',
                              params, 'resource_code', 'amount')
+
+
+def _get_minlevel(techlevel):
+    return 0 if techlevel == 1 else 1
+
+
+def get_model_level_by_technologies(techs: List[List[int]]) -> int:
+    if not techs:
+        return 0
+    elif len(techs) == 1:
+        out = [_get_minlevel(techs[0][0])] * 3
+    elif len(techs) == 3:
+        out = [_get_minlevel(round(sum([x[0] for x in techs]) / 3))]
