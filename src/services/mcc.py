@@ -11,7 +11,8 @@ def mcc_dashboard(self, params):
         LEFT JOIN builds b on f.id = b.flight_id and b.node_type_code = 'hull'
         LEFT JOIN nodes n on b.node_id = n.id
         LEFT JOIN models m on n.model_id = m.id
-    WHERE status in ('prepare', 'freight')""", associate='id')
+    WHERE status in ('prepare', 'freight')
+    order by f.departure, f.dock""", associate='id')
     flight_ids = tuple(flights.keys())
     for flight in flights.values():
         flight['departure'] = modernize_date(flight['departure'])

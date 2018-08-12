@@ -2020,19 +2020,19 @@ INSERT IGNORE INTO `flight_crews` (`flight_id`, `role`, `user_id`) VALUES
 -- Дамп структуры для таблица magellan.flight_luggage
 DROP TABLE IF EXISTS `flight_luggage`;
 CREATE TABLE IF NOT EXISTS `flight_luggage` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `flight_id` int(11) NOT NULL,
   `code` enum('mine','module','beacon') NOT NULL,
   `company` enum('mst','mat','gd','kkg','pre') DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  `planet_id` varchar(50) DEFAULT NULL,
+  `amount` int(11) NOT NULL DEFAULT '1',
   KEY `flight_id` (`flight_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Дамп данных таблицы magellan.flight_luggage: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `flight_luggage` DISABLE KEYS */;
-INSERT IGNORE INTO `flight_luggage` (`id`, `flight_id`, `code`, `company`) VALUES
-	(1, 1, 'beacon', NULL),
-	(2, 1, 'mine', 'mat');
+INSERT IGNORE INTO `flight_luggage` (`flight_id`, `code`, `company`, `planet_id`, `amount`) VALUES
+	(1, 'beacon', NULL, NULL, 1),
+	(1, 'mine', 'gd', NULL, 2);
 /*!40000 ALTER TABLE `flight_luggage` ENABLE KEYS */;
 
 
@@ -4544,7 +4544,7 @@ CREATE TABLE IF NOT EXISTS `tech_effects` (
   CONSTRAINT `FK_tech_effects_technologies` FOREIGN KEY (`tech_id`) REFERENCES `technologies` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Эффекты технологии';
 
--- Дамп данных таблицы magellan.tech_effects: ~8 rows (приблизительно)
+-- Дамп данных таблицы magellan.tech_effects: ~18 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_effects` DISABLE KEYS */;
 INSERT IGNORE INTO `tech_effects` (`tech_id`, `node_code`, `parameter_code`, `value`) VALUES
 	(1, 'radar', 'angle_max', 0.8),
@@ -4576,7 +4576,7 @@ CREATE TABLE IF NOT EXISTS `tech_inventors` (
   PRIMARY KEY (`tech_id`,`company`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.tech_inventors: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.tech_inventors: ~4 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_inventors` DISABLE KEYS */;
 INSERT IGNORE INTO `tech_inventors` (`tech_id`, `company`) VALUES
 	(1, 'mst'),
@@ -4598,7 +4598,7 @@ CREATE TABLE IF NOT EXISTS `tech_point_cost` (
   CONSTRAINT `FK_tech_point_cost_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Стоимость одного поинта технологии';
 
--- Дамп данных таблицы magellan.tech_point_cost: ~1 rows (приблизительно)
+-- Дамп данных таблицы magellan.tech_point_cost: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_point_cost` DISABLE KEYS */;
 INSERT IGNORE INTO `tech_point_cost` (`tech_id`, `resource_code`, `amount`) VALUES
 	(1, 'iron', 4),

@@ -16,7 +16,7 @@ from services.nodes_control import (
 )
 from services.sync import set_build_correction
 from services.tech import create_tech, read_techs
-from services.technopark import get_flight_params, reserve_node, get_my_reserved_nodes
+from services.technopark import get_flight_params, reserve_node, get_my_reserved_nodes, load_luggage, unload_luggage
 from services.users import read_users_from_alice, users_list
 from tornado.web import RequestHandler
 
@@ -52,6 +52,8 @@ app_urls = [
     url("/tech/read", read_techs),
 
     url("/technopark/get_flight_params", get_flight_params),
+    url("/technopark/load_luggage", load_luggage),
+    url("/technopark/unload_luggage", unload_luggage),
 
     url("/sync/set_correction", set_build_correction),
 
