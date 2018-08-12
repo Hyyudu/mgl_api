@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+from numpy import interp
 from services.misc import api_fail, inject_db, roundTo
 
 
@@ -184,9 +185,19 @@ def _get_minlevel(techlevel):
 
 
 def get_model_level_by_technologies(techs: List[List[int]]) -> int:
+    """ [[tech1.level, tech1.balls], [tech2.level, tech2.balls], ...]"""
+    out = []
     if not techs:
         return 0
     elif len(techs) == 1:
         out = [_get_minlevel(techs[0][0])] * 3
     elif len(techs) == 3:
         out = [_get_minlevel(round(sum([x[0] for x in techs]) / 3))]
+    elif len(techs) == 2:
+        if {_get_minlevel(techs[0][0]), _get_minlevel(techs[1][0])} == {0,1}:
+            out = [0.5, 0.5]
+        else:
+            out = [_get_minlevel(techs[0][0])]*2
+    for tech in techs:
+        out.append(interp(tech[1], (0, 10), (_get_minlevel(tech[0]), tech[0]+1)))
+    return round(sum(out)/4)

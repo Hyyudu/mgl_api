@@ -118,3 +118,9 @@ def get_nearest_flight_for_supercargo(self, user_id):
 @inject_db
 def get_nearest_flight_for_engineer(self, user_id):
     return get_nearest_flight_for_role(self, {"user_id": user_id, "role": 'engineer'})
+
+
+@inject_db
+def freight_flight(self, params):
+    """ params {flight_id: int} """
+    return api_fail("Пока не реализовано")

@@ -3,11 +3,12 @@ from handlers.PingHandler import (
     PingHandler,
 )
 from services.boosts import boosts_read, boost_use
-from services.economic import read_pumps, resource_list, add_pump, stop_pump, set_mine
+from services.economic import read_pumps, resource_list, add_pump, stop_pump, set_mine, get_nodes_kpi
 from services.mcc import (
     mcc_dashboard, mcc_set_crew, mcc_add_passenger, mcc_remove, mcc_add_flight, mcc_set_all_crew,
     get_nearest_flight_for_role,
     mcc_assign_flight,
+    freight_flight,
 )
 from services.misc import url_params
 from services.model_crud import add_model, read_model, read_models, delete_model, get_model_upkeep_price
@@ -69,6 +70,7 @@ app_urls = [
     url("/economics/read_pumps", read_pumps),
     url("/economics/stop_pump", stop_pump),
     url("/economics/set_mine", set_mine),
+    url("/economics/get_nodes_kpi", get_nodes_kpi),
 
     url("/mcc/dashboard", mcc_dashboard),
     url("/mcc/set_crew", mcc_set_crew),
@@ -80,7 +82,7 @@ app_urls = [
     url("/mcc/assign_flight", mcc_assign_flight),
     url("/mcc/set_all_crew", mcc_set_all_crew),
     url('/mcc/get_nearest_flight_for_role', get_nearest_flight_for_role),
-
+    url('/mcc/freight', freight_flight),
 
     url("/boosts/read", boosts_read),
     url("/boosts/use", boost_use),

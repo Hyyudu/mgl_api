@@ -102,3 +102,21 @@ def set_mine(self, params):
     }
     add_pump(self, pump)
     return pump
+
+
+@inject_db
+def get_nodes_kpi(self, params):
+    """ params = {node_type_code: str} """
+    data = self.db.fetchAll("""
+    select cnt, name, company, kpi_price, full_kpi
+    from v_nodes_kpi
+    where node_type_code=:node_type_code""", params, associate='company', cumulative=True)
+    sum_kpi = self.db.fetchOne("""select sum(full_kpi) from v_nodes_kpi 
+        where node_type_code=:node_type_code""", params)
+    table = {key: ["{name} = {kpi_price} * {cnt} = {full_kpi}".format(**item) for item in items] +
+                ["Итого: {} ({}%)".format(
+                    sum([x['full_kpi'] for x in data[key]]),
+                    round(sum([x['full_kpi'] for x in data[key]]) * 100 / sum_kpi),
+                )]
+             for key, items in data.items()}
+    return table
