@@ -1928,6 +1928,7 @@ CREATE TABLE IF NOT EXISTS `builds` (
   `node_id` int(11) NOT NULL COMMENT 'ID узла',
   `vector` varchar(16) DEFAULT '' COMMENT 'Вектор рассинхрона (узел xor корпус)',
   `correction` varchar(16) DEFAULT '' COMMENT 'Вектор корректировки',
+  `corection_func` varchar(100) DEFAULT '',
   `total` varchar(16) DEFAULT '' COMMENT 'Итоговый вектор',
   `params_json` text COMMENT 'JSON с получившимися параметрами',
   KEY `FK_builds_flights` (`flight_id`),
@@ -1940,10 +1941,10 @@ CREATE TABLE IF NOT EXISTS `builds` (
 
 -- Дамп данных таблицы magellan.builds: ~3 rows (приблизительно)
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
-INSERT IGNORE INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `total`, `params_json`) VALUES
-	(1, 'scaner', 142, '0011000111111100', '0000000000000000', '0011000111111100', '{"az_level": {"percent": 100, "value": 100.0}, "drop_range": {"percent": 60, "value": 14.4}, "drop_speed": {"percent": 40, "value": 18.0}, "scan_range": {"percent": 70, "value": 50.4}, "scan_speed": {"percent": 50, "value": 13.8}, "volume": {"percent": 100, "value": 218.0}, "weight": {"percent": 100, "value": 104.0}}'),
-	(1, 'shields', 162, '1101100000011010', '0000000000000000', '1101100000011010', '{"az_level": {"percent": 100, "value": 100.0}, "desinfect_level": {"percent": 64, "value": 56.3}, "heat_capacity": {"percent": 86, "value": 509.0}, "heat_reflection": {"percent": 60, "value": 7.2}, "heat_sink": {"percent": 70, "value": 88.9}, "mechanical_def": {"percent": 84, "value": 8.4}, "radiation_def": {"percent": 79, "value": 9.48}, "volume": {"percent": 100, "value": 476.0}, "weight": {"percent": 100, "value": 343.0}}'),
-	(1, 'hull', 177, '', '', '', '{"weight": {"percent": 100, "value": 3620.0}, "volume": {"percent": 100, "value": 3080.0}, "az_level": {"percent": 100, "value": 115}}');
+INSERT IGNORE INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `corection_func`, `total`, `params_json`) VALUES
+	(1, 'scaner', 142, '0011000111111100', '0000000000000000', '', '0011000111111100', '{"az_level": {"percent": 100, "value": 100.0}, "drop_range": {"percent": 60, "value": 14.4}, "drop_speed": {"percent": 40, "value": 18.0}, "scan_range": {"percent": 70, "value": 50.4}, "scan_speed": {"percent": 50, "value": 13.8}, "volume": {"percent": 100, "value": 218.0}, "weight": {"percent": 100, "value": 104.0}}'),
+	(1, 'shields', 162, '1101100000011010', '0000000000000000', '', '1101100000011010', '{"az_level": {"percent": 100, "value": 100.0}, "desinfect_level": {"percent": 64, "value": 56.3}, "heat_capacity": {"percent": 86, "value": 509.0}, "heat_reflection": {"percent": 60, "value": 7.2}, "heat_sink": {"percent": 70, "value": 88.9}, "mechanical_def": {"percent": 84, "value": 8.4}, "radiation_def": {"percent": 79, "value": 9.48}, "volume": {"percent": 100, "value": 476.0}, "weight": {"percent": 100, "value": 343.0}}'),
+	(1, 'hull', 177, '', '', '', '', '{"weight": {"percent": 100, "value": 3620.0}, "volume": {"percent": 100, "value": 3080.0}, "az_level": {"percent": 100, "value": 115}}');
 /*!40000 ALTER TABLE `builds` ENABLE KEYS */;
 
 
@@ -1954,7 +1955,7 @@ CREATE TABLE IF NOT EXISTS `companies` (
   `name` varchar(50) NOT NULL,
   `code` varchar(3) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Названия компаний';
 
 -- Дамп данных таблицы magellan.companies: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `companies` DISABLE KEYS */;
@@ -2102,7 +2103,7 @@ CREATE TABLE IF NOT EXISTS `hull_slots` (
   CONSTRAINT `FK__nodes` FOREIGN KEY (`hull_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Слоты в корпусах под детали синхронизации';
 
--- Дамп данных таблицы magellan.hull_slots: ~12 rows (приблизительно)
+-- Дамп данных таблицы magellan.hull_slots: ~13 rows (приблизительно)
 /*!40000 ALTER TABLE `hull_slots` DISABLE KEYS */;
 INSERT IGNORE INTO `hull_slots` (`hull_id`, `slots_json`) VALUES
 	(172, '{"sum3": 4, "con3": 3, "sum4": 3, "sum2": 5, "inv": 2, "con2": 2, "sum5": 1}'),
@@ -3682,9 +3683,9 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   KEY `FK_model_id` (`model_id`),
   CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
+) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
--- Дамп данных таблицы magellan.nodes: ~95 rows (приблизительно)
+-- Дамп данных таблицы magellan.nodes: ~96 rows (приблизительно)
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
 	(101, 101, '', 100, 'free', '2018-08-06 21:38:39', NULL, '', '2018-08-06 21:58:03'),
@@ -3910,7 +3911,7 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~105 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~102 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
 	(1, 'mat', '2018-07-28 13:20:38', NULL, 'mines', NULL, 'Шахты Мицубиси Автоваз Технолоджис на планетах Ойкумены', 1),
@@ -4034,7 +4035,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~418 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~402 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(1, 'aluminium', 500),
@@ -4518,10 +4519,13 @@ CREATE TABLE IF NOT EXISTS `technologies` (
   `is_available` tinyint(4) NOT NULL DEFAULT '0',
   `description` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.technologies: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.technologies: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `technologies` DISABLE KEYS */;
+INSERT IGNORE INTO `technologies` (`id`, `name`, `opened_at`, `level`, `is_available`, `description`) VALUES
+	(1, 'Визор Гамильтона', NULL, 1, 1, 'Изобретение Джеймса Эллены Чиела-Гамильтона, юпитерского конструктора, в 2310 году'),
+	(4, 'Система Adoe', NULL, 1, 1, 'C лат. Дар богов - 2110 год, ранее изобретение лабораторий первого города (Венера)? авторство – коллектив ученых Aerenia.');
 /*!40000 ALTER TABLE `technologies` ENABLE KEYS */;
 
 
@@ -4540,8 +4544,27 @@ CREATE TABLE IF NOT EXISTS `tech_effects` (
   CONSTRAINT `FK_tech_effects_technologies` FOREIGN KEY (`tech_id`) REFERENCES `technologies` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Эффекты технологии';
 
--- Дамп данных таблицы magellan.tech_effects: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.tech_effects: ~8 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_effects` DISABLE KEYS */;
+INSERT IGNORE INTO `tech_effects` (`tech_id`, `node_code`, `parameter_code`, `value`) VALUES
+	(1, 'radar', 'angle_max', 0.8),
+	(1, 'radar', 'angle_min', -0.8),
+	(1, 'radar', 'range_max', 2),
+	(1, 'radar', 'weight', 1.5),
+	(1, 'scaner', 'drop_speed', 0.4),
+	(1, 'scaner', 'scan_range', 1.8),
+	(1, 'scaner', 'scan_speed', 0.03),
+	(1, 'scaner', 'weight', 1.5),
+	(4, 'lss', 'air_volume', 15),
+	(4, 'lss', 'co2_level', 6),
+	(4, 'lss', 'lightness', 1),
+	(4, 'lss', 'thermal_def', 0.6),
+	(4, 'lss', 'volume', -0.5),
+	(4, 'shields', 'desinfect_level', 2.5),
+	(4, 'shields', 'heat_reflection', 0.15),
+	(4, 'shields', 'mechanical_def', 1),
+	(4, 'shields', 'radiation_def', 0.25),
+	(4, 'shields', 'volume', -0.5);
 /*!40000 ALTER TABLE `tech_effects` ENABLE KEYS */;
 
 
@@ -4555,6 +4578,11 @@ CREATE TABLE IF NOT EXISTS `tech_inventors` (
 
 -- Дамп данных таблицы magellan.tech_inventors: ~0 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_inventors` DISABLE KEYS */;
+INSERT IGNORE INTO `tech_inventors` (`tech_id`, `company`) VALUES
+	(1, 'mst'),
+	(1, 'mat'),
+	(4, 'kkg'),
+	(4, 'gd');
 /*!40000 ALTER TABLE `tech_inventors` ENABLE KEYS */;
 
 
@@ -4562,14 +4590,19 @@ CREATE TABLE IF NOT EXISTS `tech_inventors` (
 DROP TABLE IF EXISTS `tech_point_cost`;
 CREATE TABLE IF NOT EXISTS `tech_point_cost` (
   `tech_id` int(11) NOT NULL,
-  `resource_id` int(11) NOT NULL,
+  `resource_code` varchar(50) NOT NULL,
   `amount` float NOT NULL,
   KEY `Индекс 1` (`tech_id`),
-  CONSTRAINT `FK__technologies` FOREIGN KEY (`tech_id`) REFERENCES `technologies` (`id`)
+  KEY `FK_tech_point_cost_resources` (`resource_code`),
+  CONSTRAINT `FK__technologies` FOREIGN KEY (`tech_id`) REFERENCES `technologies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_tech_point_cost_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Стоимость одного поинта технологии';
 
--- Дамп данных таблицы magellan.tech_point_cost: ~0 rows (приблизительно)
+-- Дамп данных таблицы magellan.tech_point_cost: ~1 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_point_cost` DISABLE KEYS */;
+INSERT IGNORE INTO `tech_point_cost` (`tech_id`, `resource_code`, `amount`) VALUES
+	(1, 'iron', 4),
+	(4, 'titan', 2);
 /*!40000 ALTER TABLE `tech_point_cost` ENABLE KEYS */;
 
 

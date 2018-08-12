@@ -19,12 +19,13 @@ class ApiHandler(RequestHandler):
 
     async def post(self):
         try:
-            body = self.request.body
+            body = self.request.body or "{}"
             try:
                 req = json.loads(body)
             except JSONDecodeError:
-                req = {}
-            out = self.func(self, req)
+                out=api_fail("JSON-запрос невалиден")
+            else:
+                out = self.func(self, req)
             self.write(json.dumps(out, indent=4))
         except Exception as e:
             err_text = self.get_exception_text(self, e)

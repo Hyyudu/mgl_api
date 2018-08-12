@@ -1,6 +1,9 @@
 import re
+from collections import defaultdict
 from datetime import datetime
+import logging
 from typing import Dict
+from traceback import format_tb
 
 import mysql.connector
 from config import DB_CONFIG
@@ -54,12 +57,18 @@ class DB:
                 for key, val in item.items()}
             yield item
 
-    def fetchAll(self, sql, data=None, associate=''):
+    def fetchAll(self, sql, data=None, associate='', cumulative=False):
         self.query(sql, data or {})
         result = [item for item in self.get_result()]
         self.cnx.commit()
         if associate:
-            result = {item[associate]: item for item in result}
+            if not cumulative:
+                result = {item[associate]: item for item in result}
+            else:
+                out = defaultdict(list)
+                for item in result:
+                    out[item[associate]].append(item)
+                result = dict(out)
         return result
 
     def fetchRow(self, sql, data=None):

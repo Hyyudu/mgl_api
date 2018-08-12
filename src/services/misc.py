@@ -61,6 +61,7 @@ def inject_db(func):
     def wrapper(obj, params, **kwargs):
         if not obj:
             obj = DBHolder()
+            obj.db: DB
         return func(obj, params, **kwargs)
     wrapper.__doc__ = func.__doc__
     return wrapper
@@ -78,3 +79,16 @@ def url_params(app_urls):
 
 def roundTo(val, prec=3):
     return round(val, prec - len(str(int(val))))
+
+
+def apply_percent(value, percent=100):
+    return roundTo(value * (100+percent)/100)
+
+
+def drop(arr, field: str):
+    if isinstance(arr, (list, tuple, set)):
+        for dct in arr:
+            del(dct[field])
+    else:
+        del(arr[field])
+    return arr

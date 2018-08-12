@@ -1,11 +1,11 @@
 import re
-from collections import Counter
+from collections import Counter, defaultdict
 from itertools import product
 from random import shuffle, choice, randint
 from typing import List
 
 from services.desync_penalties import desync_penalties
-from services.misc import inject_db, roundTo
+from services.misc import inject_db, roundTo, api_fail, api_ok
 from services.model_crud import read_models
 
 
@@ -105,3 +105,63 @@ def get_desync_percent(vector, node_type_code):
     for param, func in desync_penalties[node_type_code].items():
         ret[param] = 100 + func(vector)
     return ret
+
+
+@inject_db
+def set_build_correction(self, params):
+    """ params: {flight_id: int, node_type_code: str, correction: str}"""
+    existing = self.db.fetchAll("""
+    select * from builds where flight_id = :flight_id""", params, 'node_type_code')
+    if not existing:
+        return api_fail(
+            "Полет {flight_id) не существует, либо для него не зарезервировано ни одного узла!".format(**params))
+    update_row = existing.get(params['node_type_code'])
+    if not update_row:
+        return api_fail("Для полета не зарезервирован узел {node_type_code}".format(**params))
+    update_row['correction_func'] = params['correction']
+    update_row['correction'] = get_func_vector(params['correction'])
+    update_row['total'] = xor([update_row['vector'], update_row['correction']])
+    update_row = get_node_params_with_desync(
+        update_row['total'],
+        node_id=update_row['node_id']
+    )
+    self.db.update('bulids', update_row, 'flight_id = :flight_id and node_type_code=:node_type_code')
+    return api_ok(node_sync=update_row)
+
+def count_elements_for_functext(st):
+    # print(st)
+    res = defaultdict(int)
+    steps = 0
+    # Подсчитываем все инверторы
+    res['inv'] = st.count('!')
+    st = st.replace("!", '')
+
+    st = st.replace(" ", '')
+    while st != 'x':
+        # Находим все конъюнктивные группы и меняем их
+        p = re.findall("[abcdx]+", st, re.I)
+        p.sort(key=len, reverse=True)
+        for group in p:
+            if len(group) > 1:
+                res[f'con{len(group)}'] += st.count(group)
+            st = st.replace(group, 'x')
+            # print(st)
+            # print(res)
+        # находим все суммы и меняем их
+        p = re.findall("((?:[abcdx]\+)+[abcdx])", st, re.I)
+        p.sort(key=len, reverse=True)
+        # print(p)
+        for group in p:
+            if len(group) > 1:
+                res[f'sum{group.count("+") + 1}'] += st.count(group)
+            st = st.replace(group, 'x')
+            # print(st)
+            # print(res)
+        # находим все скобки с одним элементом и меняем их
+        st = re.sub("\((\w)\)", "\\1", st)
+        # print(st)
+        steps += 1
+        if steps > 1000:
+            break
+    else:
+        return dict(res)

@@ -6,7 +6,8 @@ import requests
 from config import SERVICE_URL
 from services.misc import api_fail
 from src.services.sync import xor, getfunc, get_func_vector
-from src.sync.magellan import table_view, count_elements
+from src.sync.magellan import table_view
+from services.sync import count_elements_for_functext
 from src.sync.nodes_data import node_names, node_params, param_names
 
 
@@ -233,7 +234,7 @@ class Sync:
             ))
         else:
             print(node_names[syst] + ": корректирующая функция сброшена")
-        self.slots[syst] = count_elements(functext)
+        self.slots[syst] = count_elements_for_functext(functext)
 
     def cmd_correct_system(self, args):
         syst = args[0]

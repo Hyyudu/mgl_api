@@ -1,51 +1,8 @@
-import re
-from collections import defaultdict
-
 from services.misc import group
+from services.sync import count_elements_for_functext
 
 
 sample_func = '!((aBC+Ad)(B+C+aD) + Bd + !(AbcD + bc))'
-
-
-def count_elements(st):
-    # print(st)
-    res = {'!': 0, '+': defaultdict(int), '*': defaultdict(int)}
-    steps = 0
-    # Подсчитываем все инверторы
-    res['!'] = {1: st.count('!')}
-    st = st.replace("!", '')
-
-    st = st.replace(" ", '')
-    while st != 'x':
-        # Находим все конъюнктивные группы и меняем их
-        p = re.findall("[abcdx]+", st, re.I)
-        p.sort(key=len, reverse=True)
-        for group in p:
-            if len(group) > 1:
-                res['*'][len(group)] += st.count(group)
-            st = st.replace(group, 'x')
-            # print(st)
-            # print(res)
-        # находим все суммы и меняем их
-        p = re.findall("((?:[abcdx]\+)+[abcdx])", st, re.I)
-        p.sort(key=len, reverse=True)
-        # print(p)
-        for group in p:
-            if len(group) > 1:
-                res['+'][group.count('+') + 1] += st.count(group)
-            st = st.replace(group, 'x')
-            # print(st)
-            # print(res)
-        # находим все скобки с одним элементом и меняем их
-        st = re.sub("\((\w)\)", "\\1", st)
-        # print(st)
-        steps += 1
-        if steps > 1000:
-            break
-    else:
-        res['+'] = dict(res['+'])
-        res['*'] = dict(res['*'])
-        return res
 
 
 def table_view(data, free_space_right=4, free_space_left=1, column_separator="|"):
@@ -79,6 +36,6 @@ def get_vector_carno(vector):
 
 if __name__ == "__main__":
     print(sample_func)
-    r = count_elements(sample_func)
+    r = count_elements_for_functext(sample_func)
     for key, val in r.items():
         print("{}: {}".format(key, val))
