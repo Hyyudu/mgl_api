@@ -2,7 +2,7 @@ import json
 from typing import List
 
 from numpy import interp
-from services.misc import api_fail, inject_db, roundTo
+from services.misc import api_fail, inject_db, roundTo, apply_percent
 
 
 @inject_db
@@ -59,26 +59,26 @@ def apply_companies_perks(model):
         if model['node_type_code'] == 'warp_engine':
             model['params']['distort_level'] *= 1.12
         if model['node_type_code'] != 'hull':
-            model['params']['volume'] *= 0.92
+            model['params']['volume'] = apply_percent(model['params']['volume'], -8)
         else:
-            model['params']['volume'] *= 1.08
+            model['params']['volume'] = apply_percent(model['params']['volume'], 8)
 
     elif model['company'] in ['gd', 'mst']:
-        model['params']['az_level'] *= 1.15
+        model['params']['az_level'] = apply_percent(model['params']['az_level'], 15)
 
     elif model['company'] == 'kkg':
         if model['node_type_code'] == 'lss':
             for field in ['thermal_def', 'co2_level', 'air_volume', 'air_speed']:
-                model['params'][field] *= 1.09
+                model['params'][field] = apply_percent(model['params'][field], 9)
 
     elif model['company'] == 'mat':
         node_type = model['node_type_code']
         if node_type == 'march_engine':
-            model['params']['thrust'] *= 1.12
+            model['params']['thrust'] = apply_percent(model['params']['thrust'], 12)
         elif node_type == 'shunter':
-            model['params']['strafe'] = 1.12 * model['params'].get('strafe', 0)
+            model['params']['turn_accel'] = apply_percent(model['params']['turn_accel'], 12)
         elif node_type == 'fuel_tank':
-            model['params']['fuel_volume'] *= 1.12
+            model['params']['fuel_volume'] = apply_percent(model['params']['fuel_volume'], 12)
 
     return model
 
@@ -103,7 +103,7 @@ def read_models(self=None, params=None, read_nodes=True):
     ids = {"model_id": [model['id'] for model in models]}
     params_where = self.db.construct_where(ids)
     ids = self.db.construct_params(ids)
-    all_params = self.db.fetchAll("select * from v_model_params where is_hidden=0 and " + params_where, ids)
+    all_params = self.db.fetchAll("select * from v_model_params where " + params_where, ids)
     if read_nodes:
         nodes_sql = """
             select n.id, n.model_id, n.name, n.az_level, n.status_code, n.date_created, m.node_type_code,

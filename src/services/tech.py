@@ -1,4 +1,5 @@
-from services.misc import inject_db, api_ok, drop, roundTo
+from services.misc import inject_db, api_ok, drop, apply_percent, roundTo
+from services.model_crud import calc_weight, apply_companies_perks
 
 
 TECH_WOW_PERIOD_HOURS = 2
@@ -64,8 +65,43 @@ def read_techs(self, params):
 @inject_db
 def calc_model_params(self, params):
     """ params = {"node_type_code": "radar", "company": "mat","size": "large", "tech_balls": {"1": 10, "2": 5}}"""
-    dummy = self.db.fetchAll("""
-    select parameter_code, def_value, 1 medium, mult_small small, mult_large large
+    data = self.db.fetchAll("""
+    select parameter_code, def_value, increase_direction
     from model_has_parameters
     where node_code = :node_type_code""", params)
-    return {item['parameter_code']: roundTo(item['def_value'] * item[params['size']]) for item in dummy}
+    techs = read_techs(None, {"company": params['company'], "node_type_code": params['node_type_code']})
+    techs = {tech_id: {item['parameter_code']: item['value']
+                       for item in tech_data['effects']
+                       if item['node_code'] == params['node_type_code']}
+             for tech_id, tech_data in techs.items()}
+    model_params = {}
+    for param in data:
+        param_code = param['parameter_code']
+        modifiers = sorted(
+            [item.get(param_code, 0) * params['tech_balls'].get(str(tech_id), 0) for tech_id, item in techs.items()],
+            reverse=int(param['increase_direction']) == 1)
+        if param_code == 'volume':
+            model_params['volume'] = apply_percent(param['def_value'], sum(modifiers))
+        else:
+            model_params[param_code] = param['def_value'] + modifiers[0]
+    model_params['weight'] = calc_weight(params['node_type_code'], params['size'], model_params['volume'])
+    return model_params
+
+
+@inject_db
+def preview_model_params(self, params):
+    """ params = {"node_type_code": "radar", "company": "mat","size": "large", "tech_balls": {"1": 10, "2": 5}}"""
+    model_params = calc_model_params(None, params)
+    modif = {"small": "mult_small", "large": "mult_large", "medium": "1"}.get(params['size'])
+    size_modifiers = self.db.fetchDict(f"""select parameter_code, {modif} modifier 
+        from model_has_parameters   
+        where node_code=:node_type_code""", params, 'parameter_code', 'modifier')
+    # Применяем модификаторы размера
+    for param, modifier in size_modifiers.items():
+        model_params[param] = roundTo(model_params[param] * modifier)
+    # Применяем модификаторы компании
+    model = params
+    model['params'] = model_params
+    apply_companies_perks(model)
+    model_params['weight'] = calc_weight(params['node_type_code'], params['size'], model_params['volume'])
+    return model['params']
