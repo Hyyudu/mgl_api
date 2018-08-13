@@ -1,3 +1,4 @@
+from services.economic import calc_model_upkeep, is_income_enough_for_both
 from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail
 from services.model_crud import calc_weight, apply_companies_perks
 
@@ -119,5 +120,11 @@ def develop_model(self, params):
         "password":
     }
     """
+    # Считаем, сколько апкипа жрет модель
+    model_upkeep = calc_model_upkeep(tech_balls=params['tech_balls'])
+    # проверяем, хватает ли доходов
+    if not is_income_enough_for_both(company=params['company'], upkeep_price=model_upkeep):
+        return api_fail("")
+
     model_params = calc_model_params(None, params)
     return api_fail("Еще не реализовано")
