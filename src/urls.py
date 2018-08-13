@@ -25,7 +25,7 @@ from services.nodes_control import (
     check_password,
 )
 from services.sync import set_build_correction
-from services.tech import create_tech, read_techs, calc_model_params, preview_model_params
+from services.tech import create_tech, read_techs, calc_model_params, preview_model_params, develop_model
 from services.technopark import (
     get_flight_params, reserve_node, get_my_reserved_nodes, load_luggage, unload_luggage,
     get_luggage,
@@ -66,6 +66,7 @@ app_urls = [
     url("/tech/read", read_techs),
     url("/tech/calc_model_params", calc_model_params),
     url("/tech/preview_model_params", preview_model_params),
+    url("/tech/develop_model", develop_model),
 
     url("/technopark/get_flight_params", get_flight_params),
     url("/technopark/load_luggage", load_luggage),

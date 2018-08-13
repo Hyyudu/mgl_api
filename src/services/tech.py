@@ -1,4 +1,4 @@
-from services.misc import inject_db, api_ok, drop, apply_percent, roundTo
+from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail
 from services.model_crud import calc_weight, apply_companies_perks
 
 
@@ -105,3 +105,17 @@ def preview_model_params(self, params):
     apply_companies_perks(model)
     model_params['weight'] = calc_weight(params['node_type_code'], params['size'], model_params['volume'])
     return model['params']
+
+
+@inject_db
+def develop_model(self, params):
+    """ params = {
+        "node_type_code": "radar",
+        "company": "mat",
+        "size": "large",
+        "tech_balls": {"1": 10, "2": 5},
+        "name": "Азаза",
+        "description": "",
+    }
+    """
+    return api_fail("Еще не реализовано")
