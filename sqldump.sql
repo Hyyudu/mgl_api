@@ -2275,6 +2275,7 @@ CREATE TABLE IF NOT EXISTS `models` (
   `company` varchar(3) NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата создания',
   `premium_expires` datetime NOT NULL,
+  `kpi_price` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `node_type` (`node_type_code`),
   CONSTRAINT `node_type` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON UPDATE CASCADE
@@ -2282,102 +2283,102 @@ CREATE TABLE IF NOT EXISTS `models` (
 
 -- Дамп данных таблицы magellan.models: ~95 rows (приблизительно)
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
-INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company`, `created`, `premium_expires`) VALUES
-	(101, 'Восход', 'march_engine', 0, 'small', NULL, 'mat', '2018-08-06 21:35:14', '2018-08-07 00:35:14'),
-	(102, 'Заря', 'march_engine', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:15', '2018-08-07 00:35:15'),
-	(103, 'Буран', 'march_engine', 1, 'large', NULL, 'mat', '2018-08-06 21:35:15', '2018-08-07 00:35:15'),
-	(104, 'Ларри Пейдж', 'march_engine', 1, 'large', NULL, 'gd', '2018-08-06 21:35:16', '2018-08-07 00:35:16'),
-	(105, 'Сергей Брин', 'march_engine', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:16', '2018-08-07 00:35:16'),
-	(106, 'МСТ-ГД-4', 'march_engine', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:16', '2018-08-07 00:35:16'),
-	(107, 'F-1', 'march_engine', 1, 'large', NULL, 'pre', '2018-08-06 21:35:17', '2018-08-07 00:35:17'),
-	(108, 'Subortus-S', 'march_engine', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:17', '2018-08-07 00:35:17'),
-	(109, 'Subortus-M', 'march_engine', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:17', '2018-08-07 00:35:17'),
-	(110, 'Subortus-L', 'march_engine', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:18', '2018-08-07 00:35:18'),
-	(111, 'Эклипс', 'shunter', 0, 'small', NULL, 'mat', '2018-08-06 21:35:18', '2018-08-07 00:35:18'),
-	(112, 'Галант', 'shunter', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:18', '2018-08-07 00:35:18'),
-	(113, 'Аутлендер', 'shunter', 1, 'large', NULL, 'mat', '2018-08-06 21:35:19', '2018-08-07 00:35:19'),
-	(114, 'Дисней', 'shunter', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:19', '2018-08-07 00:35:19'),
-	(115, 'МСТ-МД-3', 'shunter', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:19', '2018-08-07 00:35:19'),
-	(116, 'J-2', 'shunter', 0, 'large', NULL, 'pre', '2018-08-06 21:35:20', '2018-08-07 00:35:20'),
-	(117, 'Timerus-S', 'shunter', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:20', '2018-08-07 00:35:20'),
-	(118, 'Timerus-M', 'shunter', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:20', '2018-08-07 00:35:20'),
-	(119, 'Timerus-L', 'shunter', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:21', '2018-08-07 00:35:21'),
-	(120, 'Галилей', 'warp_engine', 0, 'small', NULL, 'mat', '2018-08-06 21:35:21', '2018-08-07 00:35:21'),
-	(121, 'Ньютон', 'warp_engine', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:21', '2018-08-07 00:35:21'),
-	(122, 'Архимед', 'warp_engine', 0, 'large', NULL, 'mat', '2018-08-06 21:35:21', '2018-08-07 00:35:21'),
-	(123, 'Джафар', 'warp_engine', 0, 'large', NULL, 'gd', '2018-08-06 21:35:22', '2018-08-07 00:35:22'),
-	(124, 'Аид', 'warp_engine', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:22', '2018-08-07 00:35:22'),
-	(125, 'МСТ-ПА-2', 'warp_engine', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:22', '2018-08-07 00:35:22'),
-	(126, 'Waverider Mk1', 'warp_engine', 2, 'large', NULL, 'pre', '2018-08-06 21:35:22', '2018-08-07 00:35:22'),
-	(127, 'Fortus-S', 'warp_engine', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:23', '2018-08-07 00:35:23'),
-	(128, 'Fortus-M', 'warp_engine', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:23', '2018-08-07 00:35:23'),
-	(129, 'Fortus-L', 'warp_engine', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:23', '2018-08-07 00:35:23'),
-	(130, 'Арагорн', 'radar', 0, 'small', NULL, 'mat', '2018-08-06 21:35:23', '2018-08-07 00:35:23'),
-	(131, 'Сусанин', 'radar', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:23', '2018-08-07 00:35:23'),
-	(132, 'Одиссей', 'radar', 0, 'large', NULL, 'mat', '2018-08-06 21:35:24', '2018-08-07 00:35:24'),
-	(133, 'Patents Search', 'radar', 0, 'large', NULL, 'gd', '2018-08-06 21:35:24', '2018-08-07 00:35:24'),
-	(134, 'Suggest', 'radar', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:24', '2018-08-07 00:35:24'),
-	(135, 'МСТ-СР-2', 'radar', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:24', '2018-08-07 00:35:24'),
-	(136, 'AN/ZPY-1 Starlite', 'radar', 0, 'large', NULL, 'pre', '2018-08-06 21:35:24', '2018-08-07 00:35:24'),
-	(137, 'Caperus-S', 'radar', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:24', '2018-08-07 00:35:24'),
-	(138, 'Caperus-M', 'radar', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:25', '2018-08-07 00:35:25'),
-	(139, 'Caperus-L', 'radar', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:25', '2018-08-07 00:35:25'),
-	(140, 'Зорге', 'scaner', 0, 'small', NULL, 'mat', '2018-08-06 21:35:26', '2018-08-07 00:35:26'),
-	(141, 'Чапмен', 'scaner', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:26', '2018-08-07 00:35:26'),
-	(142, 'Сноуден', 'scaner', 0, 'large', NULL, 'mat', '2018-08-06 21:35:26', '2018-08-07 00:35:26'),
-	(143, 'R2-D2', 'scaner', 0, 'large', NULL, 'gd', '2018-08-06 21:35:26', '2018-08-07 00:35:26'),
-	(144, 'С-3РО', 'scaner', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
-	(145, 'МСТ-КР-2', 'scaner', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
-	(146, 'E-2 Hawkeye', 'scaner', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
-	(147, 'Invenirus-S', 'scaner', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
-	(148, 'Invenirus-M', 'scaner', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27'),
-	(149, 'Invenirus-L', 'scaner', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:28', '2018-08-07 00:35:28'),
-	(150, 'Нагасаки', 'fuel_tank', 0, 'small', NULL, 'mat', '2018-08-06 21:35:28', '2018-08-07 00:35:28'),
-	(151, 'Волоколамск', 'fuel_tank', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:28', '2018-08-07 00:35:28'),
-	(152, 'Припять', 'fuel_tank', 1, 'large', NULL, 'mat', '2018-08-06 21:35:29', '2018-08-07 00:35:29'),
-	(153, 'Гаррисон', 'fuel_tank', 0, 'large', NULL, 'gd', '2018-08-06 21:35:29', '2018-08-07 00:35:29'),
-	(154, 'Лукьяненко', 'fuel_tank', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:29', '2018-08-07 00:35:29'),
-	(155, 'МСТ-ТБ-2', 'fuel_tank', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:29', '2018-08-07 00:35:29'),
-	(156, 'FT-1', 'fuel_tank', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:29', '2018-08-07 00:35:29'),
-	(157, 'Lacus-s', 'fuel_tank', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(158, 'Lacus-M', 'fuel_tank', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(159, 'Lacus-L', 'fuel_tank', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(160, 'Зевс', 'shields', 0, 'small', NULL, 'mat', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(161, 'Ормузд', 'shields', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(162, 'Перун', 'shields', 0, 'large', NULL, 'mat', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(163, 'Микки Маус', 'shields', 0, 'large', NULL, 'gd', '2018-08-06 21:35:30', '2018-08-07 00:35:30'),
-	(164, 'Дональд Дак', 'shields', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(165, 'Свалинн-2', 'shields', 1, 'large', NULL, 'mst', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(166, 'Охайн-мини', 'shields', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(167, 'Охайн-микро', 'shields', 0, 'small', NULL, 'mst', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(168, 'Interceptor', 'shields', 0, 'small', NULL, 'pre', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(169, 'Мендель', 'shields', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(170, 'Вейсман', 'shields', 1, 'medium', NULL, 'kkg', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(171, 'Морган', 'shields', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:31', '2018-08-07 00:35:31'),
-	(172, 'Нинья', 'hull', 0, 'small', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(173, 'Пинта', 'hull', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(174, 'Санта-Мария', 'hull', 0, 'large', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(175, 'Adventureland', 'hull', 0, 'large', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(176, 'Mickey\'s Toontown', 'hull', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(177, 'Ленинград-5', 'hull', 2, 'large', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(178, 'Ленинград-3', 'hull', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32'),
-	(179, 'МСТ-М4', 'hull', 0, 'small', NULL, 'mst', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(180, 'Unity', 'hull', 1, 'medium', NULL, 'pre', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(181, 'Cutis-S', 'hull', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(182, 'Cutis-M', 'hull', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(183, 'Cutis-L', 'hull', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(184, 'Калина', 'lss', 0, 'small', NULL, 'mat', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(185, 'Гранта', 'lss', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:33', '2018-08-07 00:35:33'),
-	(186, 'Приора', 'lss', 0, 'large', NULL, 'mat', '2018-08-06 21:35:34', '2018-08-07 00:35:34'),
-	(187, 'Юрий Гагарин', 'lss', 1, 'large', NULL, 'gd', '2018-08-06 21:35:34', '2018-08-07 00:35:34'),
-	(188, 'Жугдэрдэмидийн Гуррагча', 'lss', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:34', '2018-08-07 00:35:34'),
-	(189, 'ЛайфХак-Ультра', 'lss', 2, 'large', NULL, 'mst', '2018-08-06 21:35:34', '2018-08-07 00:35:34'),
-	(190, 'Ж-С-2', 'lss', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:34', '2018-08-07 00:35:34'),
-	(191, 'Ж-М-4', 'lss', 0, 'small', NULL, 'mst', '2018-08-06 21:35:34', '2018-08-07 00:35:34'),
-	(192, 'EdEn', 'lss', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:35', '2018-08-07 00:35:35'),
-	(193, 'Гален', 'lss', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35'),
-	(194, 'Гиппократ', 'lss', 2, 'medium', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35'),
-	(195, 'Авиценна', 'lss', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35');
+INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company`, `created`, `premium_expires`, `kpi_price`) VALUES
+	(101, 'Восход', 'march_engine', 0, 'small', NULL, 'mat', '2018-08-06 21:35:14', '2018-08-07 00:35:14', 15),
+	(102, 'Заря', 'march_engine', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:15', '2018-08-07 00:35:15', 15),
+	(103, 'Буран', 'march_engine', 1, 'large', NULL, 'mat', '2018-08-06 21:35:15', '2018-08-07 00:35:15', 32),
+	(104, 'Ларри Пейдж', 'march_engine', 1, 'large', NULL, 'gd', '2018-08-06 21:35:16', '2018-08-07 00:35:16', 28),
+	(105, 'Сергей Брин', 'march_engine', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:16', '2018-08-07 00:35:16', 15),
+	(106, 'МСТ-ГД-4', 'march_engine', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:16', '2018-08-07 00:35:16', 16),
+	(107, 'F-1', 'march_engine', 1, 'large', NULL, 'pre', '2018-08-06 21:35:17', '2018-08-07 00:35:17', 27),
+	(108, 'Subortus-S', 'march_engine', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:17', '2018-08-07 00:35:17', 15),
+	(109, 'Subortus-M', 'march_engine', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:17', '2018-08-07 00:35:17', 15),
+	(110, 'Subortus-L', 'march_engine', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:18', '2018-08-07 00:35:18', 15),
+	(111, 'Эклипс', 'shunter', 0, 'small', NULL, 'mat', '2018-08-06 21:35:18', '2018-08-07 00:35:18', 15),
+	(112, 'Галант', 'shunter', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:18', '2018-08-07 00:35:18', 22),
+	(113, 'Аутлендер', 'shunter', 1, 'large', NULL, 'mat', '2018-08-06 21:35:19', '2018-08-07 00:35:19', 28),
+	(114, 'Дисней', 'shunter', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:19', '2018-08-07 00:35:19', 15),
+	(115, 'МСТ-МД-3', 'shunter', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:19', '2018-08-07 00:35:19', 16),
+	(116, 'J-2', 'shunter', 0, 'large', NULL, 'pre', '2018-08-06 21:35:20', '2018-08-07 00:35:20', 25),
+	(117, 'Timerus-S', 'shunter', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:20', '2018-08-07 00:35:20', 15),
+	(118, 'Timerus-M', 'shunter', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:20', '2018-08-07 00:35:20', 15),
+	(119, 'Timerus-L', 'shunter', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:21', '2018-08-07 00:35:21', 15),
+	(120, 'Галилей', 'warp_engine', 0, 'small', NULL, 'mat', '2018-08-06 21:35:21', '2018-08-07 00:35:21', 12),
+	(121, 'Ньютон', 'warp_engine', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:21', '2018-08-07 00:35:21', 21),
+	(122, 'Архимед', 'warp_engine', 0, 'large', NULL, 'mat', '2018-08-06 21:35:21', '2018-08-07 00:35:21', 15),
+	(123, 'Джафар', 'warp_engine', 0, 'large', NULL, 'gd', '2018-08-06 21:35:22', '2018-08-07 00:35:22', 21),
+	(124, 'Аид', 'warp_engine', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:22', '2018-08-07 00:35:22', 15),
+	(125, 'МСТ-ПА-2', 'warp_engine', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:22', '2018-08-07 00:35:22', 15),
+	(126, 'Waverider Mk1', 'warp_engine', 2, 'large', NULL, 'pre', '2018-08-06 21:35:22', '2018-08-07 00:35:22', 37),
+	(127, 'Fortus-S', 'warp_engine', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:23', '2018-08-07 00:35:23', 15),
+	(128, 'Fortus-M', 'warp_engine', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:23', '2018-08-07 00:35:23', 15),
+	(129, 'Fortus-L', 'warp_engine', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:23', '2018-08-07 00:35:23', 15),
+	(130, 'Арагорн', 'radar', 0, 'small', NULL, 'mat', '2018-08-06 21:35:23', '2018-08-07 00:35:23', 26),
+	(131, 'Сусанин', 'radar', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:23', '2018-08-07 00:35:23', 14),
+	(132, 'Одиссей', 'radar', 0, 'large', NULL, 'mat', '2018-08-06 21:35:24', '2018-08-07 00:35:24', 14),
+	(133, 'Patents Search', 'radar', 0, 'large', NULL, 'gd', '2018-08-06 21:35:24', '2018-08-07 00:35:24', 20),
+	(134, 'Suggest', 'radar', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:24', '2018-08-07 00:35:24', 15),
+	(135, 'МСТ-СР-2', 'radar', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:24', '2018-08-07 00:35:24', 15),
+	(136, 'AN/ZPY-1 Starlite', 'radar', 0, 'large', NULL, 'pre', '2018-08-06 21:35:24', '2018-08-07 00:35:24', 18),
+	(137, 'Caperus-S', 'radar', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:24', '2018-08-07 00:35:24', 15),
+	(138, 'Caperus-M', 'radar', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:25', '2018-08-07 00:35:25', 15),
+	(139, 'Caperus-L', 'radar', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:25', '2018-08-07 00:35:25', 15),
+	(140, 'Зорге', 'scaner', 0, 'small', NULL, 'mat', '2018-08-06 21:35:26', '2018-08-07 00:35:26', 14),
+	(141, 'Чапмен', 'scaner', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:26', '2018-08-07 00:35:26', 14),
+	(142, 'Сноуден', 'scaner', 0, 'large', NULL, 'mat', '2018-08-06 21:35:26', '2018-08-07 00:35:26', 14),
+	(143, 'R2-D2', 'scaner', 0, 'large', NULL, 'gd', '2018-08-06 21:35:26', '2018-08-07 00:35:26', 14),
+	(144, 'С-3РО', 'scaner', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:27', '2018-08-07 00:35:27', 14),
+	(145, 'МСТ-КР-2', 'scaner', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:27', '2018-08-07 00:35:27', 14),
+	(146, 'E-2 Hawkeye', 'scaner', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:27', '2018-08-07 00:35:27', 18),
+	(147, 'Invenirus-S', 'scaner', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27', 14),
+	(148, 'Invenirus-M', 'scaner', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:27', '2018-08-07 00:35:27', 14),
+	(149, 'Invenirus-L', 'scaner', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:28', '2018-08-07 00:35:28', 14),
+	(150, 'Нагасаки', 'fuel_tank', 0, 'small', NULL, 'mat', '2018-08-06 21:35:28', '2018-08-07 00:35:28', 15),
+	(151, 'Волоколамск', 'fuel_tank', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:28', '2018-08-07 00:35:28', 15),
+	(152, 'Припять', 'fuel_tank', 1, 'large', NULL, 'mat', '2018-08-06 21:35:29', '2018-08-07 00:35:29', 30),
+	(153, 'Гаррисон', 'fuel_tank', 0, 'large', NULL, 'gd', '2018-08-06 21:35:29', '2018-08-07 00:35:29', 22),
+	(154, 'Лукьяненко', 'fuel_tank', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:29', '2018-08-07 00:35:29', 15),
+	(155, 'МСТ-ТБ-2', 'fuel_tank', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:29', '2018-08-07 00:35:29', 15),
+	(156, 'FT-1', 'fuel_tank', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:29', '2018-08-07 00:35:29', 15),
+	(157, 'Lacus-s', 'fuel_tank', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 15),
+	(158, 'Lacus-M', 'fuel_tank', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 15),
+	(159, 'Lacus-L', 'fuel_tank', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 15),
+	(160, 'Зевс', 'shields', 0, 'small', NULL, 'mat', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 16),
+	(161, 'Ормузд', 'shields', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 13),
+	(162, 'Перун', 'shields', 0, 'large', NULL, 'mat', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 13),
+	(163, 'Микки Маус', 'shields', 0, 'large', NULL, 'gd', '2018-08-06 21:35:30', '2018-08-07 00:35:30', 24),
+	(164, 'Дональд Дак', 'shields', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 24),
+	(165, 'Свалинн-2', 'shields', 1, 'large', NULL, 'mst', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 32),
+	(166, 'Охайн-мини', 'shields', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 13),
+	(167, 'Охайн-микро', 'shields', 0, 'small', NULL, 'mst', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 13),
+	(168, 'Interceptor', 'shields', 0, 'small', NULL, 'pre', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 13),
+	(169, 'Мендель', 'shields', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 18),
+	(170, 'Вейсман', 'shields', 1, 'medium', NULL, 'kkg', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 26),
+	(171, 'Морган', 'shields', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:31', '2018-08-07 00:35:31', 18),
+	(172, 'Нинья', 'hull', 0, 'small', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 20),
+	(173, 'Пинта', 'hull', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
+	(174, 'Санта-Мария', 'hull', 0, 'large', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
+	(175, 'Adventureland', 'hull', 0, 'large', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 26),
+	(176, 'Mickey\'s Toontown', 'hull', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
+	(177, 'Ленинград-5', 'hull', 2, 'large', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 38),
+	(178, 'Ленинград-3', 'hull', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
+	(179, 'МСТ-М4', 'hull', 0, 'small', NULL, 'mst', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
+	(180, 'Unity', 'hull', 1, 'medium', NULL, 'pre', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 27),
+	(181, 'Cutis-S', 'hull', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
+	(182, 'Cutis-M', 'hull', 0, 'medium', NULL, 'kkg', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
+	(183, 'Cutis-L', 'hull', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
+	(184, 'Калина', 'lss', 0, 'small', NULL, 'mat', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
+	(185, 'Гранта', 'lss', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
+	(186, 'Приора', 'lss', 0, 'large', NULL, 'mat', '2018-08-06 21:35:34', '2018-08-07 00:35:34', 13),
+	(187, 'Юрий Гагарин', 'lss', 1, 'large', NULL, 'gd', '2018-08-06 21:35:34', '2018-08-07 00:35:34', 26),
+	(188, 'Жугдэрдэмидийн Гуррагча', 'lss', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:34', '2018-08-07 00:35:34', 14),
+	(189, 'ЛайфХак-Ультра', 'lss', 2, 'large', NULL, 'mst', '2018-08-06 21:35:34', '2018-08-07 00:35:34', 40),
+	(190, 'Ж-С-2', 'lss', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:34', '2018-08-07 00:35:34', 14),
+	(191, 'Ж-М-4', 'lss', 0, 'small', NULL, 'mst', '2018-08-06 21:35:34', '2018-08-07 00:35:34', 14),
+	(192, 'EdEn', 'lss', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 15),
+	(193, 'Гален', 'lss', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 24),
+	(194, 'Гиппократ', 'lss', 2, 'medium', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 40),
+	(195, 'Авиценна', 'lss', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 25);
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 
 
@@ -3683,9 +3684,9 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   KEY `FK_model_id` (`model_id`),
   CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
+) ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
--- Дамп данных таблицы magellan.nodes: ~96 rows (приблизительно)
+-- Дамп данных таблицы magellan.nodes: ~98 rows (приблизительно)
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
 	(101, 101, '', 100, 'free', '2018-08-06 21:38:39', NULL, '', '2018-08-06 21:58:03'),
@@ -3909,9 +3910,9 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   PRIMARY KEY (`id`),
   KEY `FK_resource_flows_resource_sections` (`section`),
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=108 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~102 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~104 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
 	(1, 'mat', '2018-07-28 13:20:38', NULL, 'mines', NULL, 'Шахты Мицубиси Автоваз Технолоджис на планетах Ойкумены', 1),
@@ -4019,7 +4020,9 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 	(104, 'mat', '2018-08-08 21:44:11', NULL, 'nodes', '197', 'Поддержка узла 197 модели Восход', 0),
 	(105, 'mat', '2018-08-08 21:44:32', NULL, 'nodes', '198', 'Поддержка узла 198 модели Нинья', 0),
 	(106, 'mat', '2018-08-08 21:45:32', NULL, 'nodes', '199', 'Поддержка узла 199 модели Нинья', 0),
-	(107, 'mst', '2018-08-08 23:38:42', NULL, 'nodes', '200', 'Поддержка узла 200 модели Ленинград-5', 0);
+	(107, 'mst', '2018-08-08 23:38:42', NULL, 'nodes', '200', 'Поддержка узла 200 модели Ленинград-5', 0),
+	(108, 'gd', '2018-08-13 00:29:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели С-3РО', 0),
+	(109, 'mst', '2018-08-13 00:29:58', NULL, 'nodes', '197', 'Поддержка узла 197 модели МСТ-КР-2', 0);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
 
 
@@ -4035,7 +4038,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~402 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~410 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(1, 'aluminium', 500),
@@ -4459,7 +4462,15 @@ INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(107, 'aluminium', 26),
 	(107, 'iron', 58),
 	(107, 'nickel', 30),
-	(107, 'titan', 63);
+	(107, 'titan', 63),
+	(108, 'iron', 8),
+	(108, 'magnesium', 29),
+	(108, 'nickel', 3),
+	(108, 'titan', 25),
+	(109, 'aluminium', 23),
+	(109, 'iron', 22),
+	(109, 'nickel', 11),
+	(109, 'titan', 9);
 /*!40000 ALTER TABLE `pump_resources` ENABLE KEYS */;
 
 
@@ -4524,7 +4535,7 @@ CREATE TABLE IF NOT EXISTS `technologies` (
 -- Дамп данных таблицы magellan.technologies: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `technologies` DISABLE KEYS */;
 INSERT IGNORE INTO `technologies` (`id`, `name`, `opened_at`, `level`, `is_available`, `description`) VALUES
-	(1, 'Визор Гамильтона', NULL, 1, 1, 'Изобретение Джеймса Эллены Чиела-Гамильтона, юпитерского конструктора, в 2310 году'),
+	(1, 'Визор Гамильтона', '2018-08-12 10:31:36', 1, 1, 'Изобретение Джеймса Эллены Чиела-Гамильтона, юпитерского конструктора, в 2310 году'),
 	(4, 'Система Adoe', NULL, 1, 1, 'C лат. Дар богов - 2110 год, ранее изобретение лабораторий первого города (Венера)? авторство – коллектив ученых Aerenia.');
 /*!40000 ALTER TABLE `technologies` ENABLE KEYS */;
 
@@ -4796,6 +4807,20 @@ CREATE TABLE `v_model_params` (
 ) ENGINE=MyISAM;
 
 
+-- Дамп структуры для представление magellan.v_nodes_kpi
+DROP VIEW IF EXISTS `v_nodes_kpi`;
+-- Создание временной таблицы для обработки ошибок зависимостей представлений
+CREATE TABLE `v_nodes_kpi` (
+	`id` INT(11) NOT NULL,
+	`cnt` BIGINT(21) NOT NULL,
+	`name` VARCHAR(50) NOT NULL COMMENT 'Наименования модели' COLLATE 'utf8_general_ci',
+	`company` VARCHAR(3) NOT NULL COLLATE 'utf8_general_ci',
+	`node_type_code` VARCHAR(50) NOT NULL COMMENT 'Код типа (shields, hull etc.)' COLLATE 'utf8_general_ci',
+	`kpi_price` INT(11) NULL,
+	`full_kpi` BIGINT(31) NULL
+) ENGINE=MyISAM;
+
+
 -- Дамп структуры для представление magellan.v_node_parameter_list
 DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
@@ -4834,6 +4859,17 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_model_params` AS s
 from models m
 join model_has_parameters mhp on m.node_type_code = mhp.node_code
 left join model_parameters mp on mhp.parameter_code = mp.parameter_code and mp.model_id = m.id ;
+
+
+-- Дамп структуры для представление magellan.v_nodes_kpi
+DROP VIEW IF EXISTS `v_nodes_kpi`;
+-- Удаление временной таблицы и создание окончательной структуры представления
+DROP TABLE IF EXISTS `v_nodes_kpi`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_nodes_kpi` AS select distinct m.id,count(*) cnt, m.name, m.company, m.node_type_code, m.kpi_price, m.kpi_price * count(*) full_kpi
+from models m 
+join nodes n on n.model_id = m.id
+where n.status_code not in ('decomm', 'lost')
+group by m.id ;
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list

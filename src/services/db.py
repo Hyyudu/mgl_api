@@ -1,11 +1,11 @@
 import re
+import traceback
 from collections import defaultdict
 from datetime import datetime
-import logging
 from typing import Dict
-from traceback import format_tb
 
 import mysql.connector
+import sys
 from config import DB_CONFIG
 from mysql.connector import errorcode
 
@@ -37,9 +37,15 @@ class DB:
 
             return self.cursor
         except Exception as e:
-            print("Error executing query: "+sql)
-            print(data)
+            error_text = "Error executing query: " + sql+"\n"+str(data) +"\n" + "\n".join(traceback.format_stack())
+            from src.services.misc import get_error_logger
+
+            logger = get_error_logger(__name__)
+            logger.error("======================================================================")
+            logger.exception(error_text, exc_info=e)
+            print(error_text)
             e.sql = sql
+            e.data = data
             raise e
 
     def query(self, sql, data=None, need_commit=False):

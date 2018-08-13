@@ -1,10 +1,24 @@
-from collections import  defaultdict
+import logging
+from collections import defaultdict
 from random import choices, randint
 
 from services.db import DB
 
 
-db = DB()
+def get_logger(name, log_file='logs/main.log', level=logging.INFO):
+    """Function setup as many loggers as you want"""
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger
+
+def get_error_logger(name):
+    return get_logger(name, log_file="logs/error.log")
 
 
 class DBHolder():
@@ -13,6 +27,7 @@ class DBHolder():
 
 
 def node_type_list(without_hull=True):
+    db = DB()
     ret = db.fetchColumn("select code from node_types")
     if without_hull:
         ret.remove('hull')
@@ -63,6 +78,7 @@ def inject_db(func):
             obj = DBHolder()
             obj.db: DB
         return func(obj, params, **kwargs)
+
     wrapper.__doc__ = func.__doc__
     return wrapper
 
@@ -82,13 +98,13 @@ def roundTo(val, prec=3):
 
 
 def apply_percent(value, percent=100):
-    return roundTo(value * (100+percent)/100)
+    return roundTo(value * (100 + percent) / 100)
 
 
 def drop(arr, field: str):
     if isinstance(arr, (list, tuple, set)):
         for dct in arr:
-            del(dct[field])
+            del (dct[field])
     else:
-        del(arr[field])
+        del (arr[field])
     return arr

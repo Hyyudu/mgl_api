@@ -29,10 +29,9 @@ class ApiHandler(RequestHandler):
             self.write(json.dumps(out, indent=4))
         except Exception as e:
             err_text = self.get_exception_text(self, e)
-            fail_args = {"msg": err_text} if err_text else {"msg": str(e), "args": e.args}
+            fail_args = {"msg": err_text} if err_text else {"args": e.args, "msg": e.sql, "data": e.data}
             self.write(json.dumps(api_fail(**fail_args)))
-            if not err_text:
-                raise e
+
 
 
     def set_default_headers(self):

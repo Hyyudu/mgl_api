@@ -1,5 +1,8 @@
-from services.misc import api_fail, api_ok, inject_db
+from services.misc import api_fail, api_ok, inject_db, get_logger
 from services.model_crud import get_model_upkeep_price
+
+
+logger = get_logger(__name__)
 
 
 @inject_db
@@ -62,12 +65,13 @@ def stop_pump(self, params):
 @inject_db
 def resource_list(self, params):
     """ no params """
+    logger.info("Прочитан список ресурсов")
     return self.db.fetchAll('select * from resources')
 
 
 @inject_db
 def add_model_upkeep_pump(self, model_id):
-    pass
+    logger.info(f"Добавлен насос для модели {model_id}")
 
 
 @inject_db
@@ -114,9 +118,9 @@ def get_nodes_kpi(self, params):
     sum_kpi = self.db.fetchOne("""select sum(full_kpi) from v_nodes_kpi 
         where node_type_code=:node_type_code""", params)
     table = {key: ["{name} = {kpi_price} * {cnt} = {full_kpi}".format(**item) for item in items] +
-                ["Итого: {} ({}%)".format(
-                    sum([x['full_kpi'] for x in data[key]]),
-                    round(sum([x['full_kpi'] for x in data[key]]) * 100 / sum_kpi),
-                )]
+                  ["Итого: {} ({}%)".format(
+                      sum([x['full_kpi'] for x in data[key]]),
+                      round(sum([x['full_kpi'] for x in data[key]]) * 100 / sum_kpi),
+                  )]
              for key, items in data.items()}
     return table

@@ -1,5 +1,7 @@
 from services.misc import inject_db, api_ok, drop
 
+TECH_WOW_PERIOD_HOURS = 2
+
 
 @inject_db
 def create_tech(self, params):
@@ -24,14 +26,25 @@ def create_tech(self, params):
 
 @inject_db
 def read_techs(self, params):
-    """ params = {} / {"node_type_code": "shields"} """
-    sql_part = ("join tech_effects te on te.tech_id = t.id and te.node_code = :node_type_code".format(**params)
-        if params.get('node_type_code') else "")
-    tech_sql = f"""
-    select distinct t.id, t.name, t.description, t.opened_at, t.level
-    from technologies t {sql_part}
-    where t.is_available = 1"""
+    """ params = {} / {"node_type_code": "shields", "company": "mat"} """
+
+    if not params:
+        tech_sql = f"""
+            select distinct t.id, t.name, t.description, t.opened_at, t.level
+            from technologies t where t.is_available = 1"""
+    else:
+        tech_sql = f"""
+            select distinct t.id, t.name, t.description, t.opened_at, t.level, ti.company
+            from technologies t 
+                join tech_effects te on te.tech_id = t.id and te.node_code = :node_type_code
+                left join tech_inventors ti on ti.tech_id = t.id and ti.company=:company
+            where t.is_available = 1
+                and (ti.company is not null or t.opened_at + INTERVAL {TECH_WOW_PERIOD_HOURS} hour < Now())
+                """
+
     techs = self.db.fetchAll(tech_sql, params, "id")
+    if not techs:
+        return []
     tech_ids_sql = " tech_id in (" + ', '.join(map(str, techs.keys())) + ")"
     tech_effects = self.db.fetchAll(f"select * from tech_effects where {tech_ids_sql}",
                                     associate="tech_id", cumulative=True)
