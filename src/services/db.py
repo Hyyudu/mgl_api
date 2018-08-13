@@ -42,7 +42,7 @@ class DB:
 
             logger = get_error_logger(__name__)
             logger.error("======================================================================")
-            logger.exception(error_text, exc_info=e)
+            logger.exception(error_text, exc_info=e, data=data)
             print(error_text)
             e.sql = sql
             e.data = data

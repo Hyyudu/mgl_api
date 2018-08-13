@@ -5,16 +5,18 @@ from numpy import interp
 from services.misc import api_fail, inject_db, roundTo, apply_percent
 
 
+MODEL_WOW_PERIOD_HOURS = 2
+
 @inject_db
 def add_model(self, data):
-    """ params: {<id>, name, level, description, size, node_type_code, company, {params}} """
+    """ params: {<id>, name, level, description, size, node_type_code, company, kpi_price, {params}, "upkeep"} """
     avail_vendors = self.db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
     # Добавляем модель
     new_model_id = self.db.insert('models', data)
     # Устанавливаем ей вау-период
-    self.db.query('update models set premium_expires = created + interval 2 hour where id=:id', {"id": new_model_id})
+    self.db.query(f'update models set premium_expires = created + interval {MODEL_WOW_PERIOD_HOURS} hour where id=:id', {"id": new_model_id})
     model_params = self.db.fetchDict(
         'select parameter_code, def_value from model_has_parameters where node_code=:node_type_code',
         data, 'parameter_code', 'def_value')
@@ -29,6 +31,15 @@ def add_model(self, data):
     data['id'] = new_model_id
     self.db.insert('model_parameters', insert_parameters)
 
+    upkeep_parameters = [
+        {
+            "model_id": new_model_id,
+            "resource_code": code,
+            "amount": value
+        }
+        for code, value in data['upkeep'].items()
+    ]
+    self.db.insert('models_upkeep', upkeep_parameters)
     data['params'] = {param['parameter_code']: param['value'] for param in insert_parameters}
     return {"status": "ok", "data": data}
 

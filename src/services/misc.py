@@ -73,11 +73,11 @@ def group(lst, n):
 
 
 def inject_db(func):
-    def wrapper(obj, params=None, **kwargs):
+    def wrapper(obj, *args, **kwargs):
         if not obj:
             obj = DBHolder()
             obj.db: DB
-        return func(obj, params, **kwargs)
+        return func(obj, *args, **kwargs)
 
     wrapper.__doc__ = func.__doc__
     return wrapper

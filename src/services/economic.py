@@ -9,7 +9,13 @@ logger = get_logger(__name__)
 
 @inject_db
 def add_pump(self, data):
-    """ params: {company, section, comment, is_income, amount, resources {code: value} } """
+    """ params: {company: str,
+                section: nodes/models/crises/markets/mines,
+                entity_id: int/str,
+                comment: str,
+                is_income: 1/0,
+                resources {code: value}
+    } """
     avail_vendors = self.db.fetchColumn('select code from companies')
     if not data.get('company') in avail_vendors:
         return api_fail("Не существует компания с кодом '{}'".format(data.get('company', '')))
@@ -97,13 +103,6 @@ def get_insufficient_for_both(company: str, model_id: int = None, upkeep_price=N
 
 
 @inject_db
-def add_model_upkeep_pump(self, model_id=None, model=None):
-    if not model:
-        model = self.db.fetchRow("select id, name, company from models where id=:id", {"id": model_id})
-    logger.info(f"Добавлен насос для модели {model_id}")
-
-
-@inject_db
 def add_node_upkeep_pump(self, node_id=None, model=None):
     if not model:
         model = self.db.fetchRow("""select m.id, m.name, m.company
@@ -175,5 +174,5 @@ def calc_model_upkeep(self, params):
     upkeep_price = defaultdict(int)
     for tech_id, costs in tech_point_costs.items():
         for cost_item in costs:
-            upkeep_price[cost_item['resource_code']] += int(cost_item['amount']) * params[str(tech_id)]
+            upkeep_price[cost_item['resource_code']] += int(cost_item['amount']) * params[int(tech_id)]
     return dict(upkeep_price)

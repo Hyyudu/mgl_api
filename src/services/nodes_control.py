@@ -15,7 +15,7 @@ def create_node(self, params):
     """ params: {model_id: int, password: str} """
     model_id = params.get('model_id', 0)
     if not model_id:
-        raise Exception("Model id not specified!")
+        raise Exception("Не указан model_id!")
     model_id_dict = {"id": model_id}
     model = read_models(None, model_id_dict, read_nodes=False)
 
@@ -31,7 +31,7 @@ def create_node(self, params):
         'premium_expires': None if not existing_nodes else model['premium_expires']
     }
     node_id = self.db.insert('nodes', insert_data)
-    add_node_upkeep_pump(self, model)
+    add_node_upkeep_pump(None, node_id=node_id, model=model)
     if model['node_type_code'] != 'hull':
         result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result

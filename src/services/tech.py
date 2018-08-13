@@ -1,6 +1,12 @@
-from services.economic import calc_model_upkeep, get_insufficient_for_both
+from random import randint
+
+from services.economic import calc_model_upkeep, get_insufficient_for_both, add_pump
 from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail
-from services.model_crud import calc_weight, apply_companies_perks
+from services.model_crud import (
+    calc_weight, apply_companies_perks, add_model, get_model_level_by_technologies,
+    MODEL_WOW_PERIOD_HOURS,
+)
+from services.nodes_control import create_node
 
 
 TECH_WOW_PERIOD_HOURS = 2
@@ -117,9 +123,17 @@ def develop_model(self, params):
         "tech_balls": {"1": 10, "2": 5},
         "name": "Азаза",
         "description": "",
-        "password":
+        "password": ""
     }
     """
+    # Читаем используемые технологии
+    techs = read_techs(None, params)
+    # Чистим неиспользуемые техи
+    params['tech_balls'] = {
+        int(key): value
+        for key, value in params['tech_balls'].items()
+        if int(key) in techs.keys()
+    }
     # Считаем, сколько апкипа жрет модель
     model_upkeep = calc_model_upkeep(None, params['tech_balls'])
     # проверяем, хватает ли доходов
@@ -127,5 +141,45 @@ def develop_model(self, params):
     if insufficient:
         return api_fail("Для создания модели и стартового узла по этой модели вам не хватает ресурсов",
                         insufficient=insufficient)
-    return api_ok(msg="Всего хватает")
-    model_params = calc_model_params(None, params)
+
+
+    # Вычисляем параметры
+    model_params = calc_model_params(self, params)
+    # Находим цену в KPI
+    model_kpi_price = sum([
+        ball * techs.get(tech_id, {}).get('level', 0) ** 2
+        for tech_id, ball in params['tech_balls'].items()
+    ])
+    model_level = get_model_level_by_technologies([
+        [techs[key].get('level'), value]
+        for key, value in params['tech_balls'].items()
+    ])
+    model_data = add_model(None, {
+        "name": params['name'],
+        "description": params.get("description", ''),
+        "level": model_level,
+        "kpi_price": model_kpi_price,
+        "size": params['size'],
+        "node_type_code": params['node_type_code'],
+        "company": params['company'],
+        'params': model_params,
+        "upkeep": model_upkeep,
+    })
+    model_id = model_data['data']['id']
+    # Создаем временный насос
+    model_pump = add_pump(None, {
+        "company": params['company'],
+        'section': 'models',
+        'entity_id': model_id,
+        'comment': f'Разработка модели {model_id} {params["name"]}',
+        "is_income": 0,
+        "resources": {code: value / 2 for code, value in model_upkeep.items()}
+    })
+    # Устанавливаем насосу время окончания
+    self.db.query(f"""update pumps set date_end = Now() + interval {MODEL_WOW_PERIOD_HOURS} hour
+            where id=:id""", model_pump['data'], need_commit=True)
+    # Создаем стартовый узел
+    if not params.get('password'):
+        params['password'] = str(randint(1000, 9999))
+    create_node(None, {"model_id": model_id, "password": params['password']})
+    return api_ok(params=params)
