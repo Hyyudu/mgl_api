@@ -116,6 +116,8 @@ def develop_model(self, params):
         "tech_balls": {"1": 10, "2": 5},
         "name": "Азаза",
         "description": "",
+        "password":
     }
     """
+    model_params = calc_model_params(None, params)
     return api_fail("Еще не реализовано")

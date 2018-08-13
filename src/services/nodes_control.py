@@ -31,12 +31,13 @@ def create_node(self, params):
         'premium_expires': None if not existing_nodes else model['premium_expires']
     }
     node_id = self.db.insert('nodes', insert_data)
-    add_node_upkeep_pump(self, node_id)
+    add_node_upkeep_pump(self, model)
     if model['node_type_code'] != 'hull':
         result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
     else:
         return create_hull(self, model, node_id=node_id)
+
 
 @inject_db
 def check_reserve_node(self, data):
@@ -77,6 +78,7 @@ def set_password(self, data):
     affected = self.db.update('nodes', {"id": data.get('node_id', 0), 'password': data.get('password', '')}, 'id=:id')
     return {"result": "ok", "affected": affected}
 
+
 @inject_db
 def check_password(self, data):
     """ params: {node_id: int, password: string} """
@@ -86,6 +88,7 @@ def check_password(self, data):
     if row.get('password') != data.get('password'):
         return api_fail('Пароль неверен')
     return {"result": "ok"}
+
 
 @inject_db
 def get_all_params(self, data) -> List[Dict[str, Any]]:
@@ -105,6 +108,7 @@ def generate_slots(amount: int) -> Dict[str, int]:
     })
     slots = gen_array_by_weight(detail_distribution, amount)
     return slots
+
 
 @inject_db
 def generate_hull_perks(self, size: int) -> List[Dict[str, Any]]:
@@ -131,6 +135,7 @@ def generate_hull_perks(self, size: int) -> List[Dict[str, Any]]:
         if len(outset) == len(set(outset)):
             break
     return out
+
 
 @inject_db
 def generate_hull_vectors(self, model: Dict) -> List[Dict[str, Any]]:
@@ -161,6 +166,7 @@ def generate_hull_vectors(self, model: Dict) -> List[Dict[str, Any]]:
     ]
     return ret
 
+
 @inject_db
 def create_hull(self, model: Dict, node_id: int):
     node_name = model['name'] + "-" + str(node_id)
@@ -185,5 +191,3 @@ def create_hull(self, model: Dict, node_id: int):
         self.db.insert('hull_vectors', vector)
 
     return node
-
-

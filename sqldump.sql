@@ -2359,7 +2359,7 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 	(173, 'Пинта', 'hull', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(174, 'Санта-Мария', 'hull', 0, 'large', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(175, 'Adventureland', 'hull', 0, 'large', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 26),
-	(176, 'Mickey\'s Toontown', 'hull', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
+	(176, 'Mickey&amp;s Toontown', 'hull', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(177, 'Ленинград-5', 'hull', 2, 'large', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 38),
 	(178, 'Ленинград-3', 'hull', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(179, 'МСТ-М4', 'hull', 0, 'small', NULL, 'mst', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
@@ -3911,7 +3911,7 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~104 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~99 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
 	(1, 'mat', '2018-07-28 13:20:38', NULL, 'mines', NULL, 'Шахты Мицубиси Автоваз Технолоджис на планетах Ойкумены', 1),
@@ -3995,7 +3995,7 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 	(80, 'mat', '2018-08-06 21:38:59', NULL, 'nodes', '173', 'Поддержка узла 173 модели Пинта', 0),
 	(81, 'mat', '2018-08-06 21:39:00', NULL, 'nodes', '174', 'Поддержка узла 174 модели Санта-Мария', 0),
 	(82, 'gd', '2018-08-06 21:39:01', NULL, 'nodes', '175', 'Поддержка узла 175 модели Adventureland', 0),
-	(83, 'gd', '2018-08-06 21:39:02', NULL, 'nodes', '176', 'Поддержка узла 176 модели Mickey\'s Toontown', 0),
+	(83, 'gd', '2018-08-06 21:39:02', NULL, 'nodes', '176', 'Поддержка узла 176 модели Mickey&amp;s Toontown', 0),
 	(84, 'mst', '2018-08-06 21:39:03', NULL, 'nodes', '177', 'Поддержка узла 177 модели Ленинград-5', 0),
 	(85, 'mst', '2018-08-06 21:39:04', NULL, 'nodes', '178', 'Поддержка узла 178 модели Ленинград-3', 0),
 	(86, 'mst', '2018-08-06 21:39:05', NULL, 'nodes', '179', 'Поддержка узла 179 модели МСТ-М4', 0),
@@ -4015,11 +4015,6 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 	(100, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '193', 'Поддержка узла 193 модели Гален', 0),
 	(101, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '194', 'Поддержка узла 194 модели Гиппократ', 0),
 	(102, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '195', 'Поддержка узла 195 модели Авиценна', 0),
-	(103, 'mat', '2018-08-07 22:55:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели Восход', 0),
-	(104, 'mat', '2018-08-08 21:44:11', NULL, 'nodes', '197', 'Поддержка узла 197 модели Восход', 0),
-	(105, 'mat', '2018-08-08 21:44:32', NULL, 'nodes', '198', 'Поддержка узла 198 модели Нинья', 0),
-	(106, 'mat', '2018-08-08 21:45:32', NULL, 'nodes', '199', 'Поддержка узла 199 модели Нинья', 0),
-	(107, 'mst', '2018-08-08 23:38:42', NULL, 'nodes', '200', 'Поддержка узла 200 модели Ленинград-5', 0),
 	(108, 'gd', '2018-08-13 00:29:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели С-3РО', 0),
 	(109, 'mst', '2018-08-13 00:29:58', NULL, 'nodes', '197', 'Поддержка узла 197 модели МСТ-КР-2', 0);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
@@ -4037,7 +4032,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~410 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~390 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(1, 'aluminium', 500),
@@ -4442,26 +4437,6 @@ INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(102, 'iron', 31),
 	(102, 'nickel', 26),
 	(102, 'titan', 17),
-	(103, 'aluminium', 20),
-	(103, 'iron', 23),
-	(103, 'nickel', 6),
-	(103, 'titan', 20),
-	(104, 'aluminium', 20),
-	(104, 'iron', 23),
-	(104, 'nickel', 6),
-	(104, 'titan', 20),
-	(105, 'aluminium', 21),
-	(105, 'iron', 19),
-	(105, 'magnesium', 32),
-	(105, 'titan', 21),
-	(106, 'aluminium', 21),
-	(106, 'iron', 19),
-	(106, 'magnesium', 32),
-	(106, 'titan', 21),
-	(107, 'aluminium', 26),
-	(107, 'iron', 58),
-	(107, 'nickel', 30),
-	(107, 'titan', 63),
 	(108, 'iron', 8),
 	(108, 'magnesium', 29),
 	(108, 'nickel', 3),
@@ -4828,6 +4803,17 @@ CREATE TABLE `v_node_parameter_list` (
 ) ENGINE=MyISAM;
 
 
+-- Дамп структуры для представление magellan.v_total_income
+DROP VIEW IF EXISTS `v_total_income`;
+-- Создание временной таблицы для обработки ошибок зависимостей представлений
+CREATE TABLE `v_total_income` (
+	`company` ENUM('mst','mat','gd','kkg','pre') NOT NULL COLLATE 'utf8_general_ci',
+	`resource_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
+	`resource_name` VARCHAR(10) NULL COLLATE 'utf8_general_ci',
+	`value` DECIMAL(33,0) NULL
+) ENGINE=MyISAM;
+
+
 -- Дамп структуры для представление magellan.v_luggages
 DROP VIEW IF EXISTS `v_luggages`;
 -- Удаление временной таблицы и создание окончательной структуры представления
@@ -4879,6 +4865,22 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_node_parameter_lis
 from node_types nt
 join model_has_parameters np on nt.code = np.node_code
 join parameters_list p on np.parameter_code = p.code ;
+
+
+-- Дамп структуры для представление magellan.v_total_income
+DROP VIEW IF EXISTS `v_total_income`;
+-- Удаление временной таблицы и создание окончательной структуры представления
+DROP TABLE IF EXISTS `v_total_income`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_total_income` AS select 
+	distinct p.company, 
+		pr.resource_code, 
+		r.name resource_name,  
+		sum(pr.value* if(p.is_income=1, 1, -1)) value
+from pumps p
+join pump_resources pr on p.id = pr.pump_id
+left join resources r on r.code = pr.resource_code
+where p.date_end is null and r.is_active = 1
+group by p.company, pr.resource_code ;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

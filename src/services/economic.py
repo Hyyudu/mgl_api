@@ -69,18 +69,44 @@ def resource_list(self, params):
     return self.db.fetchAll('select * from resources')
 
 
+def is_income_enough_for(company: str, model_id: int, target: str, upkeep_price=None):
+    company_income = get_company_income(None, {"company": company})
+    if not upkeep_price:
+        upkeep_price = get_model_upkeep_price(None, {"model_id": model_id})
+    val_modifier = {"model": 0.5, "node": 1, "both": 1.5}
+    upkeep_price = {key: val * val_modifier[target] for key, val in upkeep_price.items()}
+    return all([upkeep_price[key] <= company_income.get(key, 0) for key in upkeep_price.keys()])
+
+
+def is_income_enough_for_model(company: str, model_id: int, upkeep_price=None):
+    return is_income_enough_for(company, model_id, 'model', upkeep_price)
+
+
+def is_income_enough_for_node(company: str, model_id: int, upkeep_price=None):
+    return is_income_enough_for(company, model_id, 'node', upkeep_price)
+
+
+def is_income_enough_for_both(company: str, model_id: int, upkeep_price=None):
+    return is_income_enough_for(company, model_id, 'both', upkeep_price)
+
+
 @inject_db
-def add_model_upkeep_pump(self, model_id):
+def add_model_upkeep_pump(self, model_id=None, model=None):
+    if not model:
+        model = self.db.fetchRow("select id, name, company from models where id=:id", {"id": model_id})
     logger.info(f"Добавлен насос для модели {model_id}")
 
 
 @inject_db
-def add_node_upkeep_pump(self, node_id, model=None):
+def add_node_upkeep_pump(self, node_id=None, model=None):
     if not model:
         model = self.db.fetchRow("""select m.id, m.name, m.company
     from models m join nodes n on m.id = n.model_id
     where n.id = :node_id""", {"node_id": node_id})
     upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
+    if not is_income_enough_for_node(company=model['company'], model_id=model['id'], upkeep_price=upkeep_price):
+        return api_fail("Вашего дохода не хватает для создани  узла")
+
     pump = {
         "company": model['company'],
         "section": "nodes",
@@ -90,7 +116,7 @@ def add_node_upkeep_pump(self, node_id, model=None):
         "resources": upkeep_price
     }
     add_pump(self, pump)
-    return pump
+    return api_ok(pump=pump)
 
 
 @inject_db
@@ -124,3 +150,10 @@ def get_nodes_kpi(self, params):
                   )]
              for key, items in data.items()}
     return table
+
+
+@inject_db
+def get_company_income(self, params):
+    """ params = {"company": str} """
+    return self.db.fetchDict("select resource_code, value from v_total_income where company=:company", params,
+                             "resource_code", "value")
