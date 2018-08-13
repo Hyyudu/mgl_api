@@ -65,7 +65,7 @@ def stop_pump(self, params):
 
 
 @inject_db
-def resource_list(self, params):
+def resource_list(self, params=None):
     """ no params """
     logger.info("Прочитан список ресурсов")
     return self.db.fetchAll('select * from resources')
@@ -77,18 +77,22 @@ def get_insufficient_for(company: str, model_id: int = None, target: str = None,
         upkeep_price = get_model_upkeep_price(None, {"model_id": model_id})
     val_modifier = {"model": 0.5, "node": 1, "both": 1.5}
     upkeep_price = {key: val * val_modifier[target] for key, val in upkeep_price.items()}
-    return all([upkeep_price[key] <= company_income.get(key, 0) for key in upkeep_price.keys()])
+    res_names = {item['code']: item['name'] for item in resource_list(None)}
+    insufficient = {res_names[key]: upkeep_price[key] - company_income.get(key, 0)
+                    for key in upkeep_price.keys()
+                    if (upkeep_price[key] - company_income.get(key, 0)) > 0}
+    return insufficient
 
 
-def is_income_enough_for_model(company: str, model_id: int = None, upkeep_price=None):
+def get_insufficient_for_model(company: str, model_id: int = None, upkeep_price=None):
     return get_insufficient_for(company, model_id, 'model', upkeep_price)
 
 
-def is_income_enough_for_node(company: str, model_id: int = None, upkeep_price=None):
+def get_insufficient_for_node(company: str, model_id: int = None, upkeep_price=None):
     return get_insufficient_for(company, model_id, 'node', upkeep_price)
 
 
-def is_income_enough_for_both(company: str, model_id: int = None, upkeep_price=None):
+def get_insufficient_for_both(company: str, model_id: int = None, upkeep_price=None):
     return get_insufficient_for(company, model_id, 'both', upkeep_price)
 
 
@@ -106,7 +110,7 @@ def add_node_upkeep_pump(self, node_id=None, model=None):
     from models m join nodes n on m.id = n.model_id
     where n.id = :node_id""", {"node_id": node_id})
     upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
-    if not is_income_enough_for_node(company=model['company'], model_id=model['id'], upkeep_price=upkeep_price):
+    if get_insufficient_for_node(company=model['company'], model_id=model['id'], upkeep_price=upkeep_price):
         return api_fail("Вашего дохода не хватает для создани  узла")
 
     pump = {
@@ -157,18 +161,19 @@ def get_nodes_kpi(self, params):
 @inject_db
 def get_company_income(self, params):
     """ params = {"company": str} """
-    return self.db.fetchDict("select resource_code, value from v_total_income where company=:company", params,
-                             "resource_code", "value")
-
+    return {key: int(val) for key, val in
+                self.db.fetchDict("select resource_code, value from v_total_income where company=:company", params,
+                             "resource_code", "value").items()
+            }
 
 @inject_db
-def calc_model_upkeep(self, tech_balls):
-    """ tech_balls {tech_id: balls}  """
-    tech_ids_sql = " tech_id in (" + ', '.join(map(str, tech_balls.keys())) + ")"
+def calc_model_upkeep(self, params):
+    """ params {tech_id: balls}  """
+    tech_ids_sql = " tech_id in (" + ', '.join(map(str, params.keys())) + ")"
     tech_point_costs = self.db.fetchAll(f"""select tech_id, resource_code, amount 
         from tech_point_cost where {tech_ids_sql}""", associate="tech_id", cumulative=True)
     upkeep_price = defaultdict(int)
     for tech_id, costs in tech_point_costs.items():
         for cost_item in costs:
-            upkeep_price[cost_item['resource_code']] += int(cost_item['amount']) * tech_balls[str(tech_id)]
+            upkeep_price[cost_item['resource_code']] += int(cost_item['amount']) * params[str(tech_id)]
     return dict(upkeep_price)

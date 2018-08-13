@@ -73,7 +73,7 @@ def group(lst, n):
 
 
 def inject_db(func):
-    def wrapper(obj, params, **kwargs):
+    def wrapper(obj, params=None, **kwargs):
         if not obj:
             obj = DBHolder()
             obj.db: DB

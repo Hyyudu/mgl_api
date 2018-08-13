@@ -11,13 +11,11 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Дамп структуры базы данных magellan
-DROP DATABASE IF EXISTS `magellan`;
 CREATE DATABASE IF NOT EXISTS `magellan` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `magellan`;
 
 
 -- Дамп структуры для таблица magellan.base_freq_vectors
-DROP TABLE IF EXISTS `base_freq_vectors`;
 CREATE TABLE IF NOT EXISTS `base_freq_vectors` (
   `company` enum('mst','mat','gd','pre','kkg') NOT NULL,
   `node_code` varchar(50) NOT NULL,
@@ -1234,7 +1232,6 @@ INSERT IGNORE INTO `base_freq_vectors` (`company`, `node_code`, `level`, `size`,
 
 
 -- Дамп структуры для таблица magellan.boosts
-DROP TABLE IF EXISTS `boosts`;
 CREATE TABLE IF NOT EXISTS `boosts` (
   `node_type` varchar(50) NOT NULL COMMENT 'Тип узла',
   `base_time` smallint(6) NOT NULL COMMENT 'Базовое время работы',
@@ -1921,7 +1918,6 @@ INSERT IGNORE INTO `boosts` (`node_type`, `base_time`, `az_bonus`, `az_damage`, 
 
 
 -- Дамп структуры для таблица magellan.builds
-DROP TABLE IF EXISTS `builds`;
 CREATE TABLE IF NOT EXISTS `builds` (
   `flight_id` int(11) NOT NULL COMMENT 'ID полета',
   `node_type_code` varchar(50) NOT NULL,
@@ -1949,7 +1945,6 @@ INSERT IGNORE INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`,
 
 
 -- Дамп структуры для таблица magellan.companies
-DROP TABLE IF EXISTS `companies`;
 CREATE TABLE IF NOT EXISTS `companies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
@@ -1969,7 +1964,6 @@ INSERT IGNORE INTO `companies` (`id`, `name`, `code`) VALUES
 
 
 -- Дамп структуры для таблица magellan.flights
-DROP TABLE IF EXISTS `flights`;
 CREATE TABLE IF NOT EXISTS `flights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `departure` datetime NOT NULL,
@@ -1993,7 +1987,6 @@ INSERT IGNORE INTO `flights` (`id`, `departure`, `dock`, `status`, `company`, `w
 
 
 -- Дамп структуры для таблица magellan.flight_crews
-DROP TABLE IF EXISTS `flight_crews`;
 CREATE TABLE IF NOT EXISTS `flight_crews` (
   `flight_id` int(11) NOT NULL,
   `role` enum('pilot','navigator','supercargo','radist','engineer','_other') NOT NULL,
@@ -2018,7 +2011,6 @@ INSERT IGNORE INTO `flight_crews` (`flight_id`, `role`, `user_id`) VALUES
 
 
 -- Дамп структуры для таблица magellan.flight_luggage
-DROP TABLE IF EXISTS `flight_luggage`;
 CREATE TABLE IF NOT EXISTS `flight_luggage` (
   `flight_id` int(11) NOT NULL,
   `code` enum('mine','module','beacon') NOT NULL,
@@ -2037,7 +2029,6 @@ INSERT IGNORE INTO `flight_luggage` (`flight_id`, `code`, `company`, `planet_id`
 
 
 -- Дамп структуры для таблица magellan.hull_perks
-DROP TABLE IF EXISTS `hull_perks`;
 CREATE TABLE IF NOT EXISTS `hull_perks` (
   `hull_id` int(11) NOT NULL,
   `node_type_code` varchar(50) NOT NULL,
@@ -2095,7 +2086,6 @@ INSERT IGNORE INTO `hull_perks` (`hull_id`, `node_type_code`, `parameter_code`, 
 
 
 -- Дамп структуры для таблица magellan.hull_slots
-DROP TABLE IF EXISTS `hull_slots`;
 CREATE TABLE IF NOT EXISTS `hull_slots` (
   `hull_id` int(11) NOT NULL,
   `slots_json` tinytext NOT NULL,
@@ -2122,7 +2112,6 @@ INSERT IGNORE INTO `hull_slots` (`hull_id`, `slots_json`) VALUES
 
 
 -- Дамп структуры для таблица magellan.hull_vectors
-DROP TABLE IF EXISTS `hull_vectors`;
 CREATE TABLE IF NOT EXISTS `hull_vectors` (
   `hull_id` int(11) NOT NULL,
   `node_type_code` varchar(50) NOT NULL,
@@ -2238,7 +2227,6 @@ INSERT IGNORE INTO `hull_vectors` (`hull_id`, `node_type_code`, `vector`, `lapse
 
 
 -- Дамп структуры для таблица magellan.luggages
-DROP TABLE IF EXISTS `luggages`;
 CREATE TABLE IF NOT EXISTS `luggages` (
   `code` enum('mine','module','beacon') NOT NULL COMMENT 'Код типа груза',
   `company` enum('mst','mat','gd','kkg','pre') DEFAULT NULL COMMENT 'Код компании-владельца (для шахт)',
@@ -2264,7 +2252,6 @@ INSERT IGNORE INTO `luggages` (`code`, `company`, `vaild_since`, `created_at`, `
 
 
 -- Дамп структуры для таблица magellan.models
-DROP TABLE IF EXISTS `models`;
 CREATE TABLE IF NOT EXISTS `models` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL COMMENT 'Наименования модели',
@@ -2359,7 +2346,7 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 	(173, 'Пинта', 'hull', 0, 'medium', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(174, 'Санта-Мария', 'hull', 0, 'large', NULL, 'mat', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(175, 'Adventureland', 'hull', 0, 'large', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 26),
-	(176, 'Mickey&amp;s Toontown', 'hull', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
+	(176, 'Mickey\'s Toontown', 'hull', 0, 'medium', NULL, 'gd', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(177, 'Ленинград-5', 'hull', 2, 'large', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 38),
 	(178, 'Ленинград-3', 'hull', 0, 'medium', NULL, 'mst', '2018-08-06 21:35:32', '2018-08-07 00:35:32', 14),
 	(179, 'МСТ-М4', 'hull', 0, 'small', NULL, 'mst', '2018-08-06 21:35:33', '2018-08-07 00:35:33', 14),
@@ -2383,7 +2370,6 @@ INSERT IGNORE INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `d
 
 
 -- Дамп структуры для таблица magellan.models_upkeep
-DROP TABLE IF EXISTS `models_upkeep`;
 CREATE TABLE IF NOT EXISTS `models_upkeep` (
   `model_id` int(11) NOT NULL,
   `resource_code` varchar(50) NOT NULL,
@@ -2778,7 +2764,6 @@ INSERT IGNORE INTO `models_upkeep` (`model_id`, `resource_code`, `amount`) VALUE
 
 
 -- Дамп структуры для таблица magellan.model_has_parameters
-DROP TABLE IF EXISTS `model_has_parameters`;
 CREATE TABLE IF NOT EXISTS `model_has_parameters` (
   `node_code` varchar(50) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -2875,7 +2860,6 @@ INSERT IGNORE INTO `model_has_parameters` (`node_code`, `parameter_code`, `def_v
 
 
 -- Дамп структуры для таблица magellan.model_parameters
-DROP TABLE IF EXISTS `model_parameters`;
 CREATE TABLE IF NOT EXISTS `model_parameters` (
   `model_id` int(11) NOT NULL,
   `parameter_code` varchar(50) NOT NULL,
@@ -3667,7 +3651,6 @@ INSERT IGNORE INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VA
 
 
 -- Дамп структуры для таблица magellan.nodes
-DROP TABLE IF EXISTS `nodes`;
 CREATE TABLE IF NOT EXISTS `nodes` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID узла',
   `model_id` int(11) NOT NULL DEFAULT '0' COMMENT 'ID модели',
@@ -3787,7 +3770,6 @@ INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`,
 
 
 -- Дамп структуры для таблица magellan.node_statuses
-DROP TABLE IF EXISTS `node_statuses`;
 CREATE TABLE IF NOT EXISTS `node_statuses` (
   `code` varchar(10) NOT NULL,
   `name` varchar(30) NOT NULL,
@@ -3806,7 +3788,6 @@ INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.node_types
-DROP TABLE IF EXISTS `node_types`;
 CREATE TABLE IF NOT EXISTS `node_types` (
   `code` varchar(50) NOT NULL,
   `id` tinyint(4) NOT NULL,
@@ -3830,7 +3811,6 @@ INSERT IGNORE INTO `node_types` (`code`, `id`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.parameters_list
-DROP TABLE IF EXISTS `parameters_list`;
 CREATE TABLE IF NOT EXISTS `parameters_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(50) NOT NULL DEFAULT '',
@@ -3896,7 +3876,6 @@ INSERT IGNORE INTO `parameters_list` (`id`, `code`, `name`, `short_name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.pumps
-DROP TABLE IF EXISTS `pumps`;
 CREATE TABLE IF NOT EXISTS `pumps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `company` enum('mst','mat','gd','kkg','pre') NOT NULL,
@@ -3995,7 +3974,7 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 	(80, 'mat', '2018-08-06 21:38:59', NULL, 'nodes', '173', 'Поддержка узла 173 модели Пинта', 0),
 	(81, 'mat', '2018-08-06 21:39:00', NULL, 'nodes', '174', 'Поддержка узла 174 модели Санта-Мария', 0),
 	(82, 'gd', '2018-08-06 21:39:01', NULL, 'nodes', '175', 'Поддержка узла 175 модели Adventureland', 0),
-	(83, 'gd', '2018-08-06 21:39:02', NULL, 'nodes', '176', 'Поддержка узла 176 модели Mickey&amp;s Toontown', 0),
+	(83, 'gd', '2018-08-06 21:39:02', NULL, 'nodes', '176', 'Поддержка узла 176 модели Mickey\'s Toontown', 0),
 	(84, 'mst', '2018-08-06 21:39:03', NULL, 'nodes', '177', 'Поддержка узла 177 модели Ленинград-5', 0),
 	(85, 'mst', '2018-08-06 21:39:04', NULL, 'nodes', '178', 'Поддержка узла 178 модели Ленинград-3', 0),
 	(86, 'mst', '2018-08-06 21:39:05', NULL, 'nodes', '179', 'Поддержка узла 179 модели МСТ-М4', 0),
@@ -4021,7 +4000,6 @@ INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`
 
 
 -- Дамп структуры для таблица magellan.pump_resources
-DROP TABLE IF EXISTS `pump_resources`;
 CREATE TABLE IF NOT EXISTS `pump_resources` (
   `pump_id` int(11) NOT NULL,
   `resource_code` varchar(50) NOT NULL,
@@ -4449,7 +4427,6 @@ INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 
 
 -- Дамп структуры для таблица magellan.pump_sections
-DROP TABLE IF EXISTS `pump_sections`;
 CREATE TABLE IF NOT EXISTS `pump_sections` (
   `code` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -4468,7 +4445,6 @@ INSERT IGNORE INTO `pump_sections` (`code`, `name`) VALUES
 
 
 -- Дамп структуры для таблица magellan.resources
-DROP TABLE IF EXISTS `resources`;
 CREATE TABLE IF NOT EXISTS `resources` (
   `code` varchar(10) NOT NULL,
   `name` varchar(10) DEFAULT NULL,
@@ -4495,7 +4471,6 @@ INSERT IGNORE INTO `resources` (`code`, `name`, `is_active`) VALUES
 
 
 -- Дамп структуры для таблица magellan.technologies
-DROP TABLE IF EXISTS `technologies`;
 CREATE TABLE IF NOT EXISTS `technologies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -4515,7 +4490,6 @@ INSERT IGNORE INTO `technologies` (`id`, `name`, `opened_at`, `level`, `is_avail
 
 
 -- Дамп структуры для таблица magellan.tech_effects
-DROP TABLE IF EXISTS `tech_effects`;
 CREATE TABLE IF NOT EXISTS `tech_effects` (
   `tech_id` int(11) NOT NULL,
   `node_code` varchar(30) NOT NULL,
@@ -4554,7 +4528,6 @@ INSERT IGNORE INTO `tech_effects` (`tech_id`, `node_code`, `parameter_code`, `va
 
 
 -- Дамп структуры для таблица magellan.tech_inventors
-DROP TABLE IF EXISTS `tech_inventors`;
 CREATE TABLE IF NOT EXISTS `tech_inventors` (
   `tech_id` int(11) NOT NULL,
   `company` enum('mst','mat','kkg','gd','pre') NOT NULL,
@@ -4572,7 +4545,6 @@ INSERT IGNORE INTO `tech_inventors` (`tech_id`, `company`) VALUES
 
 
 -- Дамп структуры для таблица magellan.tech_point_cost
-DROP TABLE IF EXISTS `tech_point_cost`;
 CREATE TABLE IF NOT EXISTS `tech_point_cost` (
   `tech_id` int(11) NOT NULL,
   `resource_code` varchar(50) NOT NULL,
@@ -4586,13 +4558,12 @@ CREATE TABLE IF NOT EXISTS `tech_point_cost` (
 -- Дамп данных таблицы magellan.tech_point_cost: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `tech_point_cost` DISABLE KEYS */;
 INSERT IGNORE INTO `tech_point_cost` (`tech_id`, `resource_code`, `amount`) VALUES
-	(1, 'iron', 4),
+	(1, 'magnesium', 4),
 	(4, 'titan', 2);
 /*!40000 ALTER TABLE `tech_point_cost` ENABLE KEYS */;
 
 
 -- Дамп структуры для таблица magellan.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL DEFAULT '' COMMENT 'Имя',
@@ -4760,7 +4731,6 @@ INSERT IGNORE INTO `users` (`id`, `name`, `company_id`, `is_active`) VALUES
 
 
 -- Дамп структуры для представление magellan.v_luggages
-DROP VIEW IF EXISTS `v_luggages`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_luggages` (
 	`code` ENUM('mine','module','beacon') NOT NULL COMMENT 'Код типа груза' COLLATE 'utf8_general_ci',
@@ -4771,7 +4741,6 @@ CREATE TABLE `v_luggages` (
 
 
 -- Дамп структуры для представление magellan.v_model_params
-DROP VIEW IF EXISTS `v_model_params`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_model_params` (
 	`model_id` INT(11) NOT NULL,
@@ -4781,7 +4750,6 @@ CREATE TABLE `v_model_params` (
 
 
 -- Дамп структуры для представление magellan.v_nodes_kpi
-DROP VIEW IF EXISTS `v_nodes_kpi`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_nodes_kpi` (
 	`id` INT(11) NOT NULL,
@@ -4795,7 +4763,6 @@ CREATE TABLE `v_nodes_kpi` (
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list
-DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_node_parameter_list` (
 	`node_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
@@ -4807,7 +4774,6 @@ CREATE TABLE `v_node_parameter_list` (
 
 
 -- Дамп структуры для представление magellan.v_total_income
-DROP VIEW IF EXISTS `v_total_income`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
 CREATE TABLE `v_total_income` (
 	`company` ENUM('mst','mat','gd','kkg','pre') NOT NULL COLLATE 'utf8_general_ci',
@@ -4818,7 +4784,6 @@ CREATE TABLE `v_total_income` (
 
 
 -- Дамп структуры для представление magellan.v_luggages
-DROP VIEW IF EXISTS `v_luggages`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_luggages`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_luggages` AS select distinct code, company, weight, volume
@@ -4829,7 +4794,6 @@ order by l.vaild_since desc ;
 
 
 -- Дамп структуры для представление magellan.v_model_params
-DROP VIEW IF EXISTS `v_model_params`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_model_params`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_model_params` AS select 
@@ -4845,7 +4809,6 @@ left join model_parameters mp on mhp.parameter_code = mp.parameter_code and mp.m
 
 
 -- Дамп структуры для представление magellan.v_nodes_kpi
-DROP VIEW IF EXISTS `v_nodes_kpi`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_nodes_kpi`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_nodes_kpi` AS select distinct m.id,count(*) cnt, m.name, m.company, m.node_type_code, m.kpi_price, m.kpi_price * count(*) full_kpi
@@ -4856,7 +4819,6 @@ group by m.id ;
 
 
 -- Дамп структуры для представление magellan.v_node_parameter_list
-DROP VIEW IF EXISTS `v_node_parameter_list`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_node_parameter_list`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_node_parameter_list` AS SELECT nt.code node_code, 
@@ -4870,7 +4832,6 @@ join parameters_list p on np.parameter_code = p.code ;
 
 
 -- Дамп структуры для представление magellan.v_total_income
-DROP VIEW IF EXISTS `v_total_income`;
 -- Удаление временной таблицы и создание окончательной структуры представления
 DROP TABLE IF EXISTS `v_total_income`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_total_income` AS select 

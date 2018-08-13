@@ -3,7 +3,10 @@ from handlers.PingHandler import (
     PingHandler,
 )
 from services.boosts import boosts_read, boost_use
-from services.economic import read_pumps, resource_list, add_pump, stop_pump, set_mine, get_nodes_kpi
+from services.economic import (
+    read_pumps, resource_list, add_pump, stop_pump, set_mine, get_nodes_kpi,
+    get_company_income,
+)
 from services.mcc import (
     mcc_dashboard,
     mcc_set_crew,
@@ -84,6 +87,7 @@ app_urls = [
     url("/economics/stop_pump", stop_pump),
     url("/economics/set_mine", set_mine),
     url("/economics/get_nodes_kpi", get_nodes_kpi),
+    url("/economics/get_company_income", get_company_income),
 
     url("/mcc/dashboard", mcc_dashboard),
     url("/mcc/set_crew", mcc_set_crew),
