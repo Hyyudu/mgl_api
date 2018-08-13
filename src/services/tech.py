@@ -1,4 +1,5 @@
-from services.misc import inject_db, api_ok, drop
+from services.misc import inject_db, api_ok, drop, roundTo
+
 
 TECH_WOW_PERIOD_HOURS = 2
 
@@ -58,3 +59,13 @@ def read_techs(self, params):
         tech['point_cost'] = {item['resource_code']: item['amount']
                               for item in tech_point_costs[tech_id]}
     return techs
+
+
+@inject_db
+def calc_model_params(self, params):
+    """ params = {"node_type_code": "radar", "company": "mat","size": "large", "tech_balls": {"1": 10, "2": 5}}"""
+    dummy = self.db.fetchAll("""
+    select parameter_code, def_value, 1 medium, mult_small small, mult_large large
+    from model_has_parameters
+    where node_code = :node_type_code""", params)
+    return {item['parameter_code']: roundTo(item['def_value'] * item[params['size']]) for item in dummy}

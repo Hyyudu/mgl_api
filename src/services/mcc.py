@@ -124,3 +124,17 @@ def get_nearest_flight_for_engineer(self, user_id):
 def freight_flight(self, params):
     """ params {flight_id: int} """
     return api_fail("Пока не реализовано")
+
+
+@inject_db
+def flight_died(self, params):
+    """ params = {flight_id: int} """
+    # Находим все узлы того полета
+    node_ids = self.db.fetchColumn("select node_id from builds where flight_id=:flight_id", params)
+    nodelist = "(" + ", ".join(node_ids) + ")"
+    # Ставим всем узлам статус "утерян"
+    self.db.query(f"update nodes set status_code='lost' where id in {nodelist}", None, need_commit=True)
+    # Отключаем их насосы в экономике
+    self.db.query(f"update pumps set date_end = Now() where section='nodes' and entity_id in {nodelist}",
+                  need_commit=True)
+    return api_ok()
