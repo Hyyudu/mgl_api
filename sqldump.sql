@@ -2103,7 +2103,7 @@ CREATE TABLE IF NOT EXISTS `hull_slots` (
   CONSTRAINT `FK__nodes` FOREIGN KEY (`hull_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Слоты в корпусах под детали синхронизации';
 
--- Дамп данных таблицы magellan.hull_slots: ~13 rows (приблизительно)
+-- Дамп данных таблицы magellan.hull_slots: ~12 rows (приблизительно)
 /*!40000 ALTER TABLE `hull_slots` DISABLE KEYS */;
 INSERT IGNORE INTO `hull_slots` (`hull_id`, `slots_json`) VALUES
 	(172, '{"sum3": 4, "con3": 3, "sum4": 3, "sum2": 5, "inv": 2, "con2": 2, "sum5": 1}'),
@@ -3685,7 +3685,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
--- Дамп данных таблицы magellan.nodes: ~96 rows (приблизительно)
+-- Дамп данных таблицы magellan.nodes: ~95 rows (приблизительно)
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT IGNORE INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
 	(101, 101, '', 100, 'free', '2018-08-06 21:38:39', NULL, '', '2018-08-06 21:58:03'),
@@ -3794,7 +3794,7 @@ CREATE TABLE IF NOT EXISTS `node_statuses` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Статусы узлов';
 
--- Дамп данных таблицы magellan.node_statuses: ~6 rows (приблизительно)
+-- Дамп данных таблицы magellan.node_statuses: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `node_statuses` DISABLE KEYS */;
 INSERT IGNORE INTO `node_statuses` (`code`, `name`) VALUES
 	('decomm', 'Списан'),
@@ -3911,7 +3911,7 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~99 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~103 rows (приблизительно)
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT IGNORE INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
 	(1, 'mat', '2018-07-28 13:20:38', NULL, 'mines', NULL, 'Шахты Мицубиси Автоваз Технолоджис на планетах Ойкумены', 1),
@@ -4032,7 +4032,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~390 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~410 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(1, 'aluminium', 500),
@@ -4456,7 +4456,7 @@ CREATE TABLE IF NOT EXISTS `pump_sections` (
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Разделы трат и доходов';
 
--- Дамп данных таблицы magellan.pump_sections: ~4 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_sections: ~5 rows (приблизительно)
 /*!40000 ALTER TABLE `pump_sections` DISABLE KEYS */;
 INSERT IGNORE INTO `pump_sections` (`code`, `name`) VALUES
 	('crises', 'Кризисы'),
@@ -4773,7 +4773,10 @@ CREATE TABLE `v_luggages` (
 -- Дамп структуры для представление magellan.v_model_params
 DROP VIEW IF EXISTS `v_model_params`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_model_params` 
+CREATE TABLE `v_model_params` (
+	`model_id` INT(11) NOT NULL,
+	`parameter_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
+	`value` DOUBLE(19,2) NULL
 ) ENGINE=MyISAM;
 
 
@@ -4835,8 +4838,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_model_params` AS s
 	round(
 		coalesce(mp.value, mhp.def_value)*
 		if(m.size='small', mhp.mult_small, if(m.size='large', mhp.mult_large,1))
-	,2) value,
-	mhp.is_hidden
+	,2) value
 from models m
 join model_has_parameters mhp on m.node_type_code = mhp.node_code
 left join model_parameters mp on mhp.parameter_code = mp.parameter_code and mp.model_id = m.id ;
