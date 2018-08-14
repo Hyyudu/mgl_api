@@ -3,7 +3,7 @@ from collections import OrderedDict, defaultdict
 from random import randint, choice
 from typing import Dict, Any, List
 
-from services.economic import add_node_upkeep_pump
+from services.economic import add_node_upkeep_pump, get_insufficient_for_node
 from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
 from services.model_crud import read_models
@@ -22,6 +22,11 @@ def create_node(self, params):
     if len(model) < 0:
         raise Exception(f"No model with id {model_id}")
     model = model[0]
+
+    insufficient = get_insufficient_for_node(company=model['company'], model_id=model_id)
+    if insufficient:
+        return api_fail("Для создания узла вам не хватает следующих ресурсов", insufficient=insufficient)
+
     existing_nodes = self.db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
     insert_data = {
         "model_id": model_id,

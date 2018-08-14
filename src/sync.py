@@ -158,29 +158,29 @@ class Sync:
     def cmd_system_params(self, args):
         try:
             syst = args[1]
-            if syst not in list(self.systems) + ['all']:
+            if syst not in list(self.systems):
                 raise IndexError
         except IndexError:
             print("В команду system params необходимо передать код интересующей системы"
                   " или all для вывода ТТХ всего корабля")
             return
-        if syst != 'all':
-            systdata = self.systems[syst]
-            print(node_names[syst] + " " + systdata.get("name"))
-            for param, value in systdata['params'].items():
-                print(" " * 10 + param_names[param] + ": " + str(value))
-        else:
-            print("Массогабаритные характеристики корабля:")
-            sdata = [
-                [node_names[sys],
-                 self.systems[sys]['params']['weight'],
-                 self.systems[sys]['params']['volume'] * (1 if sys == 'hull' else -1)
-                 ] for sys in self.systems.keys()]
-            zdata = list(zip(*sdata))
-            lst = [["Система", "Масса", "Объем"], '='] + sdata + ["=", [
-                "Итого", "sum", "sum"
-            ]]
-            table_view(lst)
+        # if syst != 'all':
+        systdata = self.systems[syst]
+        print(node_names[syst] + " " + systdata.get("name"))
+        for param, value in systdata['params'].items():
+            print(" " * 10 + param_names[param] + ": " + str(value))
+        # else:
+        #     print("Массогабаритные характеристики корабля:")
+        #     sdata = [
+        #         [node_names[sys],
+        #          self.systems[sys]['params']['weight'],
+        #          self.systems[sys]['params']['volume'] * (1 if sys == 'hull' else -1)
+        #          ] for sys in self.systems.keys()]
+        #     zdata = list(zip(*sdata))
+        #     lst = [["Система", "Масса", "Объем"], '='] + sdata + ["=", [
+        #         "Итого", "sum", "sum"
+        #     ]]
+        #     table_view(lst)
 
     def cmd_help(self, args):
         if len(args) == 0:

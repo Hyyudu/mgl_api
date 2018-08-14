@@ -37,11 +37,11 @@ from services.users import read_users_from_alice, users_list
 from tornado.web import RequestHandler
 
 
-def url(uri, func, kwargs=None):
+def url(uri, func, is_tableview=None, **kwargs):
     init_params = {"func": func}
     if kwargs:
         init_params.update(kwargs)
-    return (uri, ApiHandler, init_params)
+    return uri, ApiHandler, init_params
 
 
 class UrlsHandler(RequestHandler):

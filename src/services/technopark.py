@@ -5,7 +5,7 @@ from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import inject_db, api_fail, apply_percent, api_ok
 from services.model_crud import read_models
 from services.nodes_control import check_reserve_node
-from services.sync import get_node_vector, get_node_params_with_desync
+from services.sync import get_node_vector, get_node_params_with_desync, xor
 
 
 @inject_db
@@ -77,8 +77,17 @@ where n.id=:node_id""", build_item)
         self.db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
                       build_item)
     if build_item['node_type_code'] != 'hull':
+        hull_vectors = self.db.fetchDict("""
+        select hv.node_type_code, hv.vector
+        from hull_vectors hv
+        join builds b on b.node_type_code = 'hull' and b.node_id = hv.hull_id
+        where b.flight_id = :flight_id""", build_item, 'node_type_code', 'vector')
         # рассчитываем вектора
-        build_item['vector'] = build_item['total'] = get_node_vector(None, params)
+        build_item['vector'] = build_item['total'] = xor(
+            [get_node_vector(None, params),
+             hull_vectors[build_item['node_type_code']],
+            ]
+        )
         build_item['correction'] = "0" * 16
         params_json = get_node_params_with_desync(
             vector=build_item['vector'],
