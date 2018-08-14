@@ -36,4 +36,9 @@ def read_users_from_alice(self, params):
 @inject_db
 def users_list(self, params):
     """ no params """
-    return self.db.fetchAll('select id, name from users where is_active=1 order by 1')
+    return self.db.fetchAll("""
+        select u.id, u.name, COUNT(fc.flight_id) AS flight_count from users u 
+        left join flight_crews fc on fc.user_id = u.id
+        where is_active=1 
+        group by u.id, u.name
+        order by 1""")
