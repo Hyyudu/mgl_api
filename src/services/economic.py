@@ -165,6 +165,12 @@ def get_company_income(self, params):
                              "resource_code", "value").items()
             }
 
+
+@inject_db
+def get_all_companies_income(self, params):
+    """ no params """
+    return self.db.fetchAll("""select * from v_total_income """)
+
 @inject_db
 def calc_model_upkeep(self, params):
     """ params {tech_id: balls}  """

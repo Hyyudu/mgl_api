@@ -1,3 +1,5 @@
+import json
+
 from handlers.ApiHandler import ApiHandler
 from handlers.PingHandler import (
     PingHandler,
@@ -6,6 +8,7 @@ from services.boosts import boosts_read, boost_use
 from services.economic import (
     read_pumps, resource_list, add_pump, stop_pump, set_mine, get_nodes_kpi,
     get_company_income,
+    get_all_companies_income,
 )
 from services.mcc import (
     mcc_dashboard,
@@ -37,11 +40,11 @@ from services.users import read_users_from_alice, users_list
 from tornado.web import RequestHandler
 
 
-def url(uri, func, is_tableview=None, **kwargs):
+def url(uri, func, kwargs=None, tableview_comment=""):
     init_params = {"func": func}
     if kwargs:
         init_params.update(kwargs)
-    return uri, ApiHandler, init_params
+    return uri, ApiHandler, init_params, tableview_comment
 
 
 class UrlsHandler(RequestHandler):
@@ -49,8 +52,16 @@ class UrlsHandler(RequestHandler):
         self.write("<xmp>" + url_params(app_urls) + "</xmp>")
 
 
+class TableUrlsHandler(RequestHandler):
+    def get(self):
+        self.write(json.dumps(
+            {url[0]: url[3] for url in app_urls if len(url) > 3 and url[3]},
+            indent=4
+        ))
+
+
 app_urls = [
-    url("/get-params", get_all_params),
+    url("/get-params", get_all_params, tableview_comment='Список всех параметров'),
     url("/model/add", add_model, {
         "get_exception_text": lambda self, e: "Модель с таким ID уже создана" if e.errno == 1062 else None
     }),
@@ -79,15 +90,16 @@ app_urls = [
     url("/sync/set_correction", set_build_correction),
 
     url("/users/refresh", read_users_from_alice),
-    url("/users/list", users_list),
+    url("/users/list", users_list, tableview_comment="Список пользователей"),
 
-    url("/economics/resources", resource_list),
+    url("/economics/resources", resource_list, tableview_comment="Список ресурсов"),
     url("/economics/add_pump", add_pump),
     url("/economics/read_pumps", read_pumps),
     url("/economics/stop_pump", stop_pump),
     url("/economics/set_mine", set_mine),
     url("/economics/get_nodes_kpi", get_nodes_kpi),
     url("/economics/get_company_income", get_company_income),
+    url("/economics/get_all_companies_income", get_all_companies_income, tableview_comment="Доходы компаний"),
 
     url("/mcc/dashboard", mcc_dashboard),
     url("/mcc/set_crew", mcc_set_crew),
@@ -102,9 +114,10 @@ app_urls = [
     url('/mcc/freight', freight_flight),
     url('/mcc/flight_died', flight_died),
 
-    url("/boosts/read", boosts_read),
+    url("/boosts/read", boosts_read, tableview_comment="Список всех активных бустов"),
     url("/boosts/use", boost_use),
 
     ("/ping", PingHandler),
-    ("/urls_params", UrlsHandler)
+    ("/urls_params", UrlsHandler),
+    ("/table_urls", TableUrlsHandler)
 ]
