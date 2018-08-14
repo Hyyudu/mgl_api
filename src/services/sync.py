@@ -1,3 +1,4 @@
+import json
 import re
 from collections import Counter, defaultdict
 from itertools import product
@@ -5,7 +6,7 @@ from random import shuffle, choice, randint
 from typing import List
 
 from services.desync_penalties import desync_penalties
-from services.misc import inject_db, roundTo, api_fail, api_ok
+from services.misc import inject_db, roundTo, api_fail, api_ok, group
 from services.model_crud import read_models
 
 
@@ -88,7 +89,7 @@ def get_node_vector(self, params):
     WHERE n.id = :node_id""", params)
 
 
-def get_node_params_with_desync(vector, params=None, node_id=None, node_type_code=None):
+def calc_node_params_with_desync(vector, params=None, node_id=None, node_type_code=None):
     if not params or not node_type_code:
         model = read_models(None, {"node_id": node_id}, read_nodes=False)[0]
         params = model['params']
@@ -101,11 +102,19 @@ def get_node_params_with_desync(vector, params=None, node_id=None, node_type_cod
 
 
 def get_desync_percent(vector, node_type_code):
-    ret = {}
-    for param, func in desync_penalties[node_type_code].items():
-        ret[param] = 100 + func(vector)
+    ret = {
+        param: 100 + func(vector)
+        for param, func in desync_penalties[node_type_code].items()
+    }
     return ret
 
+
+@inject_db
+def get_build_data(self, params):
+    """ params = {flight_id: int, <node_type_code>: str} """
+    if 'node_type_code' in params:
+        return self.db.fetchRow("""select * from v_builds where """+ self.db.construct_where(params), params)
+    return self.db.fetchAll("select * from v_builds where flight_id=:flight_id", params, 'node_type_code')
 
 @inject_db
 def set_build_correction(self, params):
@@ -121,19 +130,24 @@ def set_build_correction(self, params):
     update_row['correction_func'] = params['correction']
     update_row['correction'] = get_func_vector(params['correction'])
     update_row['total'] = xor([update_row['vector'], update_row['correction']])
-    update_row = get_node_params_with_desync(
+    update_row['params_json'] = json.dumps(calc_node_params_with_desync(
         update_row['total'],
         node_id=update_row['node_id']
-    )
-    self.db.update('bulids', update_row, 'flight_id = :flight_id and node_type_code=:node_type_code')
-    return api_ok(node_sync=update_row)
+    ))
+    update_row['slots_json'] = json.dumps(count_elements_for_functext(params['correction']))
+    self.db.update('builds', update_row, 'flight_id = :flight_id and node_type_code=:node_type_code')
+    del(params['correction'])
+    return api_ok(node_sync=get_build_data(self, params))
+
 
 def count_elements_for_functext(st):
     # print(st)
     res = defaultdict(int)
     steps = 0
     # Подсчитываем все инверторы
-    res['inv'] = st.count('!')
+    inv = st.count('!')
+    if inv:
+        res['inv'] = inv
     st = st.replace("!", '')
 
     st = st.replace(" ", '')
@@ -165,3 +179,32 @@ def count_elements_for_functext(st):
             break
     else:
         return dict(res)
+
+
+def get_vector_carno(vector):
+    vector = vector[::-1]
+    arr = [0, 1, 3, 2, 4, 5, 7, 6, 12, 13, 15, 14, 8, 9, 11, 10]
+    groups = group(arr, 4)
+    lst = [['', 'cd', 'cD', 'CD', 'Cd']]
+    rows = ['ab', 'aB', 'AB', 'Ab']
+    for i, grp in enumerate(groups):
+        lst += [[rows[i]] + [vector[x] for x in grp]]
+    table_view(lst, free_space_right=1)
+
+
+def table_view(data, free_space_right=4, free_space_left=1, column_separator="|"):
+    datas = [x for x in data if isinstance(x, (list, tuple))]
+    zipdata = list(zip(*datas))
+    column_widths = [max([len(str(x)) for x in col]) + free_space_right + free_space_left for col in zipdata]
+    line_width = sum(column_widths) + len(column_separator) * (len(zipdata) - 1)
+    for item in data:
+        if isinstance(item, str):
+            print(item * line_width)
+        else:
+            while "sum" in item:
+                ind = item.index("sum")
+                item[ind] = sum(
+                    [x[ind] for x in data if isinstance(x, (tuple, list)) and isinstance(x[ind], (int, float))])
+            print(column_separator.join(
+                [" " * free_space_left + "{:<{x}}".format(item[i], x=x - free_space_left) for i, x in
+                 enumerate(column_widths)]).format(*item))

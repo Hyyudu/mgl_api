@@ -1,7 +1,6 @@
 help  - вызов справки
 system list  - Список кодов всех систем
-system params <system>  - Вывести ТТХ системы
-system affected <system>  - Вывести нарушенные рассинхроном ТТХ системы
+system params <system>  - Вывести ТТХ системы с учетом рассинхрона
 system slots  - список слотов корпуса
 system vector <system>/all  - Вывести результирующий вектор по системе / по всем системам
 correct <system> <function>  - добавить корректирующий вектор системе

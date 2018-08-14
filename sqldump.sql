@@ -11,7 +11,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Дамп структуры базы данных magellan
-DROP DATABASE IF EXISTS `magellan`;
 CREATE DATABASE IF NOT EXISTS `magellan` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `magellan`;
 
@@ -1930,9 +1929,10 @@ CREATE TABLE IF NOT EXISTS `builds` (
   `node_id` int(11) NOT NULL COMMENT 'ID узла',
   `vector` varchar(16) DEFAULT '' COMMENT 'Вектор рассинхрона (узел xor корпус)',
   `correction` varchar(16) DEFAULT '' COMMENT 'Вектор корректировки',
-  `corection_func` varchar(100) DEFAULT '',
+  `correction_func` varchar(100) DEFAULT '',
   `total` varchar(16) DEFAULT '' COMMENT 'Итоговый вектор',
   `params_json` text COMMENT 'JSON с получившимися параметрами',
+  `slots_json` text,
   KEY `FK_builds_flights` (`flight_id`),
   KEY `FK_builds_nodes` (`node_id`),
   KEY `FK_builds_models` (`node_type_code`),
@@ -1941,13 +1941,19 @@ CREATE TABLE IF NOT EXISTS `builds` (
   CONSTRAINT `FK_builds_nodes` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Состав кораблей, которые суперкарго собирают ';
 
--- Дамп данных таблицы magellan.builds: ~3 rows (приблизительно)
+-- Дамп данных таблицы magellan.builds: ~9 rows (приблизительно)
 DELETE FROM `builds`;
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
-INSERT INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `corection_func`, `total`, `params_json`) VALUES
-	(1, 'scaner', 142, '0011000111111100', '0000000000000000', '', '0011000111111100', '{"az_level": {"percent": 100, "value": 100.0}, "drop_range": {"percent": 60, "value": 14.4}, "drop_speed": {"percent": 40, "value": 18.0}, "scan_range": {"percent": 70, "value": 50.4}, "scan_speed": {"percent": 50, "value": 13.8}, "volume": {"percent": 100, "value": 218.0}, "weight": {"percent": 100, "value": 104.0}}'),
-	(1, 'shields', 162, '1101100000011010', '0000000000000000', '', '1101100000011010', '{"az_level": {"percent": 100, "value": 100.0}, "desinfect_level": {"percent": 64, "value": 56.3}, "heat_capacity": {"percent": 86, "value": 509.0}, "heat_reflection": {"percent": 60, "value": 7.2}, "heat_sink": {"percent": 70, "value": 88.9}, "mechanical_def": {"percent": 84, "value": 8.4}, "radiation_def": {"percent": 79, "value": 9.48}, "volume": {"percent": 100, "value": 476.0}, "weight": {"percent": 100, "value": 343.0}}'),
-	(1, 'hull', 177, '', '', '', '', '{"weight": {"percent": 100, "value": 3620.0}, "volume": {"percent": 100, "value": 3080.0}, "az_level": {"percent": 100, "value": 115}}');
+INSERT INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `correction_func`, `total`, `params_json`, `slots_json`) VALUES
+	(1, 'hull', 177, '', '', '', '', '{"weight": {"percent": 100, "value": 3620.0}, "volume": {"percent": 100, "value": 3080.0}, "az_level": {"percent": 100, "value": 115}}', '{"sum2": 3, "sum3": 3, "sum4": 3, "inv": 5, "con4": 5, "con2": 2, "sum5": 2}'),
+	(1, 'lss', 189, '0000000000000000', '0000000000000000', '', '0000000000000000', '{"air_speed": {"percent": 100, "value": 2.0}, "air_volume": {"percent": 100, "value": 3050.0}, "az_level": {"percent": 100, "value": 115.0}, "co2_level": {"percent": 100, "value": 239.0}, "lightness": {"percent": 100, "value": 36.0}, "thermal_def": {"percent": 100, "value": 26.0}, "volume": {"percent": 100, "value": 376.0}, "weight": {"percent": 100, "value": 271.0}}', NULL),
+	(1, 'march_engine', 106, '1000100001110111', '0000000000000000', '', '1000100001110111', '{"accel": {"percent": 60, "value": 12.0}, "accel_rev": {"percent": 90, "value": 0.0}, "az_level": {"percent": 100, "value": 115.0}, "heat_prod": {"percent": 125, "value": 98.8}, "slowdown": {"percent": 55, "value": 11.0}, "slowdown_rev": {"percent": 55, "value": 0.0}, "thrust": {"percent": 60, "value": 606.0}, "thrust_rev": {"percent": 60, "value": 0.0}, "volume": {"percent": 100, "value": 239.0}, "weight": {"percent": 100, "value": 143.0}}', NULL),
+	(1, 'shunter', 115, '0001000100010001', '0000000000000000', '', '0001000100010001', '{"az_level": {"percent": 100, "value": 115.0}, "heat_prod": {"percent": 115, "value": 92.0}, "strafe_accel": {"percent": 100, "value": 0.0}, "strafe_max": {"percent": 100, "value": 0.0}, "strafe_slow": {"percent": 85, "value": 0.0}, "turn_accel": {"percent": 100, "value": 80.0}, "turn_max": {"percent": 100, "value": 45.0}, "turn_slow": {"percent": 85, "value": 78.2}, "volume": {"percent": 100, "value": 171.0}, "weight": {"percent": 100, "value": 103.0}}', NULL),
+	(1, 'warp_engine', 125, '1100110011111111', '1100110011111111', 'a+C', '0000000000000000', '{"az_level": {"percent": 100, "value": 115.0}, "consumption": {"percent": 100, "value": 0.0}, "distort_accel": {"percent": 100, "value": 3.0}, "distort_level": {"percent": 100, "value": 800.0}, "distort_slowdown": {"percent": 100, "value": 3.0}, "turn_consumption": {"percent": 100, "value": 1.0}, "turn_speed": {"percent": 100, "value": 1.0}, "volume": {"percent": 100, "value": 293.0}, "warp_enter_consumption": {"percent": 100, "value": 21.0}, "weight": {"percent": 100, "value": 246.0}}', '{"inv": 0, "sum2": 1}'),
+	(1, 'radar', 135, '1010010110010110', '0000000000000000', '', '1010010110010110', '{"angle_change": {"percent": 68, "value": 0.68}, "angle_max": {"percent": 72, "value": 24.5}, "angle_min": {"percent": 134, "value": 26.8}, "az_level": {"percent": 100, "value": 115.0}, "range_change": {"percent": 74, "value": 0.74}, "range_max": {"percent": 64, "value": 25.0}, "rotate_speed": {"percent": 60, "value": 7.2}, "volume": {"percent": 100, "value": 183.0}, "weight": {"percent": 100, "value": 87.8}}', NULL),
+	(1, 'scaner', 145, '0011111111000000', '0000000000000000', '', '0011111111000000', '{"az_level": {"percent": 100, "value": 115.0}, "drop_range": {"percent": 60, "value": 15.0}, "drop_speed": {"percent": 80, "value": 32.8}, "scan_range": {"percent": 40, "value": 19.6}, "scan_speed": {"percent": 60, "value": 1.8}, "volume": {"percent": 100, "value": 132.0}, "weight": {"percent": 100, "value": 63.4}}', NULL),
+	(1, 'fuel_tank', 155, '1010010110010110', '0000000000000000', '', '1010010110010110', '{"az_level": {"percent": 100, "value": 115.0}, "fuel_protection": {"percent": 58, "value": 2.9}, "fuel_volume": {"percent": 64, "value": 640.0}, "radiation_def": {"percent": 73, "value": 71.5}, "volume": {"percent": 100, "value": 294.0}, "weight": {"percent": 100, "value": 318.0}}', NULL),
+	(1, 'shields', 165, '0101010101010101', '0000000000000000', '', '0101010101010101', '{"az_level": {"percent": 100, "value": 115.0}, "desinfect_level": {"percent": 64, "value": 76.8}, "heat_capacity": {"percent": 79, "value": 536.0}, "heat_reflection": {"percent": 68, "value": 9.79}, "heat_sink": {"percent": 76, "value": 115.0}, "mechanical_def": {"percent": 68, "value": 8.16}, "radiation_def": {"percent": 72, "value": 10.4}, "volume": {"percent": 100, "value": 435.0}, "weight": {"percent": 100, "value": 313.0}}', NULL);
 /*!40000 ALTER TABLE `builds` ENABLE KEYS */;
 
 
@@ -2285,14 +2291,14 @@ CREATE TABLE IF NOT EXISTS `models` (
   `description` text COMMENT 'Описание',
   `company` varchar(3) NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата создания',
-  `premium_expires` datetime NOT NULL,
+  `premium_expires` datetime DEFAULT NULL,
   `kpi_price` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `node_type` (`node_type_code`),
   CONSTRAINT `node_type` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=209 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
+) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
 
--- Дамп данных таблицы magellan.models: ~95 rows (приблизительно)
+-- Дамп данных таблицы magellan.models: ~96 rows (приблизительно)
 DELETE FROM `models`;
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company`, `created`, `premium_expires`, `kpi_price`) VALUES
@@ -2390,7 +2396,8 @@ INSERT INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `descript
 	(192, 'EdEn', 'lss', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 15),
 	(193, 'Гален', 'lss', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 24),
 	(194, 'Гиппократ', 'lss', 2, 'medium', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 40),
-	(195, 'Авиценна', 'lss', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 25);
+	(195, 'Авиценна', 'lss', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 25),
+	(210, 'выа', 'scaner', 0, 'large', '', 'mst', '2018-08-14 16:13:52', '2018-08-14 18:13:52', 4);
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 
 
@@ -2406,7 +2413,7 @@ CREATE TABLE IF NOT EXISTS `models_upkeep` (
   CONSTRAINT `FK_models_upkeep_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Цена поддержки одного узла модели';
 
--- Дамп данных таблицы magellan.models_upkeep: ~377 rows (приблизительно)
+-- Дамп данных таблицы magellan.models_upkeep: ~378 rows (приблизительно)
 DELETE FROM `models_upkeep`;
 /*!40000 ALTER TABLE `models_upkeep` DISABLE KEYS */;
 INSERT INTO `models_upkeep` (`model_id`, `resource_code`, `amount`) VALUES
@@ -2786,7 +2793,8 @@ INSERT INTO `models_upkeep` (`model_id`, `resource_code`, `amount`) VALUES
 	(195, 'aluminium', 41),
 	(195, 'iron', 31),
 	(195, 'nickel', 26),
-	(195, 'titan', 17);
+	(195, 'titan', 17),
+	(210, 'magnesium', 16);
 /*!40000 ALTER TABLE `models_upkeep` ENABLE KEYS */;
 
 
@@ -2895,10 +2903,12 @@ CREATE TABLE IF NOT EXISTS `model_parameters` (
   `parameter_code` varchar(50) NOT NULL,
   `value` int(11) NOT NULL,
   KEY `parameter_code` (`parameter_code`),
+  KEY `FK_model_parameters_models` (`model_id`),
+  CONSTRAINT `FK_model_parameters_models` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `parameter_code` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.model_parameters: ~774 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_parameters: ~781 rows (приблизительно)
 DELETE FROM `model_parameters`;
 /*!40000 ALTER TABLE `model_parameters` DISABLE KEYS */;
 INSERT INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VALUES
@@ -3675,7 +3685,14 @@ INSERT INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VALUES
 	(195, 'lightness', 0),
 	(195, 'thermal_def', 16),
 	(195, 'volume', 227),
-	(195, 'weight', 1000);
+	(195, 'weight', 1000),
+	(210, 'az_level', 100),
+	(210, 'drop_range', 20),
+	(210, 'drop_speed', 38),
+	(210, 'scan_range', 42),
+	(210, 'scan_speed', 3),
+	(210, 'volume', 147),
+	(210, 'weight', 71);
 /*!40000 ALTER TABLE `model_parameters` ENABLE KEYS */;
 
 
@@ -3695,9 +3712,9 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   KEY `FK_status_code` (`status_code`),
   CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=209 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
+) ENGINE=InnoDB AUTO_INCREMENT=210 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
--- Дамп данных таблицы magellan.nodes: ~91 rows (приблизительно)
+-- Дамп данных таблицы magellan.nodes: ~96 rows (приблизительно)
 DELETE FROM `nodes`;
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
@@ -3706,7 +3723,7 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(103, 103, '', 100, 'free', '2018-08-06 21:38:40', NULL, '', '2018-08-06 21:58:03'),
 	(104, 104, '', 115, 'free', '2018-08-06 21:38:40', NULL, '', '2018-08-06 21:58:03'),
 	(105, 105, '', 115, 'free', '2018-08-06 21:38:40', NULL, '', '2018-08-06 21:58:03'),
-	(106, 106, '', 115, 'free', '2018-08-06 21:38:41', NULL, '', '2018-08-06 21:58:03'),
+	(106, 106, '', 115, 'reserved', '2018-08-06 21:38:41', NULL, '', '2018-08-06 21:58:03'),
 	(107, 107, '', 100, 'free', '2018-08-06 21:38:41', NULL, '', '2018-08-06 21:58:03'),
 	(108, 108, '', 100, 'free', '2018-08-06 21:38:41', NULL, '', '2018-08-06 21:58:03'),
 	(109, 109, '', 100, 'free', '2018-08-06 21:38:41', NULL, '', '2018-08-06 21:58:03'),
@@ -3715,7 +3732,7 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(112, 112, '', 100, 'free', '2018-08-06 21:38:42', NULL, '', '2018-08-06 21:58:03'),
 	(113, 113, '', 100, 'free', '2018-08-06 21:38:42', NULL, '', '2018-08-06 21:58:03'),
 	(114, 114, '', 115, 'free', '2018-08-06 21:38:43', NULL, '', '2018-08-06 21:58:03'),
-	(115, 115, '', 115, 'free', '2018-08-06 21:38:43', NULL, '', '2018-08-06 21:58:03'),
+	(115, 115, '', 115, 'reserved', '2018-08-06 21:38:43', NULL, '', '2018-08-06 21:58:03'),
 	(116, 116, '', 100, 'free', '2018-08-06 21:38:43', NULL, '', '2018-08-06 21:58:03'),
 	(117, 117, '', 100, 'free', '2018-08-06 21:38:43', NULL, '', '2018-08-06 21:58:03'),
 	(118, 118, '', 100, 'free', '2018-08-06 21:38:44', NULL, '', '2018-08-06 21:58:03'),
@@ -3725,7 +3742,7 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(122, 122, '', 100, 'free', '2018-08-06 21:38:45', NULL, '', '2018-08-06 21:58:03'),
 	(123, 123, '', 115, 'free', '2018-08-06 21:38:45', NULL, '', '2018-08-06 21:58:03'),
 	(124, 124, '', 115, 'free', '2018-08-06 21:38:45', NULL, '', '2018-08-06 21:58:03'),
-	(125, 125, '', 115, 'free', '2018-08-06 21:38:46', NULL, '', '2018-08-06 21:58:03'),
+	(125, 125, '', 115, 'reserved', '2018-08-06 21:38:46', NULL, '', '2018-08-06 21:58:03'),
 	(126, 126, '', 100, 'free', '2018-08-06 21:38:46', NULL, '', '2018-08-06 21:58:03'),
 	(127, 127, '', 100, 'free', '2018-08-06 21:38:46', NULL, '', '2018-08-06 21:58:03'),
 	(128, 128, '', 100, 'free', '2018-08-06 21:38:46', NULL, '', '2018-08-06 21:58:03'),
@@ -3735,17 +3752,17 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(132, 132, '', 100, 'free', '2018-08-06 21:38:47', NULL, '', '2018-08-06 21:58:03'),
 	(133, 133, '', 115, 'free', '2018-08-06 21:38:48', NULL, '', '2018-08-06 21:58:03'),
 	(134, 134, '', 115, 'free', '2018-08-06 21:38:48', NULL, '', '2018-08-06 21:58:03'),
-	(135, 135, '', 115, 'free', '2018-08-06 21:38:48', NULL, '', '2018-08-06 21:58:03'),
+	(135, 135, '', 115, 'reserved', '2018-08-06 21:38:48', NULL, '', '2018-08-06 21:58:03'),
 	(136, 136, '', 100, 'free', '2018-08-06 21:38:48', NULL, '', '2018-08-06 21:58:03'),
 	(137, 137, '', 100, 'free', '2018-08-06 21:38:48', NULL, '', '2018-08-06 21:58:03'),
 	(138, 138, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(139, 139, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(140, 140, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(141, 141, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
-	(142, 142, '', 100, 'reserved', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
+	(142, 142, '', 100, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(143, 143, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(144, 144, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
-	(145, 145, '', 115, 'free', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
+	(145, 145, '', 115, 'reserved', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
 	(146, 146, '', 100, 'free', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
 	(147, 147, '', 100, 'free', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
 	(148, 148, '', 100, 'free', '2018-08-06 21:38:52', NULL, '', '2018-08-06 21:58:03'),
@@ -3755,17 +3772,17 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(152, 152, '', 100, 'free', '2018-08-06 21:38:53', NULL, '', '2018-08-06 21:58:03'),
 	(153, 153, '', 115, 'free', '2018-08-06 21:38:53', NULL, '', '2018-08-06 21:58:03'),
 	(154, 154, '', 115, 'free', '2018-08-06 21:38:53', NULL, '', '2018-08-06 21:58:03'),
-	(155, 155, '', 115, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
+	(155, 155, '', 115, 'reserved', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(156, 156, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(157, 157, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(158, 158, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(159, 159, '', 100, 'free', '2018-08-06 21:38:54', NULL, '', '2018-08-06 21:58:03'),
 	(160, 160, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
 	(161, 161, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
-	(162, 162, '', 100, 'reserved', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
+	(162, 162, '', 100, 'free', '2018-08-06 21:38:55', NULL, '', '2018-08-06 21:58:03'),
 	(163, 163, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(164, 164, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
-	(165, 165, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
+	(165, 165, '', 115, 'reserved', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(166, 166, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(167, 167, '', 115, 'free', '2018-08-06 21:38:56', NULL, '', '2018-08-06 21:58:03'),
 	(168, 168, '', 100, 'free', '2018-08-06 21:38:57', NULL, '', '2018-08-06 21:58:03'),
@@ -3789,13 +3806,14 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(186, 186, '', 100, 'free', '2018-08-06 21:39:11', NULL, '', '2018-08-06 21:58:03'),
 	(187, 187, '', 115, 'free', '2018-08-06 21:39:12', NULL, '', '2018-08-06 21:58:03'),
 	(188, 188, '', 115, 'free', '2018-08-06 21:39:12', NULL, '', '2018-08-06 21:58:03'),
-	(189, 189, '', 115, 'free', '2018-08-06 21:39:12', NULL, '', '2018-08-06 21:58:03'),
+	(189, 189, '', 115, 'reserved', '2018-08-06 21:39:12', NULL, '', '2018-08-06 21:58:03'),
 	(190, 190, '', 115, 'free', '2018-08-06 21:39:12', NULL, '', '2018-08-06 21:58:03'),
 	(191, 191, '', 115, 'free', '2018-08-06 21:39:12', NULL, '', '2018-08-06 21:58:03'),
 	(192, 192, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
 	(193, 193, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
 	(194, 194, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
-	(195, 195, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03');
+	(195, 195, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
+	(209, 210, '', 115, 'free', '2018-08-14 16:13:54', NULL, '5832', NULL);
 /*!40000 ALTER TABLE `nodes` ENABLE KEYS */;
 
 
@@ -3925,9 +3943,9 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   PRIMARY KEY (`id`),
   KEY `FK_resource_flows_resource_sections` (`section`),
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~103 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~105 rows (приблизительно)
 DELETE FROM `pumps`;
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
@@ -4033,7 +4051,9 @@ INSERT INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `enti
 	(101, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '194', 'Поддержка узла 194 модели Гиппократ', 0),
 	(102, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '195', 'Поддержка узла 195 модели Авиценна', 0),
 	(108, 'gd', '2018-08-13 00:29:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели С-3РО', 0),
-	(109, 'mst', '2018-08-13 00:29:58', NULL, 'nodes', '197', 'Поддержка узла 197 модели МСТ-КР-2', 0);
+	(109, 'mst', '2018-08-13 00:29:58', NULL, 'nodes', '197', 'Поддержка узла 197 модели МСТ-КР-2', 0),
+	(126, 'mst', '2018-08-14 16:13:53', '2018-08-14 18:13:54', 'models', '210', 'Разработка модели 210 выа', 0),
+	(127, 'mst', '2018-08-14 16:13:54', NULL, 'nodes', '209', 'Поддержка узла 209 модели выа', 0);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
 
 
@@ -4049,7 +4069,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~410 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~412 rows (приблизительно)
 DELETE FROM `pump_resources`;
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
@@ -4462,7 +4482,9 @@ INSERT INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(109, 'aluminium', 23),
 	(109, 'iron', 22),
 	(109, 'nickel', 11),
-	(109, 'titan', 9);
+	(109, 'titan', 9),
+	(126, 'magnesium', 8),
+	(127, 'magnesium', 16);
 /*!40000 ALTER TABLE `pump_resources` ENABLE KEYS */;
 
 
@@ -4784,6 +4806,30 @@ INSERT INTO `users` (`id`, `name`, `company_id`, `is_active`) VALUES
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 
+-- Дамп структуры для представление magellan.v_builds
+DROP VIEW IF EXISTS `v_builds`;
+-- Создание временной таблицы для обработки ошибок зависимостей представлений
+CREATE TABLE `v_builds` (
+	`flight_id` INT(11) NOT NULL COMMENT 'ID полета',
+	`node_type_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
+	`node_id` INT(11) NOT NULL COMMENT 'ID узла',
+	`node_name` VARCHAR(50) NULL COMMENT 'Название (только для корпусов)' COLLATE 'utf8_general_ci',
+	`model_id` INT(11) NOT NULL COMMENT 'ID модели',
+	`model_name` VARCHAR(50) NOT NULL COMMENT 'Наименования модели' COLLATE 'utf8_general_ci',
+	`company` VARCHAR(3) NOT NULL COLLATE 'utf8_general_ci',
+	`level` SMALLINT(6) NOT NULL COMMENT 'Уровень модели',
+	`size` ENUM('small','medium','large') NOT NULL COLLATE 'utf8_general_ci',
+	`hull_vector` VARCHAR(16) NULL COLLATE 'utf8_general_ci',
+	`node_vector` VARCHAR(16) NULL COLLATE 'utf8_general_ci',
+	`vector` VARCHAR(16) NULL COMMENT 'Вектор рассинхрона (узел xor корпус)' COLLATE 'utf8_general_ci',
+	`correction` VARCHAR(16) NULL COMMENT 'Вектор корректировки' COLLATE 'utf8_general_ci',
+	`correction_func` VARCHAR(100) NULL COLLATE 'utf8_general_ci',
+	`total` VARCHAR(16) NULL COMMENT 'Итоговый вектор' COLLATE 'utf8_general_ci',
+	`params_json` TEXT NULL COMMENT 'JSON с получившимися параметрами' COLLATE 'utf8_general_ci',
+	`slots_json` TEXT NULL COLLATE 'utf8_general_ci'
+) ENGINE=MyISAM;
+
+
 -- Дамп структуры для представление magellan.v_luggages
 DROP VIEW IF EXISTS `v_luggages`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
@@ -4840,6 +4886,38 @@ CREATE TABLE `v_total_income` (
 	`resource_name` VARCHAR(10) NULL COLLATE 'utf8_general_ci',
 	`value` DECIMAL(33,0) NULL
 ) ENGINE=MyISAM;
+
+
+-- Дамп структуры для представление magellan.v_builds
+DROP VIEW IF EXISTS `v_builds`;
+-- Удаление временной таблицы и создание окончательной структуры представления
+DROP TABLE IF EXISTS `v_builds`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_builds` AS select b.flight_id,
+	b.node_type_code, 
+	b.node_id,
+	n.name node_name,
+	n.model_id,
+	m.name model_name,
+	m.company,
+	m.`level`, 
+	m.size,
+	hv.vector hull_vector,
+	bv.vector node_vector,
+	b.vector,
+	b.correction,
+	b.correction_func,
+	b.total,
+	b.params_json,
+	b.slots_json
+from builds b
+join nodes n on n.id = b.node_id
+join models m on m.id = n.model_id 
+join builds b_hull on b.flight_id = b_hull.flight_id and b_hull.node_type_code = 'hull'
+left join hull_vectors hv on hv.hull_id = b_hull.node_id and hv.node_type_code = b.node_type_code
+left join base_freq_vectors bv on bv.company = m.company 
+	and bv.node_code = b.node_type_code
+	and bv.`level` = m.`level`
+	and bv.size = m.size ;
 
 
 -- Дамп структуры для представление magellan.v_luggages

@@ -5,7 +5,7 @@ from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import inject_db, api_fail, apply_percent, api_ok
 from services.model_crud import read_models
 from services.nodes_control import check_reserve_node
-from services.sync import get_node_vector, get_node_params_with_desync, xor
+from services.sync import get_node_vector, calc_node_params_with_desync, xor
 
 
 @inject_db
@@ -14,10 +14,8 @@ def get_flight_params(self, params):
     if not 'flight_id' in params:
         return api_fail('Этот url надо вызывать через POST и передавать в тело {"flight_id": int}')
     nodes = self.db.fetchAll("""
-select b.node_type_code, n.name ship_name, m.name model_name, m.company, b.params_json
-from builds b
-join nodes n on n.id = b.node_id
-join models m on n.model_id = m.id
+select b.node_type_code, b.node_name, b.model_name, b.company, b.params_json
+from v_builds b
 where b.flight_id = :flight_id""", params, 'node_type_code')
 
     # Применить перки корпуса
@@ -43,10 +41,10 @@ where b.flight_id = :flight_id""", params, 'node_type_code')
     select fl.code, fl.company, l.weight 
 from flight_luggage fl 
 join v_luggages l on fl.code = l.code and (fl.company = l.company or (fl.company is null and l.company is null))
-where fl.id = :flight_id""", params)
+where fl.flight_id = :flight_id""", params)
 
     flight['ship'] = {
-        "name": nodes['hull']['ship_name'],
+        "name": nodes['hull']['node_name'],
         "nodes_weight": sum([float(node['params']['weight']) for node in nodes.values()])
     }
     flight['params'] = {node_type: node['params'] for node_type, node in nodes.items()}
@@ -89,7 +87,7 @@ where n.id=:node_id""", build_item)
             ]
         )
         build_item['correction'] = "0" * 16
-        params_json = get_node_params_with_desync(
+        params_json = calc_node_params_with_desync(
             vector=build_item['vector'],
             node_id=params['node_id']
         )
@@ -107,12 +105,19 @@ where n.id=:node_id""", build_item)
             key: {"percent": 100, "value": value}
             for key, value in hull_params.items()
         })
+        build_item['slots_json'] = json.dumps(model['nodes'][0]['slots'])
     self.db.insert('builds', build_item)
     self.db.query("""update nodes 
         set status_code="reserved", 
             connected_to_hull_id = null 
         where id=:node_id""", build_item, need_commit=True)
     return {"status": "ok"}
+
+
+@inject_db
+def get_luggages_info(self, params):
+    """no params"""
+    return self.db.fetchAll("select * from v_luggages")
 
 
 @inject_db

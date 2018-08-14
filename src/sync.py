@@ -1,45 +1,73 @@
 import json
 from collections import defaultdict
-from random import randint
 
 import requests
-from config import SERVICE_URL
-from services.mcc import get_nearest_flight_for_engineer
-from services.misc import api_fail
-from services.sync import count_elements_for_functext
-from src.services.sync import xor, getfunc, get_func_vector
-from src.sync.magellan import table_view
-from src.sync.nodes_data import node_names, node_params, param_names
+from sync_config import SERVICE_URL
+
+
+def modernize_date(date):
+    return date.replace("2018", "2349")
+
+
+def roundTo(val, prec=3):
+    return round(val, prec - len(str(int(val))))
+
+
+def table_view(data, free_space_right=4, free_space_left=1, column_separator="|"):
+    datas = [x for x in data if isinstance(x, (list, tuple))]
+    zipdata = list(zip(*datas))
+    column_widths = [max([len(str(x)) for x in col]) + free_space_right + free_space_left for col in zipdata]
+    line_width = sum(column_widths) + len(column_separator) * (len(zipdata) - 1)
+    for item in data:
+        if isinstance(item, str):
+            print(item * line_width)
+        else:
+            while "sum" in item:
+                ind = item.index("sum")
+                item[ind] = sum(
+                    [x[ind] for x in data if isinstance(x, (tuple, list)) and isinstance(x[ind], (int, float))])
+            print(column_separator.join(
+                [" " * free_space_left + "{:<{x}}".format(item[i], x=x - free_space_left) for i, x in
+                 enumerate(column_widths)]).format(*item))
 
 
 class Sync:
     def __init__(self):
         self.help_text = [line.strip() for line in open("commands.txt", 'r')]
-        self.freq_vectors = defaultdict(dict)
-        self.systems = defaultdict(dict)
-        self.corrections = {}
-        self.slots = {}
+        self.flight = {}
+        self.nodes_data = {}
+        self.node_names = {}
+        self.param_names = {}
+        self.param_short_names = {}
+        self.sizes = {"small": "малый", 'medium': 'средний', 'large': 'большой'}
+        self.companies = {'mst': "МарсСтройТрест", "mat": "Мицубиси Автоваз Технолоджи",
+                          "kkg": "Красный Крест Генетикс",
+                          "gd": "Гугл Дисней", "pre": "Пони РосКосмос Экспресс"}
+        self.roles = {"pilot": "Пилот", "navigator": "Навигатор", "engineer": "Инженер", "supercargo": "Суперкарго",
+                      "radist": "Радист"}
         self.engineer_id = 0
 
-    def send_post(self, url, data):
+    def send_post(self, url, data=None):
         try:
             url = SERVICE_URL + url
-            r = requests.post(url, json=data)
+            r = requests.post(url, json=data or {})
             return json.loads(r.text)
         except requests.exceptions.ConnectionError:
             return api_fail("Удаленный сервер не ответил на адрес " + url)
-
-    def get_data_for_engineer(self):
-        flight = get_nearest_flight_for_engineer(self.engineer_id)
-        # Получить ближайший вылет инженера
-        # Получить список узлов для вылета и их синхронизацию
-
 
     def mask(self, vector, total):
         return "".join([vector[i] if c == '1' else '*' for i, c in enumerate(list(total))])
 
     def get_engineer_id(self):
         return 3
+
+    def node_show_name(self, node_data):
+        if not node_data['node_name']:  # обычный узел
+            return "{model_name} #{node_id}".format(**node_data)
+        elif node_data['node_name'] == "{model_name}-{node_id}".format(**node_data):  # корпус с дефолтным именем
+            return node_data['node_name']
+        else:
+            return "{node_name}, модель {model_name}".format(**node_data)
 
     def cmd_system(self, args):
         if not args:
@@ -59,17 +87,14 @@ class Sync:
         elif args[0] == 'vector':
             self.cmd_system_vector(args)
 
-        elif args[0] == 'affected':
-            self.cmd_system_affected(args)
-
         else:
             print("Аргумент {} для команды system не распознан".format(args[0]))
             self.cmd_help(["system"])
 
     def cmd_system_list(self):
-        data = [["Код", "Система", "Марка"], "="] + [
-            [node, name, self.systems[node].get("name")] for node, name in node_names.items()
-        ]
+        data = [["Код", "Система", "Узел"], "="]
+        for node_type, name in self.node_names.items():
+            data.append([node_type, name, self.node_show_name(self.nodes_data[node_type])])
         table_view(data)
 
     def count_system_slots(self):
@@ -92,95 +117,67 @@ class Sync:
         return True
 
     def cmd_system_slots(self):
-        slots = self.count_system_slots()
-        lst = [["Система"] + sorted(slots.keys())]
-        for syst in sorted(self.systems.keys(), key=lambda x: x != 'hull'):
-            lst += [[node_names[syst]] + [slots[detail].get(syst, 0) for detail in lst[0][1:]]]
-        lst += ["="]
-        lst += [["Итого"] + ["sum"] * (len(lst[0]) - 1)]
-        table_view(lst, free_space_right=1)
-        self.check_system_slots(slots)
+        print("Не реализовано")
 
     def cmd_system_vector(self, args):
-        avail = list(self.freq_vectors.keys()) + ['all']
+        avail = list(self.nodes_data.keys()) + ['all']
+        if len(args) == 1 or args[1] not in avail:
+            print("Команде system vector надо указать код системы или all для вывода частотных векторов всех систем")
+            return
         if args[1] == 'hull':
             print("Корпус влияет на синхронизацию всех систем, но сам системой не является")
             print("Введите system vector all для вывода векторов рассихнрона по всем системам, или "
                   "system vector (название системы), чтобы увидеть подробную информацию о ее векторе рассинхрона.")
             return
 
-        if len(args) == 1 or args[1] not in avail:
-            print("Команде system vector надо указать код системы или all для вывода частотных векторов всех систем")
-            return
+
         if args[1] == 'all':
             lst = [["Узел", "Вектор рассинхрона"], "-"] + [
-                [node_names[syst], self.freq_vectors[syst].get('result', self.freq_vectors[syst]['total'])]
-                for syst in self.freq_vectors.keys()
+                [self.node_names[syst], self.nodes_data[syst].get('total')]
+                for syst in self.nodes_data.keys()
+                if syst != 'hull'
             ]
         else:
             syst = args[1]
-            syst_vector = self.freq_vectors[syst]
-            print(node_names[syst] + ": вектор частот ")
-            lst = [["Система", "Вектор частот"], "-"] + [
-                [node_names[sys] + ' ' + self.systems[sys].get('name'),
-                 self.mask(syst_vector[sys], syst_vector['total'])]
-                for sys in syst_vector.keys()
-                if sys not in ('total', 'correct', 'result')
-            ] + ["=", ["Суммарно", syst_vector['total']]]
-            if len(syst_vector.get('correct', '')) > 0:
-                lst += [["Корректировка", syst_vector.get('correct')], ["Итого", syst_vector.get('result')]]
-
-        table_view(lst)
-
-    def cmd_system_affected(self, args):
-        avail = list(self.freq_vectors.keys())
-        if len(args) < 2:
-            print(
-                "Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
-            return
-        if args[1] not in avail:
-            print("Указан код несуществующей системы: " + args[1])
-            print(
-                "Для команды system affected надо указать код проверяемой системы. Например, system affected march_engine")
-            return
-        syst = self.systems[args[1]]
-        sys_code = syst['type']
-        print(node_names[syst['type']] + ' ' + syst['name'])
-        lst = [["Параметр", "Штатное значение", "Текущее значение"], "-", ]
-        # for param, val in syst['params'].items():
-        #     arr = [param_names[param], val]
-        #     func = desync_penalties[syst['type']].get(param, lambda s: 0)
-        #     percent = 100 + func(self.freq_vectors[sys_code]['result'])
-        #     arr.append("{}% ({})".format(percent, roundTo(val * percent / 100)))
-        #     lst.append(arr)
+            node_data = self.nodes_data[syst]
+            hull_data = self.nodes_data['hull']
+            print(self.node_names[syst] + ": вектор частот ")
+            lst = [
+                ["Система", "Вектор частот"],
+                "=",
+                [self.node_names[syst] + " " + self.node_show_name(node_data),
+                 self.mask(node_data['node_vector'], node_data['vector'])],
+                ["Корпус " + self.node_show_name(hull_data), self.mask(node_data['hull_vector'], node_data['vector'])],
+                '-',
+                ["Итого", node_data['vector']],
+                ["Корректировка", node_data['correction']],
+                ["Результат", node_data['total']]
+            ]
         table_view(lst)
 
     def cmd_system_params(self, args):
         try:
             syst = args[1]
-            if syst not in list(self.systems):
+            if syst not in self.nodes_data.keys():
                 raise IndexError
         except IndexError:
             print("В команду system params необходимо передать код интересующей системы"
                   " или all для вывода ТТХ всего корабля")
             return
-        # if syst != 'all':
-        systdata = self.systems[syst]
-        print(node_names[syst] + " " + systdata.get("name"))
-        for param, value in systdata['params'].items():
-            print(" " * 10 + param_names[param] + ": " + str(value))
-        # else:
-        #     print("Массогабаритные характеристики корабля:")
-        #     sdata = [
-        #         [node_names[sys],
-        #          self.systems[sys]['params']['weight'],
-        #          self.systems[sys]['params']['volume'] * (1 if sys == 'hull' else -1)
-        #          ] for sys in self.systems.keys()]
-        #     zdata = list(zip(*sdata))
-        #     lst = [["Система", "Масса", "Объем"], '='] + sdata + ["=", [
-        #         "Итого", "sum", "sum"
-        #     ]]
-        #     table_view(lst)
+
+        systdata = self.nodes_data[syst]
+
+        print(f"""{self.node_names[syst]} {self.node_show_name(systdata)},""" +
+              f""" уровень {systdata['level']}, размер {self.sizes[systdata['size']]}""")
+        lst = [["Параметр", "Расчетное значение", "Синхронизация", "Текущее значение"], '=']
+        for param_code, param_data in systdata['params'].items():
+            lst.append([
+                self.param_names[param_code],
+                roundTo(param_data['value'] * 100 / param_data['percent']),
+                f"{param_data['percent']}%",
+                param_data['value']
+            ])
+        table_view(lst)
 
     def cmd_help(self, args):
         if len(args) == 0:
@@ -191,7 +188,7 @@ class Sync:
             "\n".join(lines) + "\n" if lines else "Неизвестная команда или запрос. Введите help для вывода всех команд")
 
     def cmd_correct(self, args):
-        if len(args) == 0 or args[0] not in ['test', 'list'] + list(self.freq_vectors.keys()):
+        if len(args) == 0 or args[0] not in ['test', 'list'] + list(self.nodes_data.keys()):
             print("Команда correct используется одним из этих способов:")
             self.cmd_help(['correct'])
             return
@@ -216,25 +213,15 @@ class Sync:
         self.show_corrections()
 
     def set_system_correct(self, syst, functext):
-        func = getfunc(functext)
-        if not func:
+        new_correction = self.send_post("sync/set_correction", {
+            "flight_id": self.flight['id'],
+            "node_type_code": syst,
+            "correction": functext})
+        if new_correction.get('status') == 'fail':
+            print(new_correction.get('errors'))
             return
-        vector = get_func_vector(func)
-        if vector == "0" * 16:
-            functext = ""
-        self.corrections[syst] = functext
-        fvs = self.freq_vectors[syst]
-        fvs['correct'] = vector
-        fvs['result'] = xor([fvs['total'], vector])
-        if functext:
-            print("{}: установлена корректирующая функция {} (частотный вектор {})".format(
-                node_names[syst],
-                functext,
-                vector
-            ))
-        else:
-            print(node_names[syst] + ": корректирующая функция сброшена")
-        self.slots[syst] = count_elements_for_functext(functext)
+        self.nodes_data[syst] = new_correction['node_sync']
+        print(f"Установлена корректирующая функция {functext}, вектор {new_correction['node_sync']['correction']}")
 
     def cmd_correct_system(self, args):
         syst = args[0]
@@ -244,20 +231,33 @@ class Sync:
         functext = "".join(args[1:])
         self.set_system_correct(syst, functext)
 
+    def get_flight_data(self):
+        self.flight = self.send_post('mcc/get_nearest_flight_for_role',
+                                     {"user_id": self.engineer_id, "role": "engineer"})
+        self.flight['departure'] = modernize_date(self.flight['departure'])
+        print("""Данные по полету считаны:
+        Номер полета: {id}
+        Дата и время вылета: {departure}
+        Номер дока: {dock}
+Экипаж корабля: """.format(**self.flight))
+        for role, user in self.flight['crew'].items():
+            print(" " * 8 + self.roles[role] + ": " + user)
+
     def load_data(self):
-        sync_data = json.load(open("sync_data.json"))
-        for system, sysdata in sync_data.items():
-            self.systems[system] = node_params[sysdata.get('id')]
-            for sys, fv in sysdata['freq_vectors'].items():
-                self.freq_vectors[sys][system] = fv
-        for sys, sysdata in self.freq_vectors.items():
-            self.freq_vectors[sys]['total'] = xor(sysdata.values())
-            self.freq_vectors[sys]['correct'] = '0' * 16
-            self.freq_vectors[sys]['result'] = self.freq_vectors[sys]['total']
+        self.nodes_data = self.send_post("sync/get_build_data", {"flight_id": self.flight['id']})
+        for val in self.nodes_data.values():
+            val['params'] = json.loads(val['params_json'])
+            val['slots'] = json.loads(val['slots_json'] or '{}')
+            del (val['params_json'])
+            del (val['slots_json'])
+        params_and_nodes = self.send_post("get-params")
+        self.param_names = {param['param_code']: param['param_name'] for param in params_and_nodes}
+        self.param_short_names = {param['param_code']: param['param_short_name'] for param in params_and_nodes}
+        self.node_names = {param['node_code']: param['node_name'] for param in params_and_nodes}
 
     def show_corrections(self, systems=[]):
         if systems == []:
-            systems = self.freq_vectors.keys()
+            systems = self.nodes_data.keys()
         for syst in systems:
             if self.corrections.get(syst) is None:
                 print(node_names[
@@ -291,10 +291,6 @@ class Sync:
                 self.cmd_system(args)
             elif command == "correct":
                 self.cmd_correct(args)
-            elif command == 'save':
-                self.cmd_save()
-            elif command == "randomize":
-                self.cmd_randomize()
             else:
                 print(
                     "Команда " + command + " не распознана. Введите help для вывода всех команд или help <имя команды> "
@@ -304,6 +300,6 @@ class Sync:
 if __name__ == "__main__":
     s = Sync()
     s.engineer_id = s.get_engineer_id()
-    data = s.get_data_for_engineer()
+    s.get_flight_data()
     s.load_data()
     s.terminal()
