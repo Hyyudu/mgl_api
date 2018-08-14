@@ -113,7 +113,10 @@ def get_desync_percent(vector, node_type_code):
 def get_build_data(self, params):
     """ params = {flight_id: int, <node_type_code>: str} """
     if 'node_type_code' in params:
-        return self.db.fetchRow("""select * from v_builds where """+ self.db.construct_where(params), params)
+        data = self.db.fetchRow("""select * from v_builds where """+ self.db.construct_where(params), params)
+        data['params'] = json.loads(data['params_json'])
+        data['slots'] = json.loads(data['slots_json'])
+        return data;
     return self.db.fetchAll("select * from v_builds where flight_id=:flight_id", params, 'node_type_code')
 
 @inject_db
@@ -130,11 +133,13 @@ def set_build_correction(self, params):
     update_row['correction_func'] = params['correction']
     update_row['correction'] = get_func_vector(params['correction'])
     update_row['total'] = xor([update_row['vector'], update_row['correction']])
-    update_row['params_json'] = json.dumps(calc_node_params_with_desync(
+    update_row['params'] = calc_node_params_with_desync(
         update_row['total'],
         node_id=update_row['node_id']
-    ))
-    update_row['slots_json'] = json.dumps(count_elements_for_functext(params['correction']))
+    )
+    update_row['params_json'] = json.dumps(update_row['params'])
+    update_row['slots'] = count_elements_for_functext(params['correction'])
+    update_row['slots_json'] = json.dumps(update_row['slots'])
     self.db.update('builds', update_row, 'flight_id = :flight_id and node_type_code=:node_type_code')
     del(params['correction'])
     return api_ok(node_sync=get_build_data(self, params))

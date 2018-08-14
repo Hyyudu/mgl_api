@@ -1,8 +1,52 @@
 import json
+import re
+import sys
 from collections import defaultdict
+from itertools import product
 
 import requests
 from sync_config import SERVICE_URL
+
+
+def getfunc(functext):
+    # очищаем вход
+    st = re.sub("[^ABCDabcd \(\)\!\+]", "", functext, len(functext))
+    # добавляем and между перемножающимися скобками или в конструкциях вида a(b+c)
+    st = re.sub(r"([abcdABCD\)])\s*\(", r"\1 & (", st)
+    st = re.sub(r"\)\s*([abcdABCD])", r") & \1", st)
+    st = re.sub(r"\)\s*\(", r") & (", st)
+    # заменяем отрицания
+    st = st.replace("!", " not ")
+    # заменяем дизъюнкции
+    st = st.replace("+", " or ")
+    # Находим все конъюнктивные группы и меняем их
+    p = re.findall("[abcdx]+", st, re.I)
+    p.sort(key=len, reverse=True)
+    for group in p:
+        st = st.replace(group, " and ".join(list(group)))
+    # заменяем a на not A и т.д.
+    for c in list("ABCD"):
+        st = re.sub("(?<!\w)" + c.lower() + "(?!\w)", " not " + c + " ", st)
+    # убираем дублирующиеся пробелы
+    st = re.sub(" +", " ", st)
+    # заменяем & на and, раньше нельзя, чтобы "a" в and не путалось с переменной
+    st = st.replace("&", "and")
+    # print(st)
+    f = lambda A, B, C, D: bool(eval(st))
+    try:
+        get_func_vector(f)
+    except SyntaxError:
+        print("Введенный вами код " + functext + " не является правильной логической функцией")
+    else:
+        return f
+
+
+def get_func_vector(func):
+    if func == "":
+        return "0" * 16
+    if not callable(func):
+        func = getfunc(func)
+    return "".join([str(int(func(A, B, C, D))) for A, B, C, D in product([0, 1], [0, 1], [0, 1], [0, 1])][::-1])
 
 
 def modernize_date(date):
@@ -53,7 +97,8 @@ class Sync:
             r = requests.post(url, json=data or {})
             return json.loads(r.text)
         except requests.exceptions.ConnectionError:
-            return api_fail("Удаленный сервер не ответил на адрес " + url)
+            print("Удаленный сервер не ответил по адресу " + url + ". Работа программы аварийно завершена")
+            sys.exit()
 
     def mask(self, vector, total):
         return "".join([vector[i] if c == '1' else '*' for i, c in enumerate(list(total))])
@@ -117,7 +162,24 @@ class Sync:
         return True
 
     def cmd_system_slots(self):
-        print("Не реализовано")
+        all_details = set([])
+        for row in self.nodes_data.values():
+            all_details = all_details | set(row['slots'].keys())
+        all_details = sorted(all_details)
+        counter = defaultdict(int)
+        lst = [["Узел"] + all_details, "="]
+        mult = 1
+        for row in sorted(self.nodes_data.values(), key=lambda x: x['node_type_code'] == 'hull', reverse=True):
+            table_row = [self.node_names[row['node_type_code']]]
+            for detail in all_details:
+                detail_cnt = mult * row['slots'].get(detail, 0)
+                table_row.append(detail_cnt)
+                counter[detail] += detail_cnt
+            lst.append(table_row)
+            mult = -1 # Для всех, кроме корпуса, значения отрицательные
+        lst.append("=")
+        lst.append(["Итого"] + [counter[detail] for detail in all_details])
+        table_view(lst)
 
     def cmd_system_vector(self, args):
         avail = list(self.nodes_data.keys()) + ['all']
@@ -129,7 +191,6 @@ class Sync:
             print("Введите system vector all для вывода векторов рассихнрона по всем системам, или "
                   "system vector (название системы), чтобы увидеть подробную информацию о ее векторе рассинхрона.")
             return
-
 
         if args[1] == 'all':
             lst = [["Узел", "Вектор рассинхрона"], "-"] + [
@@ -202,7 +263,7 @@ class Sync:
     def cmd_correct_test(self, args):
         functext = " ".join(args)
         try:
-            vector = get_func_vector(getfunc(functext))
+            vector = get_func_vector(functext)
         except:
             print(functext + " не является валидной логической функцией")
         else:
@@ -255,20 +316,17 @@ class Sync:
         self.param_short_names = {param['param_code']: param['param_short_name'] for param in params_and_nodes}
         self.node_names = {param['node_code']: param['node_name'] for param in params_and_nodes}
 
-    def show_corrections(self, systems=[]):
-        if systems == []:
+    def show_corrections(self, systems=None):
+        if systems is None:
             systems = self.nodes_data.keys()
         for syst in systems:
-            if self.corrections.get(syst) is None:
-                print(node_names[
-                          syst] + ": корректирующая функция не установлена. Введите correct {} <текст функции>, чтобы ее установить".format(
-                    syst))
+            if not self.nodes_data[syst]['correction_func']:
+                print(self.node_names[syst] +
+                      f": корректирующая функция не установлена. Введите correct {syst} <текст функции>, чтобы ее установить")
             else:
-                print("{}: корректирующая функция {} (частотный вектор {})".format(
-                    node_names[syst],
-                    self.corrections[syst],
-                    self.freq_vectors[syst]['correct']
-                ))
+                row = self.nodes_data[syst]
+                print(self.node_names[syst] +
+                      f": корректирующая функция {row['correction_func']} (частотный вектор {row['correction']})")
 
     def cmd_save(self):
         if self.check_system_slots():
