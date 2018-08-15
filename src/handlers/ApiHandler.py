@@ -1,6 +1,7 @@
 import json
 from json import JSONDecodeError
 
+import os
 from services.db import DB
 from services.misc import api_fail, get_logger
 from tornado.web import RequestHandler
@@ -64,3 +65,5 @@ class LogsHandler(DefaultHandler):
         args = {key: val[0].decode() for key, val in self.request.arguments.items()}
         if 'log' in args:
             self.write("<xmp>"+open("logs/"+args['log']+".log").read()+"</xmp>")
+        if 'clear' in args:
+            os.unlink("logs/"+args['clear']+".log")

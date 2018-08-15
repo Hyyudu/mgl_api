@@ -1940,7 +1940,7 @@ CREATE TABLE IF NOT EXISTS `builds` (
   CONSTRAINT `FK_builds_nodes` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Состав кораблей, которые суперкарго собирают ';
 
--- Дамп данных таблицы magellan.builds: ~8 rows (приблизительно)
+-- Дамп данных таблицы magellan.builds: ~9 rows (приблизительно)
 DELETE FROM `builds`;
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
 INSERT INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `correction_func`, `total`, `params_json`, `slots_json`) VALUES
@@ -1989,7 +1989,7 @@ CREATE TABLE IF NOT EXISTS `flights` (
   UNIQUE KEY `departure_dock` (`departure`,`dock`)
 ) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
 
--- Дамп данных таблицы magellan.flights: ~6 rows (приблизительно)
+-- Дамп данных таблицы magellan.flights: ~95 rows (приблизительно)
 DELETE FROM `flights`;
 /*!40000 ALTER TABLE `flights` DISABLE KEYS */;
 INSERT INTO `flights` (`id`, `departure`, `dock`, `status`, `company`) VALUES
@@ -4930,181 +4930,6 @@ INSERT INTO `users` (`id`, `name`, `company_id`, `is_active`) VALUES
 	(27027, 'Тестовый плутонианин-9', NULL, 1),
 	(27028, 'Тестовый плутонианин-10', NULL, 1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
-
-
--- Дамп структуры для представление magellan.v_builds
-DROP VIEW IF EXISTS `v_builds`;
--- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_builds` (
-	`flight_id` INT(11) NOT NULL COMMENT 'ID полета',
-	`node_type_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`node_id` INT(11) NOT NULL COMMENT 'ID узла',
-	`node_name` VARCHAR(50) NULL COMMENT 'Название (только для корпусов)' COLLATE 'utf8_general_ci',
-	`model_id` INT(11) NOT NULL COMMENT 'ID модели',
-	`model_name` VARCHAR(50) NOT NULL COMMENT 'Наименования модели' COLLATE 'utf8_general_ci',
-	`company` VARCHAR(3) NOT NULL COLLATE 'utf8_general_ci',
-	`level` SMALLINT(6) NOT NULL COMMENT 'Уровень модели',
-	`size` ENUM('small','medium','large') NOT NULL COLLATE 'utf8_general_ci',
-	`hull_vector` VARCHAR(16) NULL COLLATE 'utf8_general_ci',
-	`node_vector` VARCHAR(16) NULL COLLATE 'utf8_general_ci',
-	`vector` VARCHAR(16) NULL COMMENT 'Вектор рассинхрона (узел xor корпус)' COLLATE 'utf8_general_ci',
-	`correction` VARCHAR(16) NULL COMMENT 'Вектор корректировки' COLLATE 'utf8_general_ci',
-	`correction_func` VARCHAR(100) NULL COLLATE 'utf8_general_ci',
-	`total` VARCHAR(16) NULL COMMENT 'Итоговый вектор' COLLATE 'utf8_general_ci',
-	`params_json` TEXT NULL COMMENT 'JSON с получившимися параметрами' COLLATE 'utf8_general_ci',
-	`slots_json` TEXT NULL COLLATE 'utf8_general_ci'
-) ENGINE=MyISAM;
-
-
--- Дамп структуры для представление magellan.v_luggages
-DROP VIEW IF EXISTS `v_luggages`;
--- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_luggages` (
-	`code` ENUM('mine','module','beacon') NOT NULL COMMENT 'Код типа груза' COLLATE 'utf8_general_ci',
-	`company` ENUM('mst','mat','gd','kkg','pre') NULL COMMENT 'Код компании-владельца (для шахт)' COLLATE 'utf8_general_ci',
-	`weight` FLOAT NOT NULL,
-	`volume` FLOAT NOT NULL
-) ENGINE=MyISAM;
-
-
--- Дамп структуры для представление magellan.v_model_params
-DROP VIEW IF EXISTS `v_model_params`;
--- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_model_params` (
-	`model_id` INT(11) NOT NULL,
-	`parameter_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`value` DOUBLE(19,2) NULL
-) ENGINE=MyISAM;
-
-
--- Дамп структуры для представление magellan.v_nodes_kpi
-DROP VIEW IF EXISTS `v_nodes_kpi`;
--- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_nodes_kpi` 
-) ENGINE=MyISAM;
-
-
--- Дамп структуры для представление magellan.v_node_parameter_list
-DROP VIEW IF EXISTS `v_node_parameter_list`;
--- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_node_parameter_list` (
-	`node_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`node_name` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`param_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`param_name` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`param_short_name` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci'
-) ENGINE=MyISAM;
-
-
--- Дамп структуры для представление magellan.v_total_income
-DROP VIEW IF EXISTS `v_total_income`;
--- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_total_income` (
-	`company` ENUM('mst','mat','gd','kkg','pre') NOT NULL COLLATE 'utf8_general_ci',
-	`resource_code` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-	`resource_name` VARCHAR(10) NULL COLLATE 'utf8_general_ci',
-	`value` DECIMAL(33,0) NULL
-) ENGINE=MyISAM;
-
-
--- Дамп структуры для представление magellan.v_builds
-DROP VIEW IF EXISTS `v_builds`;
--- Удаление временной таблицы и создание окончательной структуры представления
-DROP TABLE IF EXISTS `v_builds`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_builds` AS select b.flight_id,
-	b.node_type_code, 
-	b.node_id,
-	n.name node_name,
-	n.model_id,
-	m.name model_name,
-	m.company,
-	m.`level`, 
-	m.size,
-	hv.vector hull_vector,
-	bv.vector node_vector,
-	b.vector,
-	b.correction,
-	b.correction_func,
-	b.total,
-	b.params_json,
-	b.slots_json
-from builds b
-join nodes n on n.id = b.node_id
-join models m on m.id = n.model_id 
-join builds b_hull on b.flight_id = b_hull.flight_id and b_hull.node_type_code = 'hull'
-left join hull_vectors hv on hv.hull_id = b_hull.node_id and hv.node_type_code = b.node_type_code
-left join base_freq_vectors bv on bv.company = m.company 
-	and bv.node_code = b.node_type_code
-	and bv.`level` = m.`level`
-	and bv.size = m.size ;
-
-
--- Дамп структуры для представление magellan.v_luggages
-DROP VIEW IF EXISTS `v_luggages`;
--- Удаление временной таблицы и создание окончательной структуры представления
-DROP TABLE IF EXISTS `v_luggages`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_luggages` AS select distinct code, company, weight, volume
-from luggages l
-where l.vaild_since < Now()
-group by code, company
-order by l.vaild_since desc ;
-
-
--- Дамп структуры для представление magellan.v_model_params
-DROP VIEW IF EXISTS `v_model_params`;
--- Удаление временной таблицы и создание окончательной структуры представления
-DROP TABLE IF EXISTS `v_model_params`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_model_params` AS select 
-	m.id as model_id,
-	mhp.parameter_code, 
-	round(
-		coalesce(mp.value, mhp.def_value)*
-		if(m.size='small', mhp.mult_small, if(m.size='large', mhp.mult_large,1))
-	,2) value
-from models m
-join model_has_parameters mhp on m.node_type_code = mhp.node_code
-left join model_parameters mp on mhp.parameter_code = mp.parameter_code and mp.model_id = m.id ;
-
-
--- Дамп структуры для представление magellan.v_nodes_kpi
-DROP VIEW IF EXISTS `v_nodes_kpi`;
--- Удаление временной таблицы и создание окончательной структуры представления
-DROP TABLE IF EXISTS `v_nodes_kpi`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_nodes_kpi` AS select distinct m.id,count(*) cnt, m.name, m.company, m.node_type_code, m.kpi_price, m.kpi_price * count(*) full_kpi
-from models m 
-join nodes n on n.model_id = m.id
-where n.status_code not in ('decomm', 'lost')
-group by m.id ;
-
-
--- Дамп структуры для представление magellan.v_node_parameter_list
-DROP VIEW IF EXISTS `v_node_parameter_list`;
--- Удаление временной таблицы и создание окончательной структуры представления
-DROP TABLE IF EXISTS `v_node_parameter_list`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_node_parameter_list` AS SELECT nt.code node_code, 
-	nt.name node_name,
-	p.code param_code,
-	p.name param_name,
-	p.short_name param_short_name
-from node_types nt
-join model_has_parameters np on nt.code = np.node_code
-join parameters_list p on np.parameter_code = p.code ;
-
-
--- Дамп структуры для представление magellan.v_total_income
-DROP VIEW IF EXISTS `v_total_income`;
--- Удаление временной таблицы и создание окончательной структуры представления
-DROP TABLE IF EXISTS `v_total_income`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_total_income` AS select 
-	distinct p.company, 
-		pr.resource_code, 
-		r.name resource_name,  
-		sum(pr.value* if(p.is_income=1, 1, -1)) value
-from pumps p
-join pump_resources pr on p.id = pr.pump_id
-left join resources r on r.code = pr.resource_code
-where (p.date_end is null or p.date_end > Now()) and r.is_active = 1
-group by p.company, pr.resource_code ;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
