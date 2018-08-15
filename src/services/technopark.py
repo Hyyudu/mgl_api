@@ -186,6 +186,6 @@ def get_luggage(self, params):
     """ params = {flight_id: int} """
     return self.db.fetchAll("""select fl.code, fl.company, fl.planet_id, fl.amount, l.weight, l.volume
 from flight_luggage fl
-left join luggages l on fl.code = l.code and (l.company = fl.company or (l.company is null and fl.company is null)) 
+left join v_luggages l on fl.code = l.code and (l.company = fl.company or (l.company is null and fl.company is null)) 
 where flight_id=:flight_id""",
                             params)
