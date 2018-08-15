@@ -25,7 +25,8 @@ def create_node(self, params):
 
     insufficient = get_insufficient_for_node(company=model['company'], model_id=model_id)
     if insufficient:
-        return api_fail("Для создания узла вам не хватает следующих ресурсов", insufficient=insufficient)
+        return api_fail("Для создания узла вам не хватает следующих ресурсов: "+
+                        ", ".join([f"{key}: {val}" for key, val in insufficient.items()]))
 
     existing_nodes = self.db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
     insert_data = {

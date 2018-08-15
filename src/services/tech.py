@@ -139,8 +139,8 @@ def develop_model(self, params):
     # проверяем, хватает ли доходов
     insufficient = get_insufficient_for_both(company=params['company'], upkeep_price=model_upkeep)
     if insufficient:
-        return api_fail("Для создания модели и стартового узла по этой модели вам не хватает ресурсов",
-                        insufficient=insufficient)
+        return api_fail("Для создания модели и стартового узла по этой модели вам не хватает ресурсов: "+
+                        ", ".join([f"{key}: {val}" for key, val in insufficient.items()]))
 
 
     # Вычисляем параметры

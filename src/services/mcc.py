@@ -133,6 +133,7 @@ def freight_flight(self, params):
 @inject_db
 def flight_died(self, params):
     """ params = {flight_id: int} """
+    self.db.query("update flights set status='lost' where id=:flight_id", params)
     # Находим все узлы того полета
     node_ids = self.db.fetchColumn("select node_id from builds where flight_id=:flight_id", params)
     nodelist = "(" + ", ".join(node_ids) + ")"
@@ -142,3 +143,11 @@ def flight_died(self, params):
     self.db.query(f"update pumps set date_end = Now() where section='nodes' and entity_id in {nodelist}",
                   need_commit=True)
     return api_ok()
+
+
+@inject_db
+def flight_returned(self, params):
+    self.db.query("update flights set status='returned' where id = :flight_id", params)
+    # Находим все узлы того полета
+    nodes = self.db.fetchDict("select node_type_code, node_id from builds where flight_id=:flight_id", params,
+                                 'node_type_code', 'node_id')
