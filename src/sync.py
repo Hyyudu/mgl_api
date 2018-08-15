@@ -10,6 +10,18 @@ from sync_config import SERVICE_URL, API_URL
 
 import os
 
+
+help_text = """help  - вызов справки
+system list  - Список кодов всех систем
+system params <system>  - Вывести ТТХ системы с учетом рассинхрона
+system slots  - список слотов корпуса
+system vector <system>/all  - Вывести результирующий вектор по системе / по всем системам
+correct <system> <function>  - добавить корректирующий вектор системе
+correct <system>  - просмотреть корректирующий вектор системы
+correct test <function>  - проверить вектор для заданной функции
+correct list  - просмотреть список текущих корректировок
+exit, halt, stop или quit  - завершение сеанса синхронизации"""
+
 def getfunc(functext):
     # очищаем вход
     st = re.sub("[^ABCDabcd \(\)\!\+]", "", functext, len(functext))
@@ -79,7 +91,7 @@ def table_view(data, free_space_right=4, free_space_left=1, column_separator="|"
 
 class Sync:
     def __init__(self):
-        self.help_text = [line.strip() for line in open("commands.txt", 'r')]
+        self.help_text = [line.strip() for line in help_text.split("\n")]
         self.flight = {}
         self.nodes_data = {}
         self.node_names = {}
@@ -102,10 +114,10 @@ class Sync:
             jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
             req.add_header('Content-Length', len(jsondataasbytes))
             response = urllib.request.urlopen(req, jsondataasbytes)
-            return response
+            response_text = "".join([x.decode() for x in response.readlines()])
+            result = json.loads(response_text)
+            return result
 
-            # r = requests.post(url, json=data or {})
-            # return json.loads(r.text)
         except requests.exceptions.ConnectionError:
             print("Удаленный сервер не ответил по адресу " + url + ". Работа программы аварийно завершена")
             sys.exit()
@@ -140,13 +152,14 @@ class Sync:
         else:
             password = input ("Введите пароль> ")
 
-        json = Sync.check_account(login, password)
+        check_result = Sync.check_account(login, password)
+        print(json.dumps(check_result))
 
-        if (not ('account' in json)):
+        if (not ('account' in check_result)):
             print(f"Возможно пароль неверный")
             sys.exit()
         
-        account = json['account']
+        account = check_result['account']
             
         id = account['_id']
         isEngineer = account['professions']['isEngineer']

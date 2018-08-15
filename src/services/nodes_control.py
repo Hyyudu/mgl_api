@@ -4,7 +4,6 @@ from random import randint, choice
 from typing import Dict, Any, List
 
 from services.economic import add_node_upkeep_pump, get_insufficient_for_node
-from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db, get_logger, dict2str
 from services.model_crud import read_models
 from services.sync import get_rand_func, xor, get_func_vector
@@ -49,6 +48,7 @@ def create_node(self, params):
 @inject_db
 def check_reserve_node(self, data):
     """ data = {user_id: int, node_id: int, password: str} """
+    from services.mcc import get_nearest_flight_for_supercargo
     flight = get_nearest_flight_for_supercargo(None, data.get('user_id', 0))
     if not flight:
         return api_fail("Вы не назначены ни на какой полет в качестве суперкарго")
@@ -56,7 +56,7 @@ def check_reserve_node(self, data):
     if flight.get('status', '') == 'freight':
         return api_fail("""Вы назначены суперкарго на полет №{id} (вылет {departure}, док №{dock}).
     В настоящее время ваш корабль уже зафрахтован, внесение изменений в конструкцию невозможно""".format(**flight))
-    node = self.db.fetchRow("""select n.*, ns.name status, m.node_type_code,
+    node = self.db.fetchRow("""select n.*, ns.name status_name, m.node_type_code,
             (n.premium_expires > Now() or n.premium_expires = 0 or n.premium_expires is null) as is_premium
          from nodes n 
             left join node_statuses ns on n.status = ns.code
@@ -66,7 +66,7 @@ def check_reserve_node(self, data):
         return api_fail("Узел с бортовым номером {} не существует и никогда не существовал".format(data.get('node_id')))
     if node.get('status') != 'free':
         return api_fail("Узел с бортовым номером {} сейчас находится в статусе '{}' и недоступен вам для резерва".
-                        format(node.get('id'), node.get('status')))
+                        format(node.get('id'), node.get('status_name')))
     if node.get('is_premium'):
         if not data.get('password'):
             return api_fail("Этот узел находится в премиум-доступе. Выясните у создателей пароль доступа")

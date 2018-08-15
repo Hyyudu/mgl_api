@@ -2,7 +2,7 @@ import json
 from typing import Dict, Any
 
 from services.economic import stop_pump
-from services.mcc import get_nearest_flight_for_supercargo
+
 from services.misc import inject_db, api_fail, apply_percent, api_ok, get_logger
 from services.model_crud import read_models
 from services.nodes_control import check_reserve_node
@@ -127,6 +127,7 @@ def get_luggages_info(self, params):
 @inject_db
 def get_my_reserved_nodes(self, params) -> Dict[str, Any]:
     """ params: {"user_id": int} """
+    from services.mcc import get_nearest_flight_for_supercargo
     flight = get_nearest_flight_for_supercargo(None, params.get('user_id'))
     if not flight:
         return api_fail("Суперкарго {} не назначен ни на какой полет".format(params.get('user_id')))

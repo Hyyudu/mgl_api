@@ -1,9 +1,11 @@
-from collections import defaultdict
 import os
+from collections import defaultdict
+
 import requests
 from requests.auth import HTTPBasicAuth
-from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger, NODE_NAMES, dict2str
+from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger, NODE_NAMES, dict2str, roundTo
 from services.sync import get_build_data
+from services.technopark import decomm_node
 
 
 logger = get_logger(__name__)
@@ -185,7 +187,25 @@ def flight_died(self, params):
 
 @inject_db
 def flight_returned(self, params):
+    """ params = {
+"flight_id": int,
+"flight_time": int, // время полета в секундах
+"az_damage": {
+    "march_engine": 32.5,
+    "warp_engine": 12.9,
+}
+}"""
     self.db.query("update flights set status='returned' where id = :flight_id", params)
     # Находим все узлы того полета
     nodes = self.db.fetchDict("select node_type_code, node_id from builds where flight_id=:flight_id", params,
                               'node_type_code', 'node_id')
+    for node_type_code, node_id in nodes.items():
+        if node_type_code == 'hull':
+            az_damage = roundTo(params['flight_time'] / (5 * 60))
+        else:
+            az_damage = roundTo(params['az_damage'].get(node_type_code, 0) + params['flight_time'] / (8 * 60))
+        self.db.query(f"update nodes set status='free', az_level = az_level - {az_damage} where id={node_id}")
+    logger.info("Полет {flight_id} вернулся".format(**params))
+    nodes_to_decomm = self.db.fetchColumn("select id from nodes where az_level <= 15")
+    for node_id in nodes_to_decomm:
+        decomm_node(self, {"node_id": node_id, "is_auto": 1})
