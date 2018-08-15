@@ -79,10 +79,11 @@ def get_nearest_flight_for_role(self, params):
         and departure > Now()
         order by departure asc 
         limit 1""", params)
-    flight['crew'] = self.db.fetchDict("""select fc.role, u.name
-from flight_crews fc
-left join users u on fc.user_id = u.id
-where fc.flight_id = :id""", flight, 'role', 'name')
+    if flight:
+        flight['crew'] = self.db.fetchDict("""select fc.role, u.name
+    from flight_crews fc
+    left join users u on fc.user_id = u.id
+    where fc.flight_id = :id""", flight, 'role', 'name')
     return flight
 
 
