@@ -116,7 +116,7 @@ app_urls = [
 
     url("/boosts/read", boosts_read, tableview_comment="Список всех активных бустов"),
     url("/boosts/use", boost_use),
-    url("/read_kpi", read_kpi),
+    url("/read_kpi", read_kpi, tableview_comment="KPI по фрахту и списаниям"),
 
     ("/ping", PingHandler),
     ("/urls_params", UrlsHandler),
