@@ -1,4 +1,5 @@
-from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger
+from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger, NODE_NAMES
+from services.sync import get_build_data
 
 
 logger = get_logger(__name__)
@@ -55,6 +56,7 @@ def mcc_set_all_crew(self, params):
 def mcc_add_flight(self, params):
     """ params = {"departure": "2018-08-16 15:00:00", "dock": 2, "company": "pre"} """
     params['flight_id'] = self.db.insert('flights', params)
+    logger.info("Создан полет: отбытие {departure}, док {dock}, компания {pre}".format(**params))
     return api_ok(flight=params)
 
 
@@ -100,7 +102,30 @@ def get_nearest_flight_for_engineer(self, user_id):
 @inject_db
 def freight_flight(self, params):
     """ params {flight_id: int} """
-    return api_fail("Пока не реализовано")
+    """ params: {flight_id: int} """
+    build = get_build_data(self, params)
+    # Проверить, что корабль состоит из всех нужных узлов.
+    nodes_not_reserved = set(NODE_NAMES.keys()) - set(build.keys())
+    if nodes_not_reserved:
+        return api_fail("Невозможно совершить фрахт. В корабле не хватает следующих узлов: " +
+                        ", ".join([NODE_NAMES[item] for item in nodes_not_reserved]))
+    # проверить, что общий объем неотрицательный
+    hull_volume = build['hull']['params']['volume']['value']
+    inner_nodes_volume = sum([item['params']['volume']['value']
+                              for item in build.values()
+                              if item['node_type_code'] != 'hull']
+                             )
+    luggage_volume = self.db.fetchOne("""
+    select sum(fl.amount* vl.volume)
+    from flight_luggage fl 
+    join v_luggages vl on fl.code = vl.code
+    and (fl.company = vl.company or (fl.company is null and vl.company is null))
+    where fl.flight_id = :flight_id""", params)
+    if hull_volume - inner_nodes_volume - luggage_volume < 0:
+        return api_fail(
+            f"Внутренний объем вашего корпуса {hull_volume}. Его недостаточно для размещения всех узлов " +
+            f"(суммарный объем {inner_nodes_volume}) и багажа (суммарный объем {luggage_volume})")
+    return api_ok(message="Иди обедать уже, сцуко!")
 
 
 @inject_db

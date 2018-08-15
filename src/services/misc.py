@@ -4,6 +4,17 @@ from random import choices, randint
 
 from services.db import DB
 
+NODE_NAMES = {
+    "march_engine": "маршевый двигатель",
+    "shunter": "маневровый двигатель",
+    "warp_engine": "двигатель Уайта",
+    "fuel_tank": "топливный бак",
+    "radar": "радар",
+    "scaner": "сканер",
+    "lss": "СЖО",
+    "shields": "щиты",
+    "hull": "корпус",
+}
 
 def get_logger(name, log_file='logs/main.log', level=logging.INFO):
     """Function setup as many loggers as you want"""

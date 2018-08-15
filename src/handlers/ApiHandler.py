@@ -31,7 +31,7 @@ class ApiHandler(RequestHandler):
         except Exception as e:
             err_text = self.get_exception_text(self, e)
             msg = e.sql if hasattr(e, 'sql') else str(type(e)) + ":" + str(e)
-            data = e.data if hasattr(e, 'data') else traceback.format_stack()
+            data = e.data if hasattr(e, 'data') else ''
             fail_args = {"msg": err_text} if err_text else {"args": e.args, "msg": msg, "data": data}
             logger = get_error_logger(__name__)
             logger.error("======================================================================")

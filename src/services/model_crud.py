@@ -70,7 +70,7 @@ def delete_model(self, data):
 def apply_companies_perks(model):
     if model['company'] == 'pre':
         if model['node_type_code'] == 'warp_engine':
-            model['params']['distort_level'] *= 1.12
+            model['params']['distort_level'] *= 1.15
         if model['node_type_code'] != 'hull':
             model['params']['volume'] = apply_percent(model['params']['volume'], -8)
         else:
@@ -82,16 +82,16 @@ def apply_companies_perks(model):
     elif model['company'] == 'kkg':
         if model['node_type_code'] == 'lss':
             for field in ['thermal_def', 'co2_level', 'air_volume', 'air_speed']:
-                model['params'][field] = apply_percent(model['params'][field], 9)
+                model['params'][field] = apply_percent(model['params'][field], 11)
 
     elif model['company'] == 'mat':
         node_type = model['node_type_code']
         if node_type == 'march_engine':
-            model['params']['thrust'] = apply_percent(model['params']['thrust'], 12)
+            model['params']['thrust'] = apply_percent(model['params']['thrust'], 15)
         elif node_type == 'shunter':
-            model['params']['turn_accel'] = apply_percent(model['params']['turn_accel'], 12)
+            model['params']['turn_accel'] = apply_percent(model['params']['turn_accel'], 15)
         elif node_type == 'fuel_tank':
-            model['params']['fuel_volume'] = apply_percent(model['params']['fuel_volume'], 12)
+            model['params']['fuel_volume'] = apply_percent(model['params']['fuel_volume'], 15)
 
     return model
 

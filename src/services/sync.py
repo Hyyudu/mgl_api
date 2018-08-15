@@ -114,10 +114,15 @@ def get_build_data(self, params):
     """ params = {flight_id: int, <node_type_code>: str} """
     if 'node_type_code' in params:
         data = self.db.fetchRow("""select * from v_builds where """+ self.db.construct_where(params), params)
-        data['params'] = json.loads(data['params_json'])
-        data['slots'] = json.loads(data['slots_json'])
-        return data;
-    return self.db.fetchAll("select * from v_builds where flight_id=:flight_id", params, 'node_type_code')
+        data['params'] = json.loads(data['params_json'] or '{}')
+        data['slots'] = json.loads(data['slots_json'] or '{}')
+        return data
+    else:
+        ret = self.db.fetchAll("select * from v_builds where flight_id=:flight_id", params, 'node_type_code')
+        for data  in ret.values():
+            data['params'] = json.loads(data['params_json'] or '{}')
+            data['slots'] = json.loads(data['slots_json'] or '{}')
+        return ret
 
 @inject_db
 def set_build_correction(self, params):

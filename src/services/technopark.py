@@ -8,7 +8,9 @@ from services.model_crud import read_models
 from services.nodes_control import check_reserve_node
 from services.sync import get_node_vector, calc_node_params_with_desync, xor
 
+
 logger = get_logger(__name__)
+
 
 @inject_db
 def get_flight_params(self, params):
@@ -86,7 +88,7 @@ where n.id=:node_id""", build_item)
         build_item['vector'] = build_item['total'] = xor(
             [get_node_vector(None, params),
              hull_vectors[build_item['node_type_code']],
-            ]
+             ]
         )
         build_item['correction'] = "0" * 16
         params_json = calc_node_params_with_desync(
@@ -140,9 +142,9 @@ def load_luggage(self, params):
     """ params = {flight_id: int, code: "beacon"/"mine"/"module",
         <company>: str (только для шахт), <planet_id>: str (только для модулей) }"""
     if 'company' in params and params.get('code') != 'mine':
-        del(params['company'])
+        del (params['company'])
     if 'planet_id' in params and params.get('code') != 'module':
-        del(params['planet_id'])
+        del (params['planet_id'])
     if not params.get('planet_id') and params.get('code') == 'module':
         return api_fail("Для загрузки модуля необходимо указать код планеты высадки!")
     if 'company' not in params and params.get('code') == 'mine':
@@ -162,9 +164,9 @@ def unload_luggage(self, params):
     """ params = {flight_id: int, code: "beacon"/"mine"/"module",
         <company>: str (только для шахт), <planet_id>: str (только для модулей) }"""
     if 'company' in params and params.get('code') != 'mine':
-        del(params['company'])
+        del (params['company'])
     if 'planet_id' in params and params.get('code') != 'module':
-        del(params['planet_id'])
+        del (params['planet_id'])
     if not params.get('planet_id') and params.get('code') == 'module':
         return api_fail("Для выгрузки модуля необходимо указать код планеты высадки!")
     if 'company' not in params and params.get('code') == 'mine':
