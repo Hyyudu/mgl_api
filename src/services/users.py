@@ -15,12 +15,13 @@ def read_users_from_alice(self, params):
                 {"isAlive": True}
             ]
         },
-        "fields": ["_id", "firstName", "lastName"],
+        "fields": ["_id", "firstName", "lastName", 'password'],
         "limit": 200,
     }
     r = requests.post("https://couchdb.alice.magellan2018.ru/models/_find", data=json.dumps(req),
                       headers={"Content-Type": "application/json"})
     users = json.loads(r.text)
+    print(json.dumps(users, indent=4))
     if 'docs' in users:
         ins_data = [
             {

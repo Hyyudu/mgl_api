@@ -1,8 +1,13 @@
-from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger, NODE_NAMES
+from collections import defaultdict
+import os
+import requests
+from requests.auth import HTTPBasicAuth
+from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger, NODE_NAMES, dict2str
 from services.sync import get_build_data
 
 
 logger = get_logger(__name__)
+
 
 @inject_db
 def mcc_dashboard(self, params):
@@ -102,13 +107,17 @@ def get_nearest_flight_for_engineer(self, user_id):
 @inject_db
 def freight_flight(self, params):
     """ params {flight_id: int} """
-    """ params: {flight_id: int} """
+    flight = self.db.fetchRow("select * from flights where id=:flight_id", params)
+    if flight['status'] != 'prepare':
+        return api_fail(f"Полет находится в статусе {flight['status']} и не может быть зафрахтован")
     build = get_build_data(self, params)
+
     # Проверить, что корабль состоит из всех нужных узлов.
     nodes_not_reserved = set(NODE_NAMES.keys()) - set(build.keys())
     if nodes_not_reserved:
         return api_fail("Невозможно совершить фрахт. В корабле не хватает следующих узлов: " +
                         ", ".join([NODE_NAMES[item] for item in nodes_not_reserved]))
+
     # проверить, что общий объем неотрицательный
     hull_volume = build['hull']['params']['volume']['value']
     inner_nodes_volume = sum([item['params']['volume']['value']
@@ -125,7 +134,38 @@ def freight_flight(self, params):
         return api_fail(
             f"Внутренний объем вашего корпуса {hull_volume}. Его недостаточно для размещения всех узлов " +
             f"(суммарный объем {inner_nodes_volume}) и багажа (суммарный объем {luggage_volume})")
-    return api_ok(message="Иди обедать уже, сцуко!")
+
+    # Проверить, что всех слотов синхронизации хватает
+    slots = defaultdict(int)
+    for row in build.values():
+        for slot_type, qty in row['slots'].items():
+            slots[slot_type] += qty * (1 if row['node_type_code'] == 'hull' else -1)
+    not_enough_slots = {key: val for key, val in slots.items() if val < 0}
+    if not_enough_slots:
+        return api_fail("В корпусе недостаточно слотов для выбранных инженером формул синхронизации. "
+                        + "Недостающие слоты: " + dict2str(not_enough_slots))
+
+    # Все нормально - можем фрахтовать
+    node_ids = [item['node_id'] for item in build.values()]
+    # Фрахтуем полет
+    self.db.query("update flights set status='freight' where id=:flight_id", params, need_commit=True)
+    # Фрахтуем узлы
+    self.db.query("update nodes set status='freight' where id in (" +
+                  ", ".join(map(str, node_ids)) + ")", None, need_commit=True)
+    # Выдаем компаниям KPI за фрахт узлов
+    kpi_insert = [
+        {"company": item['company'], "node_id": item['node_id'], "reason": "фрахт", "amount": 5}
+        for item in build.values()
+    ]
+    self.db.insert("kpi_changes", kpi_insert)
+
+    # Формируем инфу по щитам для CouchDb
+    dock = flight['dock']
+    shield_value = round(build['shields']['params']['desinfect_level']['value'])
+    url = f"https://api.alice.magellan2018.ru/ships/set_shields/{dock}/{shield_value}"
+    requests.get(url, auth=HTTPBasicAuth(os.environ['ADMIN_USER'], os.environ['ADMIN_PASSWORD']))
+
+    return api_ok()
 
 
 @inject_db
@@ -136,7 +176,7 @@ def flight_died(self, params):
     node_ids = self.db.fetchColumn("select node_id from builds where flight_id=:flight_id", params)
     nodelist = "(" + ", ".join(node_ids) + ")"
     # Ставим всем узлам статус "утерян"
-    self.db.query(f"update nodes set status_code='lost' where id in {nodelist}", None, need_commit=True)
+    self.db.query(f"update nodes set status='lost' where id in {nodelist}", None, need_commit=True)
     # Отключаем их насосы в экономике
     self.db.query(f"update pumps set date_end = Now() where section='nodes' and entity_id in {nodelist}",
                   need_commit=True)
@@ -148,4 +188,4 @@ def flight_returned(self, params):
     self.db.query("update flights set status='returned' where id = :flight_id", params)
     # Находим все узлы того полета
     nodes = self.db.fetchDict("select node_type_code, node_id from builds where flight_id=:flight_id", params,
-                                 'node_type_code', 'node_id')
+                              'node_type_code', 'node_id')

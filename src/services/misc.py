@@ -122,4 +122,4 @@ def drop(arr, field: str):
 
 
 def dict2str(dct, separator=", "):
-    return ", ".join(["{key}: {val}" for key, val in dct.items()])
+    return ", ".join([f"{key}: {val}" for key, val in dct.items()])

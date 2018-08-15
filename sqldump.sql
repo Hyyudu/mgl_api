@@ -1947,13 +1947,13 @@ DELETE FROM `builds`;
 INSERT INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `correction_func`, `total`, `params_json`, `slots_json`) VALUES
 	(1, 'hull', 177, '', '', '', '', '{"weight": {"percent": 100, "value": 3620.0}, "volume": {"percent": 100, "value": 3080.0}, "az_level": {"percent": 100, "value": 115}}', '{"sum2": 3, "sum3": 3, "sum4": 3, "inv": 5, "con4": 5, "con2": 2, "sum5": 2}'),
 	(1, 'lss', 189, '0000000000000000', '0000000000000000', '', '0000000000000000', '{"air_speed": {"percent": 100, "value": 2.0}, "air_volume": {"percent": 100, "value": 3050.0}, "az_level": {"percent": 100, "value": 115.0}, "co2_level": {"percent": 100, "value": 239.0}, "lightness": {"percent": 100, "value": 36.0}, "thermal_def": {"percent": 100, "value": 26.0}, "volume": {"percent": 100, "value": 376.0}, "weight": {"percent": 100, "value": 271.0}}', NULL),
-	(1, 'march_engine', 106, '1000100001110111', '0000000000000000', '', '1000100001110111', '{"accel": {"percent": 60, "value": 12.0}, "accel_rev": {"percent": 90, "value": 0.0}, "az_level": {"percent": 100, "value": 115.0}, "heat_prod": {"percent": 125, "value": 98.8}, "slowdown": {"percent": 55, "value": 11.0}, "slowdown_rev": {"percent": 55, "value": 0.0}, "thrust": {"percent": 60, "value": 606.0}, "thrust_rev": {"percent": 60, "value": 0.0}, "volume": {"percent": 100, "value": 239.0}, "weight": {"percent": 100, "value": 143.0}}', NULL),
+	(1, 'march_engine', 106, '1000100001110111', '0000000000000000', '', '1000100001110111', '{"accel": {"percent": 60, "value": 12.0}, "accel_rev": {"percent": 90, "value": 0.0}, "az_level": {"percent": 100, "value": 115.0}, "heat_prod": {"percent": 125, "value": 98.8}, "slowdown": {"percent": 55, "value": 11.0}, "slowdown_rev": {"percent": 55, "value": 0.0}, "thrust": {"percent": 60, "value": 606.0}, "thrust_rev": {"percent": 60, "value": 0.0}, "volume": {"percent": 100, "value": 239.0}, "weight": {"percent": 100, "value": 143.0}}', ''),
 	(1, 'shunter', 115, '0001000100010001', '0000000000000000', '', '0001000100010001', '{"az_level": {"percent": 100, "value": 115.0}, "heat_prod": {"percent": 115, "value": 92.0}, "strafe_accel": {"percent": 100, "value": 0.0}, "strafe_max": {"percent": 100, "value": 0.0}, "strafe_slow": {"percent": 85, "value": 0.0}, "turn_accel": {"percent": 100, "value": 80.0}, "turn_max": {"percent": 100, "value": 45.0}, "turn_slow": {"percent": 85, "value": 78.2}, "volume": {"percent": 100, "value": 171.0}, "weight": {"percent": 100, "value": 103.0}}', NULL),
 	(1, 'warp_engine', 125, '1100110011111111', '1100110011111111', 'a+C', '0000000000000000', '{"az_level": {"percent": 100, "value": 115.0}, "consumption": {"percent": 100, "value": 0.0}, "distort_accel": {"percent": 100, "value": 3.0}, "distort_level": {"percent": 100, "value": 800.0}, "distort_slowdown": {"percent": 100, "value": 3.0}, "turn_consumption": {"percent": 100, "value": 1.0}, "turn_speed": {"percent": 100, "value": 1.0}, "volume": {"percent": 100, "value": 293.0}, "warp_enter_consumption": {"percent": 100, "value": 21.0}, "weight": {"percent": 100, "value": 246.0}}', '{"inv": 0, "sum2": 1}'),
 	(1, 'radar', 135, '1010010110010110', '0000000000000000', '', '1010010110010110', '{"angle_change": {"percent": 68, "value": 0.68}, "angle_max": {"percent": 72, "value": 24.5}, "angle_min": {"percent": 134, "value": 26.8}, "az_level": {"percent": 100, "value": 115.0}, "range_change": {"percent": 74, "value": 0.74}, "range_max": {"percent": 64, "value": 25.0}, "rotate_speed": {"percent": 60, "value": 7.2}, "volume": {"percent": 100, "value": 183.0}, "weight": {"percent": 100, "value": 87.8}}', NULL),
-	(1, 'scaner', 145, '0011111111000000', '1111101011111010', 'AB+BC+CD+aB+Bcd+D', '1100010100111010', '{"az_level": {"percent": 100, "value": 115.0}, "drop_range": {"percent": 60, "value": 15.0}, "drop_speed": {"percent": 60, "value": 24.6}, "scan_range": {"percent": 60, "value": 29.4}, "scan_speed": {"percent": 60, "value": 1.8}, "volume": {"percent": 100, "value": 132.0}, "weight": {"percent": 100, "value": 63.4}}', '{"con3": 1, "con2": 4, "sum6": 1}'),
 	(1, 'fuel_tank', 155, '1010010110010110', '0000000000000000', '', '1010010110010110', '{"az_level": {"percent": 100, "value": 115.0}, "fuel_protection": {"percent": 58, "value": 2.9}, "fuel_volume": {"percent": 64, "value": 640.0}, "radiation_def": {"percent": 73, "value": 71.5}, "volume": {"percent": 100, "value": 294.0}, "weight": {"percent": 100, "value": 318.0}}', NULL),
-	(1, 'shields', 165, '0101010101010101', '0000000000000000', '', '0101010101010101', '{"az_level": {"percent": 100, "value": 115.0}, "desinfect_level": {"percent": 64, "value": 76.8}, "heat_capacity": {"percent": 79, "value": 536.0}, "heat_reflection": {"percent": 68, "value": 9.79}, "heat_sink": {"percent": 76, "value": 115.0}, "mechanical_def": {"percent": 68, "value": 8.16}, "radiation_def": {"percent": 72, "value": 10.4}, "volume": {"percent": 100, "value": 435.0}, "weight": {"percent": 100, "value": 313.0}}', NULL);
+	(1, 'shields', 165, '0101010101010101', '0000000000000000', '', '0101010101010101', '{"az_level": {"percent": 100, "value": 115.0}, "desinfect_level": {"percent": 64, "value": 76.8}, "heat_capacity": {"percent": 79, "value": 536.0}, "heat_reflection": {"percent": 68, "value": 9.79}, "heat_sink": {"percent": 76, "value": 115.0}, "mechanical_def": {"percent": 68, "value": 8.16}, "radiation_def": {"percent": 72, "value": 10.4}, "volume": {"percent": 100, "value": 435.0}, "weight": {"percent": 100, "value": 313.0}}', NULL),
+	(1, 'scaner', 144, '0110011011100000', '0000000000000000', '', '0110011011100000', '{"az_level": {"percent": 100, "value": 115.0}, "drop_range": {"percent": 60, "value": 15.0}, "drop_speed": {"percent": 70, "value": 28.7}, "scan_range": {"percent": 60, "value": 30.6}, "scan_speed": {"percent": 70, "value": 2.1}, "volume": {"percent": 100, "value": 130.0}, "weight": {"percent": 100, "value": 62.4}}', NULL);
 /*!40000 ALTER TABLE `builds` ENABLE KEYS */;
 
 
@@ -2040,12 +2040,11 @@ CREATE TABLE IF NOT EXISTS `flight_luggage` (
   KEY `flight_id` (`flight_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.flight_luggage: ~2 rows (приблизительно)
+-- Дамп данных таблицы magellan.flight_luggage: ~1 rows (приблизительно)
 DELETE FROM `flight_luggage`;
 /*!40000 ALTER TABLE `flight_luggage` DISABLE KEYS */;
 INSERT INTO `flight_luggage` (`flight_id`, `code`, `company`, `planet_id`, `amount`) VALUES
-	(1, 'beacon', NULL, NULL, 1),
-	(1, 'mine', 'gd', NULL, 2);
+	(1, 'beacon', NULL, NULL, 1);
 /*!40000 ALTER TABLE `flight_luggage` ENABLE KEYS */;
 
 
@@ -2253,6 +2252,22 @@ INSERT INTO `hull_vectors` (`hull_id`, `node_type_code`, `vector`, `lapse_func`)
 /*!40000 ALTER TABLE `hull_vectors` ENABLE KEYS */;
 
 
+-- Дамп структуры для таблица magellan.kpi_changes
+DROP TABLE IF EXISTS `kpi_changes`;
+CREATE TABLE IF NOT EXISTS `kpi_changes` (
+  `company` varchar(3) NOT NULL,
+  `timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `reason` varchar(100) DEFAULT NULL,
+  `amount` tinyint(4) NOT NULL,
+  `node_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Дамп данных таблицы magellan.kpi_changes: ~0 rows (приблизительно)
+DELETE FROM `kpi_changes`;
+/*!40000 ALTER TABLE `kpi_changes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `kpi_changes` ENABLE KEYS */;
+
+
 -- Дамп структуры для таблица magellan.luggages
 DROP TABLE IF EXISTS `luggages`;
 CREATE TABLE IF NOT EXISTS `luggages` (
@@ -2296,9 +2311,9 @@ CREATE TABLE IF NOT EXISTS `models` (
   PRIMARY KEY (`id`),
   KEY `node_type` (`node_type_code`),
   CONSTRAINT `node_type` FOREIGN KEY (`node_type_code`) REFERENCES `node_types` (`code`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
+) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8 COMMENT='Изобретенные модели узлов';
 
--- Дамп данных таблицы magellan.models: ~96 rows (приблизительно)
+-- Дамп данных таблицы magellan.models: ~95 rows (приблизительно)
 DELETE FROM `models`;
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `description`, `company`, `created`, `premium_expires`, `kpi_price`) VALUES
@@ -2396,8 +2411,7 @@ INSERT INTO `models` (`id`, `name`, `node_type_code`, `level`, `size`, `descript
 	(192, 'EdEn', 'lss', 0, 'medium', NULL, 'pre', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 15),
 	(193, 'Гален', 'lss', 0, 'small', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 24),
 	(194, 'Гиппократ', 'lss', 2, 'medium', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 40),
-	(195, 'Авиценна', 'lss', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 25),
-	(210, 'выа', 'scaner', 0, 'large', '', 'mst', '2018-08-14 16:13:52', '2018-08-14 18:13:52', 4);
+	(195, 'Авиценна', 'lss', 0, 'large', NULL, 'kkg', '2018-08-06 21:35:35', '2018-08-07 00:35:35', 25);
 /*!40000 ALTER TABLE `models` ENABLE KEYS */;
 
 
@@ -2413,7 +2427,7 @@ CREATE TABLE IF NOT EXISTS `models_upkeep` (
   CONSTRAINT `FK_models_upkeep_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Цена поддержки одного узла модели';
 
--- Дамп данных таблицы magellan.models_upkeep: ~378 rows (приблизительно)
+-- Дамп данных таблицы magellan.models_upkeep: ~377 rows (приблизительно)
 DELETE FROM `models_upkeep`;
 /*!40000 ALTER TABLE `models_upkeep` DISABLE KEYS */;
 INSERT INTO `models_upkeep` (`model_id`, `resource_code`, `amount`) VALUES
@@ -2793,8 +2807,7 @@ INSERT INTO `models_upkeep` (`model_id`, `resource_code`, `amount`) VALUES
 	(195, 'aluminium', 41),
 	(195, 'iron', 31),
 	(195, 'nickel', 26),
-	(195, 'titan', 17),
-	(210, 'magnesium', 16);
+	(195, 'titan', 17);
 /*!40000 ALTER TABLE `models_upkeep` ENABLE KEYS */;
 
 
@@ -2908,7 +2921,7 @@ CREATE TABLE IF NOT EXISTS `model_parameters` (
   CONSTRAINT `parameter_code` FOREIGN KEY (`parameter_code`) REFERENCES `parameters_list` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Дамп данных таблицы magellan.model_parameters: ~781 rows (приблизительно)
+-- Дамп данных таблицы magellan.model_parameters: ~774 rows (приблизительно)
 DELETE FROM `model_parameters`;
 /*!40000 ALTER TABLE `model_parameters` DISABLE KEYS */;
 INSERT INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VALUES
@@ -3685,14 +3698,7 @@ INSERT INTO `model_parameters` (`model_id`, `parameter_code`, `value`) VALUES
 	(195, 'lightness', 0),
 	(195, 'thermal_def', 16),
 	(195, 'volume', 227),
-	(195, 'weight', 1000),
-	(210, 'az_level', 100),
-	(210, 'drop_range', 20),
-	(210, 'drop_speed', 38),
-	(210, 'scan_range', 42),
-	(210, 'scan_speed', 3),
-	(210, 'volume', 147),
-	(210, 'weight', 71);
+	(195, 'weight', 1000);
 /*!40000 ALTER TABLE `model_parameters` ENABLE KEYS */;
 
 
@@ -3703,21 +3709,21 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   `model_id` int(11) NOT NULL DEFAULT '0' COMMENT 'ID модели',
   `name` varchar(50) DEFAULT '' COMMENT 'Название (только для корпусов)',
   `az_level` int(11) NOT NULL DEFAULT '100' COMMENT 'Уровень АЗ',
-  `status_code` varchar(10) NOT NULL DEFAULT 'free' COMMENT 'Статус',
+  `status` varchar(10) NOT NULL DEFAULT 'free' COMMENT 'Статус',
   `date_created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Дата и время создания',
   `connected_to_hull_id` int(11) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL,
   `premium_expires` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK_status_code` (`status_code`),
+  KEY `FK_status_code` (`status`),
   CONSTRAINT `FK_model_id` FOREIGN KEY (`model_id`) REFERENCES `models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_status_code` FOREIGN KEY (`status_code`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=210 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
+  CONSTRAINT `FK_status_code` FOREIGN KEY (`status`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=215 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
 -- Дамп данных таблицы magellan.nodes: ~96 rows (приблизительно)
 DELETE FROM `nodes`;
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
-INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
+INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES
 	(101, 101, '', 100, 'free', '2018-08-06 21:38:39', NULL, '', '2018-08-06 21:58:03'),
 	(102, 102, '', 100, 'free', '2018-08-06 21:38:39', NULL, '', '2018-08-06 21:58:03'),
 	(103, 103, '', 100, 'free', '2018-08-06 21:38:40', NULL, '', '2018-08-06 21:58:03'),
@@ -3761,7 +3767,7 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(141, 141, '', 100, 'free', '2018-08-06 21:38:49', NULL, '', '2018-08-06 21:58:03'),
 	(142, 142, '', 100, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(143, 143, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
-	(144, 144, '', 115, 'free', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
+	(144, 144, '', 115, 'reserved', '2018-08-06 21:38:50', NULL, '', '2018-08-06 21:58:03'),
 	(145, 145, '', 115, 'reserved', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
 	(146, 146, '', 100, 'free', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
 	(147, 147, '', 100, 'free', '2018-08-06 21:38:51', NULL, '', '2018-08-06 21:58:03'),
@@ -3812,8 +3818,7 @@ INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status_code`, `date_
 	(192, 192, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
 	(193, 193, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
 	(194, 194, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
-	(195, 195, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03'),
-	(209, 210, '', 115, 'free', '2018-08-14 16:13:54', NULL, '5832', NULL);
+	(195, 195, '', 100, 'free', '2018-08-06 21:39:13', NULL, '', '2018-08-06 21:58:03');
 /*!40000 ALTER TABLE `nodes` ENABLE KEYS */;
 
 
@@ -3943,9 +3948,9 @@ CREATE TABLE IF NOT EXISTS `pumps` (
   PRIMARY KEY (`id`),
   KEY `FK_resource_flows_resource_sections` (`section`),
   CONSTRAINT `FK_resource_flows_resource_sections` FOREIGN KEY (`section`) REFERENCES `pump_sections` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8 COMMENT='Доходы и расходы компаний';
 
--- Дамп данных таблицы magellan.pumps: ~105 rows (приблизительно)
+-- Дамп данных таблицы magellan.pumps: ~103 rows (приблизительно)
 DELETE FROM `pumps`;
 /*!40000 ALTER TABLE `pumps` DISABLE KEYS */;
 INSERT INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `entity_id`, `comment`, `is_income`) VALUES
@@ -4051,9 +4056,7 @@ INSERT INTO `pumps` (`id`, `company`, `date_begin`, `date_end`, `section`, `enti
 	(101, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '194', 'Поддержка узла 194 модели Гиппократ', 0),
 	(102, 'kkg', '2018-08-06 21:39:13', NULL, 'nodes', '195', 'Поддержка узла 195 модели Авиценна', 0),
 	(108, 'gd', '2018-08-13 00:29:48', NULL, 'nodes', '196', 'Поддержка узла 196 модели С-3РО', 0),
-	(109, 'mst', '2018-08-13 00:29:58', NULL, 'nodes', '197', 'Поддержка узла 197 модели МСТ-КР-2', 0),
-	(126, 'mst', '2018-08-14 16:13:53', '2018-08-14 18:13:54', 'models', '210', 'Разработка модели 210 выа', 0),
-	(127, 'mst', '2018-08-14 16:13:54', NULL, 'nodes', '209', 'Поддержка узла 209 модели выа', 0);
+	(109, 'mst', '2018-08-13 00:29:58', NULL, 'nodes', '197', 'Поддержка узла 197 модели МСТ-КР-2', 0);
 /*!40000 ALTER TABLE `pumps` ENABLE KEYS */;
 
 
@@ -4069,7 +4072,7 @@ CREATE TABLE IF NOT EXISTS `pump_resources` (
   CONSTRAINT `FK_pump_resources_resources` FOREIGN KEY (`resource_code`) REFERENCES `resources` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Конкретные доходы/расходы одного насоса';
 
--- Дамп данных таблицы magellan.pump_resources: ~412 rows (приблизительно)
+-- Дамп данных таблицы magellan.pump_resources: ~410 rows (приблизительно)
 DELETE FROM `pump_resources`;
 /*!40000 ALTER TABLE `pump_resources` DISABLE KEYS */;
 INSERT INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
@@ -4482,9 +4485,7 @@ INSERT INTO `pump_resources` (`pump_id`, `resource_code`, `value`) VALUES
 	(109, 'aluminium', 23),
 	(109, 'iron', 22),
 	(109, 'nickel', 11),
-	(109, 'titan', 9),
-	(126, 'magnesium', 8),
-	(127, 'magnesium', 16);
+	(109, 'titan', 9);
 /*!40000 ALTER TABLE `pump_resources` ENABLE KEYS */;
 
 
@@ -4647,162 +4648,200 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   KEY `fk_company_id` (`company_id`),
   CONSTRAINT `fk_company_id` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9150 DEFAULT CHARSET=utf8 COMMENT='Пользователи системы';
+) ENGINE=InnoDB AUTO_INCREMENT=27029 DEFAULT CHARSET=utf8 COMMENT='Пользователи системы';
 
--- Дамп данных таблицы magellan.users: ~150 rows (приблизительно)
+-- Дамп данных таблицы magellan.users: ~188 rows (приблизительно)
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `name`, `company_id`, `is_active`) VALUES
-	(1, 'Мик Джаггер', NULL, 1),
-	(2, 'Пол МакКартни', NULL, 1),
-	(3, 'Майкл Джексон', NULL, 1),
-	(4, 'Дженнис Джоплин', NULL, 1),
-	(5, 'Ума Турман', 3, 1),
-	(6, 'Фредди Меркьюри', NULL, 1),
-	(7, 'Тина Тернер', NULL, 1),
-	(8000, 'Геннадий Лавров', NULL, 0),
 	(9000, 'Геннадий Лавров', NULL, 1),
-	(9008, 'Геннадий Лавров', NULL, 1),
-	(9009, 'Геннадий Лавров', NULL, 1),
-	(9010, 'Геннадий Лавров', NULL, 1),
-	(9011, 'Геннадий Лавров', NULL, 1),
-	(9012, 'Геннадий Лавров', NULL, 1),
-	(9013, 'Геннадий Лавров', NULL, 1),
-	(9014, 'Геннадий Лавров', NULL, 1),
-	(9015, 'Геннадий Лавров', NULL, 1),
-	(9016, 'Геннадий Лавров', NULL, 1),
-	(9017, 'Геннадий Лавров', NULL, 1),
-	(9018, 'Геннадий Лавров', NULL, 1),
-	(9019, 'Геннадий Лавров', NULL, 1),
-	(9020, 'Геннадий Лавров', NULL, 1),
-	(9021, 'Геннадий Лавров', NULL, 1),
-	(9022, 'Геннадий Лавров', NULL, 1),
-	(9024, 'Геннадий Лавров', NULL, 1),
-	(9025, 'Геннадий Лавров', NULL, 1),
-	(9026, 'Геннадий Лавров', NULL, 1),
-	(9027, 'Геннадий Лавров', NULL, 1),
-	(9028, 'Геннадий Лавров', NULL, 1),
-	(9029, 'Геннадий Лавров', NULL, 1),
-	(9030, 'Геннадий Лавров', NULL, 1),
-	(9031, 'Геннадий Лавров', NULL, 1),
-	(9032, 'Геннадий Лавров', NULL, 1),
-	(9033, 'Геннадий Лавров', NULL, 1),
-	(9034, 'Геннадий Лавров', NULL, 1),
-	(9035, 'Геннадий Лавров', NULL, 1),
-	(9036, 'Геннадий Лавров', NULL, 1),
-	(9037, 'Геннадий Лавров', NULL, 1),
-	(9038, 'Геннадий Лавров', NULL, 1),
-	(9039, 'Геннадий Лавров', NULL, 1),
-	(9040, 'Геннадий Лавров', NULL, 1),
-	(9041, 'Геннадий Лавров', NULL, 1),
-	(9042, 'Геннадий Лавров', NULL, 1),
-	(9043, 'Геннадий Лавров', NULL, 1),
-	(9044, 'Геннадий Лавров', NULL, 1),
-	(9045, 'Геннадий Лавров', NULL, 1),
-	(9046, 'Геннадий Лавров', NULL, 1),
-	(9047, 'Геннадий Лавров', NULL, 1),
-	(9048, 'Геннадий Лавров', NULL, 1),
-	(9049, 'Геннадий Лавров', NULL, 1),
-	(9050, 'Геннадий Лавров', NULL, 1),
-	(9051, 'Геннадий Лавров', NULL, 1),
-	(9052, 'Геннадий Лавров', NULL, 1),
-	(9053, 'Геннадий Лавров', NULL, 1),
-	(9054, 'Геннадий Лавров', NULL, 1),
-	(9055, 'Геннадий Лавров', NULL, 1),
-	(9056, 'Геннадий Лавров', NULL, 1),
-	(9057, 'Геннадий Лавров', NULL, 1),
-	(9058, 'Геннадий Лавров', NULL, 1),
-	(9059, 'Геннадий Лавров', NULL, 1),
-	(9060, 'Геннадий Лавров', NULL, 1),
-	(9061, 'Геннадий Лавров', NULL, 1),
-	(9062, 'Геннадий Лавров', NULL, 1),
-	(9063, 'Геннадий Лавров', NULL, 1),
-	(9064, 'Геннадий Лавров', NULL, 1),
-	(9065, 'Геннадий Лавров', NULL, 1),
-	(9066, 'Геннадий Лавров', NULL, 1),
-	(9067, 'Геннадий Лавров', NULL, 1),
-	(9068, 'Геннадий Лавров', NULL, 1),
-	(9069, 'Геннадий Лавров', NULL, 1),
-	(9070, 'Геннадий Лавров', NULL, 1),
-	(9071, 'Геннадий Лавров', NULL, 1),
-	(9072, 'Геннадий Лавров', NULL, 1),
-	(9073, 'Геннадий Лавров', NULL, 1),
-	(9074, 'Геннадий Лавров', NULL, 1),
-	(9075, 'Геннадий Лавров', NULL, 1),
-	(9076, 'Геннадий Лавров', NULL, 1),
-	(9077, 'Геннадий Лавров', NULL, 1),
-	(9078, 'Геннадий Лавров', NULL, 1),
-	(9079, 'Геннадий Лавров', NULL, 1),
-	(9080, 'Геннадий Лавров', NULL, 1),
-	(9081, 'Геннадий Лавров', NULL, 1),
-	(9082, 'Геннадий Лавров', NULL, 1),
-	(9083, 'Геннадий Лавров', NULL, 1),
-	(9084, 'Геннадий Лавров', NULL, 1),
-	(9085, 'Геннадий Лавров', NULL, 1),
-	(9086, 'Геннадий Лавров', NULL, 1),
-	(9087, 'Геннадий Лавров', NULL, 1),
-	(9088, 'Геннадий Лавров', NULL, 1),
-	(9089, 'Геннадий Лавров', NULL, 1),
-	(9090, 'Геннадий Лавров', NULL, 1),
-	(9091, 'Геннадий Лавров', NULL, 1),
-	(9092, 'Геннадий Лавров', NULL, 1),
-	(9093, 'Геннадий Лавров', NULL, 1),
-	(9094, 'Геннадий Лавров', NULL, 1),
-	(9095, 'Геннадий Лавров', NULL, 1),
-	(9096, 'Геннадий Лавров', NULL, 1),
-	(9097, 'Геннадий Лавров', NULL, 1),
-	(9098, 'Геннадий Лавров', NULL, 1),
-	(9099, 'Геннадий Лавров', NULL, 1),
-	(9100, 'Геннадий Лавров', NULL, 1),
-	(9101, 'Геннадий Лавров', NULL, 1),
-	(9102, 'Геннадий Лавров', NULL, 1),
-	(9103, 'Геннадий Лавров', NULL, 1),
-	(9104, 'Геннадий Лавров', NULL, 1),
-	(9105, 'Геннадий Лавров', NULL, 1),
-	(9106, 'Геннадий Лавров', NULL, 1),
-	(9107, 'Геннадий Лавров', NULL, 1),
-	(9108, 'Геннадий Лавров', NULL, 1),
-	(9109, 'Геннадий Лавров', NULL, 1),
-	(9110, 'Геннадий Лавров', NULL, 1),
-	(9111, 'Геннадий Лавров', NULL, 1),
-	(9112, 'Геннадий Лавров', NULL, 1),
-	(9113, 'Геннадий Лавров', NULL, 1),
-	(9114, 'Геннадий Лавров', NULL, 1),
-	(9115, 'Геннадий Лавров', NULL, 1),
-	(9116, 'Геннадий Лавров', NULL, 1),
-	(9117, 'Геннадий Лавров', NULL, 1),
-	(9118, 'Геннадий Лавров', NULL, 1),
-	(9119, 'Геннадий Лавров', NULL, 1),
-	(9120, 'Геннадий Лавров', NULL, 1),
-	(9121, 'Геннадий Лавров', NULL, 1),
-	(9122, 'Геннадий Лавров', NULL, 1),
-	(9123, 'Геннадий Лавров', NULL, 1),
-	(9124, 'Геннадий Лавров', NULL, 1),
-	(9125, 'Геннадий Лавров', NULL, 1),
-	(9126, 'Геннадий Лавров', NULL, 1),
-	(9127, 'Геннадий Лавров', NULL, 1),
-	(9128, 'Геннадий Лавров', NULL, 1),
-	(9129, 'Геннадий Лавров', NULL, 1),
-	(9130, 'Геннадий Лавров', NULL, 1),
-	(9131, 'Геннадий Лавров', NULL, 1),
-	(9132, 'Геннадий Лавров', NULL, 1),
-	(9133, 'Геннадий Лавров', NULL, 1),
-	(9134, 'Геннадий Лавров', NULL, 1),
-	(9135, 'Геннадий Лавров', NULL, 1),
-	(9136, 'Геннадий Лавров', NULL, 1),
-	(9137, 'Геннадий Лавров', NULL, 1),
-	(9138, 'Геннадий Лавров', NULL, 1),
-	(9139, 'Геннадий Лавров', NULL, 1),
-	(9140, 'Геннадий Лавров', NULL, 1),
-	(9141, 'Геннадий Лавров', NULL, 1),
-	(9142, 'Геннадий Лавров', NULL, 1),
-	(9143, 'Геннадий Лавров', NULL, 1),
-	(9144, 'Геннадий Лавров', NULL, 1),
-	(9145, 'Геннадий Лавров', NULL, 1),
-	(9146, 'Геннадий Лавров', NULL, 1),
-	(9147, 'Геннадий Лавров', NULL, 1),
-	(9148, 'Геннадий Лавров', NULL, 1),
-	(9149, 'Геннадий Лавров', NULL, 1);
+	(20117, '', NULL, 1),
+	(20118, 'Опал Хелен Блэк', NULL, 1),
+	(20119, 'Говард Эми Хьюз', NULL, 1),
+	(20120, 'Ричард Рейчел Декард', NULL, 1),
+	(20121, 'Кора Махадеван', NULL, 1),
+	(20122, 'Эрик Фердинанд Люциус Флориан-Ваньли, лорд Ганимеда', NULL, 1),
+	(20123, 'Кальварий', NULL, 1),
+	(20124, 'Джувела', NULL, 1),
+	(20125, 'Сергей Мария Жук', NULL, 1),
+	(20126, 'Тривия', NULL, 1),
+	(20303, 'Ронг Ваньли', NULL, 1),
+	(20304, 'Леон Галина Абрамс', NULL, 1),
+	(20314, 'Юна', NULL, 1),
+	(20315, 'Сайе Аль Куран', NULL, 1),
+	(20317, 'Михал', NULL, 1),
+	(20336, 'Рани Мария Сонел', NULL, 1),
+	(20357, 'Хавьер Мария', NULL, 1),
+	(20358, 'Фани Мария', NULL, 1),
+	(20359, 'Фрэнк «Снаряд» Фридом', NULL, 1),
+	(21452, 'Джек Джен Гидденгс', NULL, 1),
+	(21481, 'Анна Форс', NULL, 1),
+	(21513, 'Тина Дормир', NULL, 1),
+	(21570, 'Деция', NULL, 1),
+	(21576, 'Аврелия', NULL, 1),
+	(21577, 'Мэри Александра Гамильтон-Сазонова', NULL, 1),
+	(21578, 'Алан Хелли Старр', NULL, 1),
+	(21582, 'Рагнар Баларама', NULL, 1),
+	(21583, 'Дженифер Гвенет Брукс', NULL, 1),
+	(21603, 'Ласерта', NULL, 1),
+	(21665, 'Чибис', NULL, 1),
+	(21667, 'Глэдис Кристина Хадсон', NULL, 1),
+	(21914, 'Дик Фридом', NULL, 1),
+	(21917, 'Лейт (Имя взято на Плутоне. Настоящее имя - Хульда Шетти)', NULL, 1),
+	(21934, 'Нокс', NULL, 1),
+	(21935, 'Гайя', NULL, 1),
+	(21966, 'Милдред', NULL, 1),
+	(22042, 'Лео Метида', NULL, 1),
+	(22043, 'Валериус Силестис Тертус-Мир, Лорд Ганимеда', NULL, 1),
+	(22072, 'Айвен Земля', NULL, 1),
+	(22124, 'Леонид Ада Горбовский', NULL, 1),
+	(22196, 'Русалка', NULL, 1),
+	(22529, 'Регинлейв Каур', NULL, 1),
+	(22532, 'Александра Ксантия Тертус-Мир, Леди Ганимеда', NULL, 1),
+	(22533, '', NULL, 1),
+	(22534, 'Джи Аллен', NULL, 1),
+	(22537, 'Киллиан Уолтер Флориан-Ваньли, лорд Ганимеда', NULL, 1),
+	(22538, 'Вельп', NULL, 1),
+	(22549, 'Ника Махадеван', NULL, 1),
+	(22552, 'Руби Фридом', NULL, 1),
+	(22581, 'Прометей Сарасвати', NULL, 1),
+	(22657, 'Александро', NULL, 1),
+	(22718, 'Омикрон', NULL, 1),
+	(22719, 'Чарли Джен Гидденс', NULL, 1),
+	(22721, 'Спектра', NULL, 1),
+	(23343, 'Ян Цзинтай', NULL, 1),
+	(23383, 'Кира-Мария Сазонова', NULL, 1),
+	(23442, 'Микаэре Ингрид Родригез по прозвищу', NULL, 1),
+	(23462, 'Эразмас Джезрилл Фид Матик-Анафем, лорд Ганимеда', NULL, 1),
+	(23537, 'Агнешка', NULL, 1),
+	(23541, 'Серж Луиза Расновски', NULL, 1),
+	(23550, 'Сири', NULL, 1),
+	(23598, 'Веста Маргарита Чиара Бонадонна - Дормир, леди Каллисто', NULL, 1),
+	(23599, 'Септима', NULL, 1),
+	(23640, 'Лана Мир', NULL, 1),
+	(23641, 'Рая Земля', NULL, 1),
+	(23789, 'Тоня Дормир', NULL, 1),
+	(23824, 'Ричард Мария Грас', NULL, 1),
+	(23825, 'Линда Флоренс Гудвин', NULL, 1),
+	(23836, 'Алиса Диана Родерик', NULL, 1),
+	(23863, 'Сергей Иванович Мир', NULL, 1),
+	(23867, 'Эшли София Боннар', NULL, 1),
+	(23943, 'Стики', NULL, 1),
+	(24035, 'Винка', NULL, 1),
+	(24066, 'Джонни Форс', NULL, 1),
+	(24083, 'Джейн Джейн Доу', NULL, 1),
+	(24133, 'Келли Присцилла Смит', NULL, 1),
+	(24164, 'Абдулла Ульрика Кобаяши', NULL, 1),
+	(24180, 'Сцевола', NULL, 1),
+	(24190, 'Иоланда Проводник', NULL, 1),
+	(24276, 'Хосе Мария Эрнандес', NULL, 1),
+	(24349, 'Кейси Фридом', NULL, 1),
+	(24445, 'Саймон', NULL, 1),
+	(24718, 'Нейман', NULL, 1),
+	(24753, '', NULL, 1),
+	(24995, 'Терри', NULL, 1),
+	(24996, 'Оливия Лилиан Грейс', NULL, 1),
+	(25004, 'Тай Ибарра', NULL, 1),
+	(25006, 'Ольск Шетти', NULL, 1),
+	(25024, 'Аминда', NULL, 1),
+	(25055, 'Теодор Роза Погосян', NULL, 1),
+	(25056, 'Злата', NULL, 1),
+	(25162, 'Олаф Мир', NULL, 1),
+	(25386, 'Ганеша Гонкур', NULL, 1),
+	(25660, 'Хельга Аш-Сэй', NULL, 1),
+	(25688, 'Николай Мир, экзопланетолог', NULL, 1),
+	(25839, 'Элизабет Роуз Тёрнер', NULL, 1),
+	(25844, 'Алекс Бродяга', NULL, 1),
+	(25934, 'Лив', NULL, 1),
+	(25949, 'Элиот Лилиан Грейс', NULL, 1),
+	(25957, 'Роуд', NULL, 1),
+	(25985, 'Хельги Н\'Горо Сулейман', NULL, 1),
+	(25986, 'Влад Мир', NULL, 1),
+	(25987, 'Один Вари', NULL, 1),
+	(25993, 'Хесус Мария', NULL, 1),
+	(26058, 'Сойка', NULL, 1),
+	(26088, 'Юрий Электрон', NULL, 1),
+	(26092, 'Джек «Темный» Форс', NULL, 1),
+	(26108, 'Инакса', NULL, 1),
+	(26250, 'Лира Виола Белаква', NULL, 1),
+	(26289, 'Луция', NULL, 1),
+	(26301, 'Серкадо', NULL, 1),
+	(26417, 'Бенедикт Анна Кроу', NULL, 1),
+	(26477, '', NULL, 1),
+	(26483, 'Meduzka', NULL, 1),
+	(26496, 'Максимус', NULL, 1),
+	(26512, 'Джуно', NULL, 1),
+	(26516, 'Сонджанте Sonĝante', NULL, 1),
+	(26520, 'Сонджанте Sonĝante', NULL, 1),
+	(26528, 'Янд', NULL, 1),
+	(26559, 'Карл Зена Эрикссон', NULL, 1),
+	(26592, 'Стикс', NULL, 1),
+	(26636, 'Никос Фелисия Джонсон', NULL, 1),
+	(26700, 'Веспера', NULL, 1),
+	(26741, 'Кармулина Алисия Прима-Форс', NULL, 1),
+	(26850, 'Один Рави', NULL, 1),
+	(26967, 'Тестовый венерианец-1 (пилот)', NULL, 1),
+	(26968, 'Тестовый венерианец-2 (навигатор)', NULL, 1),
+	(26969, 'Тестовый венерианец-3 (радист)', NULL, 1),
+	(26970, 'Тестовый венерианец-4 (суперкарго)', NULL, 1),
+	(26971, 'Тестовый венерианец-5 (инженер)', NULL, 1),
+	(26972, 'Тестовый венерианец-6 (биолог)', NULL, 1),
+	(26973, 'Тестовый венерианец-7 (экзопланетолог)', NULL, 1),
+	(26974, 'Тестовый венерианец-7', NULL, 1),
+	(26975, 'Тестовый венерианец-8 (менеджер Гугл Диснея)', NULL, 1),
+	(26976, 'Тестовый венерианец-9 (заместитель топа Гугл Дисней)', NULL, 1),
+	(26977, 'Тестовый венерианец-10 (топ Гугл Диснея)', NULL, 1),
+	(26978, 'Тестовый землянин-1 (пилот)', NULL, 1),
+	(26979, 'Тестовый землянин-2 (навигатор)', NULL, 1),
+	(26980, 'Тестовый землянин-3 (радист)', NULL, 1),
+	(26981, 'Тестовый землянин-4 (суперкарго)', NULL, 1),
+	(26982, 'Тестовый землянин-5 (инженер)', NULL, 1),
+	(26983, 'Тестовый землянин-6 (биолог)', NULL, 1),
+	(26984, 'Тестовый землянин-7 (экзопланетолог)', NULL, 1),
+	(26985, 'Тестовый землянин-8 (менеджер Пони Роскосмоса)', NULL, 1),
+	(26986, 'Тестовый землянин-9 (заместитель топа Пони Роскосмоса)', NULL, 1),
+	(26987, 'Тестовый землянин-10 (топ Пони Роскосмоса)', NULL, 1),
+	(26988, 'Тестовый марсианин-1 (пилот)', NULL, 1),
+	(26989, 'Тестовый марсианин-2 (навигатор)', NULL, 1),
+	(26990, 'Тестовый марсианин-3 (радист)', NULL, 1),
+	(26991, 'Тестовый марсианин-4 (суперкарго)', NULL, 1),
+	(26992, 'Тестовый марсианин-5 (инженер)', NULL, 1),
+	(26993, 'Тестовый марсианин-6 (биолог)', NULL, 1),
+	(26994, 'Тестовый марсианин-7 (экзопланетолог)', NULL, 1),
+	(26995, 'Тестовый марсианин-8 (менеджер Красного Креста)', NULL, 1),
+	(26996, 'Тестовый марсианин-9 (заместитель топа Красного Креста)', NULL, 1),
+	(26997, 'Тестовый марсианин-10 (топ Красного Креста)', NULL, 1),
+	(26998, 'Тестовый юпитерианец-1 (пилот)', NULL, 1),
+	(26999, 'Тестовый юпитерианец-2 (навигатор)', NULL, 1),
+	(27000, 'Тестовый юпитерианец-3 (радист)', NULL, 1),
+	(27001, 'Тестовый юпитерианец-4 (суперкарго)', NULL, 1),
+	(27002, 'Тестовый юпитерианец-5 (инженер)', NULL, 1),
+	(27003, 'Тестовый юпитерианец-6 (биолог)', NULL, 1),
+	(27004, 'Тестовый юпитерианец-7 (экзопланетолог)', NULL, 1),
+	(27005, 'Тестовый юпитерианец-8 (менеджер Мицубиси Автоваза)', NULL, 1),
+	(27006, 'Тестовый юпитерианец-9 (заместитель топа Мицубиси Автоваза)', NULL, 1),
+	(27007, 'Тестовый юпитерианец-10 (топ Мицубиси Автоваза)', NULL, 1),
+	(27008, 'Тестовый сатурнянин-1 (пилот)', NULL, 1),
+	(27009, 'Тестовый сатурнянин-2 (навигатор)', NULL, 1),
+	(27010, 'Тестовый сатурнянин-3 (радист)', NULL, 1),
+	(27011, 'Тестовый сатурнянин-4 (суперкарго)', NULL, 1),
+	(27012, 'Тестовый сатурнянин-5 (инженер)', NULL, 1),
+	(27013, 'Тестовый сатурнянин-6 (биолог)', NULL, 1),
+	(27014, 'Тестовый сатурнянин-7 (экзопланетолог)', NULL, 1),
+	(27015, 'Тестовый сатурнянин-8 (менеджер МарсСтройТрест)', NULL, 1),
+	(27016, 'Тестовый сатурнянин-9 (заместитель топа МарсСтройТреста)', NULL, 1),
+	(27017, 'Тестовый сатурнянин-10 (топ МарсСтройТреста)', NULL, 1),
+	(27018, 'Тестовый плутонианин-1', NULL, 1),
+	(27019, 'Тестовый плутонианин-2', NULL, 1),
+	(27020, 'Тестовый плутонианин-3', NULL, 1),
+	(27021, 'Тестовый плутонианин-4', NULL, 1),
+	(27022, 'Тестовый плутонианин-5', NULL, 1),
+	(27023, 'Тестовый плутонианин-6', NULL, 1),
+	(27024, 'Тестовый плутонианин-7', NULL, 1),
+	(27025, 'Тестовый плутонианин-7', NULL, 1),
+	(27026, 'Тестовый плутонианин-8', NULL, 1),
+	(27027, 'Тестовый плутонианин-9', NULL, 1),
+	(27028, 'Тестовый плутонианин-10', NULL, 1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 
@@ -4854,14 +4893,7 @@ CREATE TABLE `v_model_params` (
 -- Дамп структуры для представление magellan.v_nodes_kpi
 DROP VIEW IF EXISTS `v_nodes_kpi`;
 -- Создание временной таблицы для обработки ошибок зависимостей представлений
-CREATE TABLE `v_nodes_kpi` (
-	`id` INT(11) NOT NULL,
-	`cnt` BIGINT(21) NOT NULL,
-	`name` VARCHAR(50) NOT NULL COMMENT 'Наименования модели' COLLATE 'utf8_general_ci',
-	`company` VARCHAR(3) NOT NULL COLLATE 'utf8_general_ci',
-	`node_type_code` VARCHAR(50) NOT NULL COMMENT 'Код типа (shields, hull etc.)' COLLATE 'utf8_general_ci',
-	`kpi_price` INT(11) NULL,
-	`full_kpi` BIGINT(31) NULL
+CREATE TABLE `v_nodes_kpi` 
 ) ENGINE=MyISAM;
 
 

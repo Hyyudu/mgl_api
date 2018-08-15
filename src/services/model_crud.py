@@ -119,7 +119,7 @@ def read_models(self=None, params=None, read_nodes=True):
     all_params = self.db.fetchAll("select * from v_model_params where " + params_where, ids)
     if read_nodes:
         nodes_sql = """
-            select n.id, n.model_id, n.name, n.az_level, n.status_code, n.date_created, m.node_type_code,
+            select n.id, n.model_id, n.name, n.az_level, n.status, n.date_created, m.node_type_code,
                 if (n.password is not null and (
                     n.premium_expires = 0
                     or n.premium_expires is null

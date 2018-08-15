@@ -75,7 +75,7 @@ where n.id=:node_id""", build_item)
     build_item['node_type_code'] = already_reserved['node_type_code']
     if already_reserved.get('node_id'):
         # Убираем ранее зарезервированный нод
-        self.db.query('update nodes set status_code="free" where id=:node_id', already_reserved)
+        self.db.query('update nodes set status="free" where id=:node_id', already_reserved)
         self.db.query('delete from builds where flight_id=:flight_id and node_type_code=:node_type_code',
                       build_item)
     if build_item['node_type_code'] != 'hull':
@@ -112,7 +112,7 @@ where n.id=:node_id""", build_item)
         build_item['slots_json'] = json.dumps(model['nodes'][0]['slots'])
     self.db.insert('builds', build_item)
     self.db.query("""update nodes 
-        set status_code="reserved", 
+        set status="reserved", 
             connected_to_hull_id = null 
         where id=:node_id""", build_item, need_commit=True)
     return {"status": "ok"}
@@ -196,8 +196,21 @@ where flight_id=:flight_id""", params)
 
 @inject_db
 def decomm_node(self, params):
-    """ params={node_id: int, reason: str} """
-    self.db.query("update nodes set status_code='decomm' where id=:node_id", params, need_commit=True)
+    """ params={node_id: int, is_auto: 0/1, reason: str} """
+    node = self.db.fetchRow("""select m.company, n.az_level, n.status
+        from nodes n
+        join models m on m.id = n.model_id
+        where n.id=:node_id""", params)
+    if node['status'] in ['decomm', 'lost']:
+        return api_fail("Узел имеет статус {status} и уже не может быть списан".format(**node))
+    self.db.query("update nodes set status='decomm' where id=:node_id", params, need_commit=True)
+    if not params.get('is_auto'):
+
+        self.db.insert("kpi_change", {
+            "company": node['company'], "reason": "Списание узла вручную", "node_id": params['node_id'], 'amount': 15
+        })
     stop_pump(None, {"section": "nodes", "entity_id": params['node_id']})
+    if params.get('is_auto'):
+        params['reason'] = f"Автоматическое списание, уровень АЗ {node['az_level']}"
     logger.info("Списан узел {node_id}, причина: {reason}".format(**params))
     return api_ok(reason=params.get('reason', ''))

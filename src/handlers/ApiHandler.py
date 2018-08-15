@@ -1,13 +1,14 @@
 import json
-import traceback
 from json import JSONDecodeError
 
 from services.db import DB
 from services.misc import api_fail, get_logger
 from tornado.web import RequestHandler
 
+
 error_logger = get_logger(__name__, 'logs/api_errors.log')
 logger = get_logger(__name__, 'logs/api_posts.log')
+
 
 class ApiHandler(RequestHandler):
     func = None
@@ -41,7 +42,6 @@ class ApiHandler(RequestHandler):
             error_logger.exception(msg, exc_info=e)
 
             self.write(json.dumps(api_fail(**fail_args)))
-
 
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")

@@ -59,12 +59,12 @@ def check_reserve_node(self, data):
     node = self.db.fetchRow("""select n.*, ns.name status, m.node_type_code,
             (n.premium_expires > Now() or n.premium_expires = 0 or n.premium_expires is null) as is_premium
          from nodes n 
-            left join node_statuses ns on n.status_code = ns.code
+            left join node_statuses ns on n.status = ns.code
             left join models m on m.id = n.model_id
          where n.id=:node_id""", data)
     if not node:
         return api_fail("Узел с бортовым номером {} не существует и никогда не существовал".format(data.get('node_id')))
-    if node.get('status_code') != 'free':
+    if node.get('status') != 'free':
         return api_fail("Узел с бортовым номером {} сейчас находится в статусе '{}' и недоступен вам для резерва".
                         format(node.get('id'), node.get('status')))
     if node.get('is_premium'):
