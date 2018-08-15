@@ -3,9 +3,11 @@ import traceback
 from json import JSONDecodeError
 
 from services.db import DB
-from services.misc import api_fail, get_error_logger
+from services.misc import api_fail, get_logger
 from tornado.web import RequestHandler
 
+error_logger = get_logger(__name__, 'logs/api_errors.log')
+logger = get_logger(__name__, 'logs/api_posts.log')
 
 class ApiHandler(RequestHandler):
     func = None
@@ -21,6 +23,7 @@ class ApiHandler(RequestHandler):
     async def post(self):
         try:
             body = self.request.body or "{}"
+            logger.info(body)
             try:
                 req = json.loads(body)
             except JSONDecodeError:
@@ -33,9 +36,9 @@ class ApiHandler(RequestHandler):
             msg = e.sql if hasattr(e, 'sql') else str(type(e)) + ":" + str(e)
             data = e.data if hasattr(e, 'data') else traceback.format_stack()
             fail_args = {"msg": err_text} if err_text else {"args": e.args, "msg": msg, "data": data}
-            logger = get_error_logger(__name__)
-            logger.error("======================================================================")
-            logger.exception(msg, exc_info=e)
+            error_logger.error("======================================================================")
+            error_logger.info(body)
+            error_logger.exception(msg, exc_info=e)
 
             self.write(json.dumps(api_fail(**fail_args)))
 
