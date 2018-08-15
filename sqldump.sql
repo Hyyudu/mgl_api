@@ -1986,20 +1986,20 @@ CREATE TABLE IF NOT EXISTS `flights` (
   `dock` tinyint(4) NOT NULL,
   `status` enum('prepare','freight','space','returned','lost') NOT NULL DEFAULT 'prepare',
   `company` enum('mat','mst','gd','pre','kkg') DEFAULT NULL,
-  `wave` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `departure_dock` (`departure`,`dock`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
 
--- Дамп данных таблицы magellan.flights: ~5 rows (приблизительно)
+-- Дамп данных таблицы magellan.flights: ~6 rows (приблизительно)
 DELETE FROM `flights`;
 /*!40000 ALTER TABLE `flights` DISABLE KEYS */;
-INSERT INTO `flights` (`id`, `departure`, `dock`, `status`, `company`, `wave`) VALUES
-	(1, '2018-08-15 22:00:00', 1, 'prepare', 'mat', 1),
-	(2, '2018-08-15 22:00:00', 2, 'prepare', 'mst', 1),
-	(3, '2018-08-15 22:00:00', 3, 'prepare', 'kkg', 1),
-	(4, '2018-08-15 22:00:00', 4, 'prepare', 'gd', 1),
-	(5, '2018-08-15 22:00:00', 5, 'prepare', 'pre', 1);
+INSERT INTO `flights` (`id`, `departure`, `dock`, `status`, `company`) VALUES
+	(1, '2018-08-15 22:00:00', 1, 'prepare', 'mat'),
+	(2, '2018-08-15 22:00:00', 2, 'prepare', 'mst'),
+	(3, '2018-08-15 22:00:00', 3, 'prepare', 'kkg'),
+	(4, '2018-08-15 22:00:00', 4, 'prepare', 'gd'),
+	(5, '2018-08-15 22:00:00', 5, 'prepare', 'pre'),
+	(6, '2018-08-17 15:00:00', 3, 'prepare', NULL);
 /*!40000 ALTER TABLE `flights` ENABLE KEYS */;
 
 
@@ -4984,7 +4984,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `v_total_income` AS s
 from pumps p
 join pump_resources pr on p.id = pr.pump_id
 left join resources r on r.code = pr.resource_code
-where p.date_end is null and r.is_active = 1
+where (p.date_end is null or p.date_end > Now()) and r.is_active = 1
 group by p.company, pr.resource_code ;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
