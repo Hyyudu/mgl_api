@@ -4,6 +4,17 @@ from services.db import DB
 db = DB()
 
 data = {
+
+    "warp_engine": {
+        "distort_level": [800, 1000, 1200, 1500, 2000, 2200],
+        "warp_enter_consumption": [30, 25, 21, 18, 15, 12],
+        "distort_acc": [3, 4, 6, 8, 12, 16],
+        "distort_slow": [3, 4, 6, 8, 12, 16],
+        "consumption": [0.12, 0.1, 0.08, 0.05, 0.03, 0.025],
+        "turn_speed": [0.8, 1, 1.2, 3, 5, 6],
+        "turn_consumption": [1.1, 1, 0.9, 0.6, 0.25, 0.2],
+        "volume": [315, 277.5, 240],
+    },
     "march_engine": {
         "thrust": [700, 1000, 1500, 3000, 5000, 5500],
         "thrust_rev": [0, 0, 0, 1500, 2500, 2700],
@@ -14,17 +25,6 @@ data = {
         "heat_prod": [83, 80, 75, 60, 45, 40],
         "volume": [294, 259, 224],
     },
-    "warp_engine": {
-        "distort": [800, 1000, 1200, 1500, 2000, 2200],
-        "warp_enter_consumption": [30, 25, 21, 18, 15, 12],
-        "distort_acc": [3, 4, 6, 8, 12, 16],
-        "distort_slow": [3, 4, 6, 8, 12, 16],
-        "consumption": [0.12, 0.1, 0.08, 0.05, 0.03, 0.025],
-        "turn_speed": [0.8, 1, 1.2, 3, 5, 6],
-        "turn_consumption": [1.1, 1, 0.9, 0.6, 0.25, 0.2],
-        "volume": [315, 277.5, 240],
-    },
-
     "shunter": {
         "turn": [45, 60, 80, 240, 540, 720],
         "strafe": [0, 0, 0, 1500, 2500, 2700],
@@ -88,25 +88,22 @@ data = {
     }
 }
 
-
-
-
 for node_type_code, params in data.items():
     for param, values in params.items():
-        print('{"node_type_code": "'+node_type_code+'", "parameter_code": "'+param+'", "value": 0}, ')
-        # update_row = {
-        #     "node_code": node_type_code,
-        #     "parameter_code": param,
-        #     "val_start_bad": values[0],
-        #     "val_start_normal": values[1],
-        #     "val_start_good": values[2]
-        # }
-        # if len(values) == 6:
-        #     update_row.update({
-        #         "val_middle": values[3],
-        #         "val_end": values[4],
-        #         "val_ideal": values[5]
-        #     })
-        # db.update('model_has_parameters', update_row,
-        #           " node_code = :node_code and parameter_code=:parameter_code")
-        # exit()
+        print('{"node_type_code": "' + node_type_code + '", "parameter_code": "' + param + '", "value": 0}, ')
+        update_row = {
+            "node_code": node_type_code,
+            "parameter_code": param,
+            "val_start_bad": values[0],
+            "val_start_normal": values[1],
+            "val_start_good": values[2]
+        }
+        if len(values) == 6:
+            update_row.update({
+                "val_middle": values[3],
+                "val_end": values[4],
+                "val_ideal": values[5]
+            })
+        db.update('model_has_parameters', update_row,
+                  " node_code = :node_code and parameter_code=:parameter_code")
+        exit()

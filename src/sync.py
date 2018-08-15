@@ -1,11 +1,11 @@
 import json
 import re
 import sys
-import urllib.request, urllib.response
+import base64
+import urllib.request, urllib.response, urllib.error
 from collections import defaultdict
 from itertools import product
 
-import requests
 from sync_config import SERVICE_URL, API_URL
 
 import os
@@ -110,15 +110,14 @@ class Sync:
             url = SERVICE_URL + url
             req = urllib.request.Request(url)
             req.add_header('Content-Type', 'application/json; charset=utf-8')
-            jsondata = json.dumps(data)
-            jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
+            jsondataasbytes = json.dumps(data).encode('utf-8')  # needs to be bytes
             req.add_header('Content-Length', len(jsondataasbytes))
             response = urllib.request.urlopen(req, jsondataasbytes)
             response_text = "".join([x.decode() for x in response.readlines()])
             result = json.loads(response_text)
             return result
 
-        except requests.exceptions.ConnectionError:
+        except urllib.error.URLError:
             print("Удаленный сервер не ответил по адресу " + url + ". Работа программы аварийно завершена")
             sys.exit()
         except json.decoder.JSONDecodeError:
@@ -144,13 +143,13 @@ class Sync:
             login = os.environ['MAGELLAN_USER']
             auto = True
         else:
-            login = input ("Введите логин / ID инженера> ")
+            login = input ("Введите логин / ID инженера > ")
         
         if ('MAGELLAN_PASS' in os.environ):
             password = os.environ['MAGELLAN_PASS']
             auto = True
         else:
-            password = input ("Введите пароль> ")
+            password = input ("Введите пароль > ")
 
         check_result = Sync.check_account(login, password)
         print(json.dumps(check_result))

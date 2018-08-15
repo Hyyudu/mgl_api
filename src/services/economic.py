@@ -144,11 +144,8 @@ def set_mine(self, params):
 
 @inject_db
 def get_nodes_kpi(self, params):
-    """ params = {node_type_code: str} """
-    data = self.db.fetchAll("""
-    select cnt, name, company, kpi_price, full_kpi
-    from v_nodes_kpi
-    where node_type_code=:node_type_code""", params, associate='company', cumulative=True)
+    """ params = no params """
+    data = self.db.fetchAll("""select * from v_nodes_kpi """, params)
     sum_kpi = self.db.fetchOne("""select sum(full_kpi) from v_nodes_kpi 
         where node_type_code=:node_type_code""", params)
     table = {key: ["{name} = {kpi_price} * {cnt} = {full_kpi}".format(**item) for item in items] +
@@ -186,3 +183,10 @@ def calc_model_upkeep(self, params):
         for cost_item in costs:
             upkeep_price[cost_item['resource_code']] += int(cost_item['amount']) * params[int(tech_id)]
     return dict(upkeep_price)
+
+
+@inject_db
+def read_kpi(self, params):
+    """ no params """
+    return self.db.fetchAll("""select company, reason, sum(amount) kpi 
+        from kpi_changes group by company, reason order by 1""")

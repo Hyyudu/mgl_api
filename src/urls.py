@@ -9,6 +9,7 @@ from services.economic import (
     read_pumps, resource_list, add_pump, stop_pump, set_mine, get_nodes_kpi,
     get_company_income,
     get_all_companies_income,
+    read_kpi,
 )
 from services.mcc import (
     mcc_dashboard,
@@ -115,6 +116,7 @@ app_urls = [
 
     url("/boosts/read", boosts_read, tableview_comment="Список всех активных бустов"),
     url("/boosts/use", boost_use),
+    url("/read_kpi", read_kpi),
 
     ("/ping", PingHandler),
     ("/urls_params", UrlsHandler),

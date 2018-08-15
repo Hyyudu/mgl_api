@@ -47,7 +47,9 @@ class ApiHandler(DefaultHandler):
                 out = api_fail("JSON-запрос невалиден")
             else:
                 out = self.func(self, req)
-            self.write(json.dumps(out, indent=4))
+            self.add_header("Content-type", "application/json")
+            self.write(json.dumps(out))
+
         except Exception as e:
             err_text = self.get_exception_text(self, e)
             msg = e.sql if hasattr(e, 'sql') else str(type(e)) + ":" + str(e)

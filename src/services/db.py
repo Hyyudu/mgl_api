@@ -8,6 +8,7 @@ from typing import Dict
 import mysql.connector
 import sys
 from config import DB_CONFIG
+from decimal import Decimal
 from mysql.connector import errorcode
 
 
@@ -65,7 +66,10 @@ class DB:
 
     def fetchAll(self, sql, data=None, associate='', cumulative=False):
         self.query(sql, data or {})
-        result = [item for item in self.get_result()]
+        result = []
+        for item in self.get_result():
+            item = {key: float(val) if type(val) is Decimal else val for key, val in item.items()}
+            result.append(item)
         self.cnx.commit()
         if associate:
             if not cumulative:
@@ -76,6 +80,7 @@ class DB:
                     out[item[associate]].append(item)
                 result = dict(out)
         return result
+
 
     def fetchRow(self, sql, data=None):
         self.query(sql, data or {})
