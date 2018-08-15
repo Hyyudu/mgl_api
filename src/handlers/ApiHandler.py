@@ -63,4 +63,4 @@ class LogsHandler(DefaultHandler):
     async def get(self):
         args = {key: val[0].decode() for key, val in self.request.arguments.items()}
         if 'log' in args:
-            self.write("<xmp>"+open("logs/"))
+            self.write("<xmp>"+open("logs/"+args['log']+".log").read()+"</xmp>")
