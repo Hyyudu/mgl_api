@@ -5,8 +5,9 @@ from collections import defaultdict
 from itertools import product
 
 import requests
-from sync_config import SERVICE_URL
+from sync_config import SERVICE_URL, API_URL
 
+import os
 
 def getfunc(functext):
     # очищаем вход
@@ -99,12 +100,60 @@ class Sync:
         except requests.exceptions.ConnectionError:
             print("Удаленный сервер не ответил по адресу " + url + ". Работа программы аварийно завершена")
             sys.exit()
+        except json.decoder.JSONDecodeError:
+            print(f"Не удалось расшифровать {r.text}")
+            sys.exit()
 
     def mask(self, vector, total):
         return "".join([vector[i] if c == '1' else '*' for i, c in enumerate(list(total))])
 
+    @staticmethod
+    def check_account (login, password):
+        try:
+            url = API_URL + "/account"
+            r = requests.get(url, auth=(login, password))
+            return json.loads(r.text)
+        except requests.exceptions.ConnectionError:
+            print(f"Удаленный сервер {API_URL} не ответил. Работа программы аварийно завершена")
+            sys.exit()
+
     def get_engineer_id(self):
-        return 3
+        auto = False 
+        if ('MAGELLAN_USER' in os.environ):
+            login = os.environ['MAGELLAN_USER']
+            auto = True
+        else:
+            login = input ("Введите логин / ID инженера> ")
+        
+        if ('MAGELLAN_PASS' in os.environ):
+            password = os.environ['MAGELLAN_PASS']
+            auto = True
+        else:
+            password = input ("Введите пароль> ")
+
+        json = Sync.check_account(login, password)
+
+        if (not ('account' in json)):
+            print(f"Возможно пароль неверный")
+            sys.exit()
+        
+        account = json['account']
+            
+        id = account['_id']
+        isEngineer = account['professions']['isEngineer']
+
+        if (not isEngineer):
+            print(f"Терминал доступен только инженерам")
+            sys.exit()
+
+        if not auto:
+            print("Вы можете установить переменные среды MAGELLAN_USER / MAGELLAN_PASS для автологина.")
+            print("Не делайте это на общедоступных терминалах")
+        
+        if not account['jobs']['tradeUnion']['isEngineer']:
+            print("ВНИМАНИЕ! Похоже, вы не член профсоюза")
+
+        return id
 
     def node_show_name(self, node_data):
         if not node_data['node_name']:  # обычный узел
@@ -295,6 +344,10 @@ class Sync:
     def get_flight_data(self):
         self.flight = self.send_post('mcc/get_nearest_flight_for_role',
                                      {"user_id": self.engineer_id, "role": "engineer"})
+        if self.flight is None:
+            print("Похоже, вы никуда не летите. Ждите вестей от ЦУП.")
+            sys.exit()
+
         self.flight['departure'] = modernize_date(self.flight['departure'])
         print("""Данные по полету считаны:
         Номер полета: {id}
