@@ -1,4 +1,7 @@
-from services.misc import api_fail, api_ok, inject_db
+from services.misc import api_fail, api_ok, inject_db, get_logger
+
+
+logger = get_logger(__name__)
 
 
 @inject_db
@@ -17,4 +20,5 @@ def boost_use(self, params):
     if boost['used_datetime']:
         return api_fail("Этот буст уже был использован")
     self.db.query("update boosts set used_datetime=now() where password=:password", params)
+    logger.info("Использован буст с паролем {password}".format(**params))
     return api_ok()

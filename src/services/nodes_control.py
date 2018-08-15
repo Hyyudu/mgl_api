@@ -5,10 +5,11 @@ from typing import Dict, Any, List
 
 from services.economic import add_node_upkeep_pump, get_insufficient_for_node
 from services.mcc import get_nearest_flight_for_supercargo
-from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db
+from services.misc import modernize_date, api_fail, gen_array_by_weight, node_type_list, inject_db, get_logger
 from services.model_crud import read_models
 from services.sync import get_rand_func, xor, get_func_vector
 
+logger = get_logger(__name__)
 
 @inject_db
 def create_node(self, params):

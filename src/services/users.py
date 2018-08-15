@@ -1,8 +1,10 @@
 import json
 
 import requests
-from services.misc import inject_db
+from services.misc import inject_db, get_logger
 
+
+logger = get_logger(__name__)
 
 @inject_db
 def read_users_from_alice(self, params):

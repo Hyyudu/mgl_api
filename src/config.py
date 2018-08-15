@@ -1,7 +1,7 @@
+import os
 DB_CONFIG = {
-    'host': 'mysql',
+    'host': os.environ['MAGELLAN_MYSQL_HOST'],
     'database': 'magellan',
     'user': 'root',
-    # Get from ENV, regenerate password
-    'password': 'MbkaCMkviEQkWxTM'
+    'password': os.environ['MYSQL_ROOT_PASSWORD'].strip()
 }

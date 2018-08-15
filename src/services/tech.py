@@ -1,7 +1,7 @@
 from random import randint
 
 from services.economic import calc_model_upkeep, get_insufficient_for_both, add_pump
-from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail
+from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail, get_logger
 from services.model_crud import (
     calc_weight, apply_companies_perks, add_model, get_model_level_by_technologies,
     MODEL_WOW_PERIOD_HOURS,
@@ -11,6 +11,7 @@ from services.nodes_control import create_node
 
 TECH_WOW_PERIOD_HOURS = 2
 
+logger = get_logger(__name__)
 
 @inject_db
 def create_tech(self, params):

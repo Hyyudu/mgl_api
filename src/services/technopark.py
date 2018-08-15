@@ -2,11 +2,12 @@ import json
 from typing import Dict, Any
 
 from services.mcc import get_nearest_flight_for_supercargo
-from services.misc import inject_db, api_fail, apply_percent, api_ok
+from services.misc import inject_db, api_fail, apply_percent, api_ok, get_logger
 from services.model_crud import read_models
 from services.nodes_control import check_reserve_node
 from services.sync import get_node_vector, calc_node_params_with_desync, xor
 
+logger = get_logger(__name__)
 
 @inject_db
 def get_flight_params(self, params):

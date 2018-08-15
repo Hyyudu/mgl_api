@@ -1,5 +1,7 @@
-from services.misc import modernize_date, api_ok, api_fail, inject_db
+from services.misc import modernize_date, api_ok, api_fail, inject_db, get_logger
 
+
+logger = get_logger(__name__)
 
 @inject_db
 def mcc_dashboard(self, params):

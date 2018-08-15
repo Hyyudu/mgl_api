@@ -2,8 +2,10 @@ import json
 from typing import List
 
 from numpy import interp
-from services.misc import api_fail, inject_db, roundTo, apply_percent
+from services.misc import api_fail, inject_db, roundTo, apply_percent, get_logger
 
+
+logger = get_logger(__name__)
 
 MODEL_WOW_PERIOD_HOURS = 2
 

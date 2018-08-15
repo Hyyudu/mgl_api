@@ -36,6 +36,7 @@ def add_pump(self, data):
     self.db.insert('pump_resources', insert_parameters)
 
     data['resources'] = {param['resource_code']: param['value'] for param in insert_parameters}
+    logger.info("Создан насос ")
     return {"status": "ok", "data": data}
 
 
