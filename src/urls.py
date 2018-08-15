@@ -58,6 +58,16 @@ class TableUrlsHandler(RequestHandler):
             indent=4
         ))
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header("Access-Control-Allow-Headers",
+                        "x-requested-with,access-control-allow-origin,authorization,content-type")
+
+    def options(self):
+        self.set_status(204)
+        self.finish()
+
 
 app_urls = [
     url("/get-params", get_all_params, tableview_comment='Список всех параметров'),
