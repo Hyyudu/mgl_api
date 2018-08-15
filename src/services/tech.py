@@ -1,7 +1,7 @@
 from random import randint
 
 from services.economic import calc_model_upkeep, get_insufficient_for_both, add_pump
-from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail, get_logger
+from services.misc import inject_db, api_ok, drop, apply_percent, roundTo, api_fail, get_logger, dict2str
 from services.model_crud import (
     calc_weight, apply_companies_perks, add_model, get_model_level_by_technologies,
     MODEL_WOW_PERIOD_HOURS,
@@ -141,7 +141,7 @@ def develop_model(self, params):
     insufficient = get_insufficient_for_both(company=params['company'], upkeep_price=model_upkeep)
     if insufficient:
         return api_fail("Для создания модели и стартового узла по этой модели вам не хватает ресурсов: "+
-                        ", ".join([f"{key}: {val}" for key, val in insufficient.items()]))
+                        dict2str(insufficient))
 
 
     # Вычисляем параметры

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from services.misc import api_fail, api_ok, inject_db, get_logger
+from services.misc import api_fail, api_ok, inject_db, get_logger, dict2str
 from services.model_crud import get_model_upkeep_price
 
 
@@ -36,7 +36,7 @@ def add_pump(self, data):
     self.db.insert('pump_resources', insert_parameters)
 
     data['resources'] = {param['resource_code']: param['value'] for param in insert_parameters}
-    logger.info("Создан насос ")
+    logger.info("Создан насос " + data['comment'])
     return {"status": "ok", "data": data}
 
 
@@ -66,8 +66,8 @@ def read_pumps(self, params):
 
 @inject_db
 def stop_pump(self, params):
-    """ params {pump_id: int} """
-    self.db.query("update pumps set date_end=Now() where id=:pump_id", params, need_commit=True)
+    """ params {<id>: int, <company>: str, <section>: mines/nodes/models/crises/markets, <entity_id>: int/str} """
+    self.db.query("update pumps set date_end=Now() where "+self.db.construct_where(params), params, need_commit=True)
     return api_ok()
 
 
@@ -110,8 +110,9 @@ def add_node_upkeep_pump(self, node_id=None, model=None):
     from models m join nodes n on m.id = n.model_id
     where n.id = :node_id""", {"node_id": node_id})
     upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
-    if get_insufficient_for_node(company=model['company'], model_id=model['id'], upkeep_price=upkeep_price):
-        return api_fail("Вашего дохода не хватает для создани  узла")
+    insufficient = get_insufficient_for_node(company=model['company'], model_id=model['id'], upkeep_price=upkeep_price)
+    if insufficient:
+        return api_fail("Вашего дохода не хватает для создания узла: " + dict2str(insufficient))
 
     pump = {
         "company": model['company'],
@@ -132,11 +133,12 @@ def set_mine(self, params):
         "company": params['company'],
         "section": "mines",
         "entity_id": params['entity_id'],
-        "comment": "Шахта на планете {entity_id}".format(params),
+        "comment": "Шахта на планете {entity_id}".format(**params),
         "is_income": 1,
         "resources": params['resources']
     }
     add_pump(self, pump)
+    logger.info("Установлена шахта на планете {entity_id} компании {company}".format(**params))
     return pump
 
 
@@ -162,8 +164,8 @@ def get_nodes_kpi(self, params):
 def get_company_income(self, params):
     """ params = {"company": str} """
     return {key: int(val) for key, val in
-                self.db.fetchDict("select resource_code, value from v_total_income where company=:company", params,
-                             "resource_code", "value").items()
+            self.db.fetchDict("select resource_code, value from v_total_income where company=:company", params,
+                              "resource_code", "value").items()
             }
 
 
@@ -171,6 +173,7 @@ def get_company_income(self, params):
 def get_all_companies_income(self, params):
     """ no params """
     return self.db.fetchAll("""select * from v_total_income """)
+
 
 @inject_db
 def calc_model_upkeep(self, params):

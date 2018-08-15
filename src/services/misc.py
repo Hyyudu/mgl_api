@@ -108,3 +108,7 @@ def drop(arr, field: str):
     else:
         del (arr[field])
     return arr
+
+
+def dict2str(dct, separator=", "):
+    return ", ".join(["{key}: {val}" for key, val in dct.items()])

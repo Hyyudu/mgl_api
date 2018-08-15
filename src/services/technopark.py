@@ -1,6 +1,7 @@
 import json
 from typing import Dict, Any
 
+from services.economic import stop_pump
 from services.mcc import get_nearest_flight_for_supercargo
 from services.misc import inject_db, api_fail, apply_percent, api_ok, get_logger
 from services.model_crud import read_models
@@ -188,5 +189,13 @@ def get_luggage(self, params):
     return self.db.fetchAll("""select fl.code, fl.company, fl.planet_id, fl.amount, l.weight, l.volume
 from flight_luggage fl
 left join v_luggages l on fl.code = l.code and (l.company = fl.company or (l.company is null and fl.company is null)) 
-where flight_id=:flight_id""",
-                            params)
+where flight_id=:flight_id""", params)
+
+
+@inject_db
+def decomm_node(self, params):
+    """ params={node_id: int, reason: str} """
+    self.db.query("update nodes set status_code='decomm' where id=:node_id", params, need_commit=True)
+    stop_pump(None, {"section": "nodes", "entity_id": params['node_id']})
+    logger.info("Списан узел {node_id}, причина: {reason}".format(**params))
+    return api_ok(reason=params.get('reason', ''))

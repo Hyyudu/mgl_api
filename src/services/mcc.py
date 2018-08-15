@@ -39,28 +39,6 @@ join users u on f.user_id = u.id
 
 
 @inject_db
-def mcc_set_crew(self, params):
-    """ params = {"flight_id": 1, "role": "pilot", "user_id": 2} """
-    self.db.query("""delete from flight_crews 
-        where flight_id = :flight_id and (role=:role or user_id=:user_id)""", params, need_commit=True)
-    self.db.insert('flight_crews', params)
-    return api_ok()
-
-
-@inject_db
-def mcc_add_passenger(self, params):
-    """ params = {"flight_id": 1, "user_id": 2} """
-    cnt = self.db.fetchOne('select count(*) from flight_crews where flight_id=:flight_id and role="_other"', params)
-    if cnt >= 5:
-        return api_fail("В полет разрешается брать не более 5 пассажиров!")
-    params['role'] = "_other"
-    self.db.query("""delete from flight_crews 
-        where flight_id = :flight_id and user_id=:user_id""", params, need_commit=True)
-    self.db.insert('flight_crews', params)
-    return api_ok()
-
-
-@inject_db
 def mcc_set_all_crew(self, params):
     """ params = {"flight_id": int, "crew": [{"role": "pilot", "user_id": 1}, {"role": "radist", "user_id": 2}] }"""
     if not self.db.fetchRow('select * from flights where id=:flight_id', params):
@@ -71,14 +49,6 @@ def mcc_set_all_crew(self, params):
             item['flight_id'] = params['flight_id']
         self.db.insert('flight_crews', params['crew'])
     return api_ok(crew=params['crew'])
-
-
-@inject_db
-def mcc_remove(self, params):
-    """ params = {"flight_id": 1, "user_id": 2} """
-    deleted = self.db.query("delete from flight_crews where flight_id = :flight_id and user_id = :user_id",
-                            params, need_commit=True)
-    return api_ok(deleted=self.db.cursor.rowcount)
 
 
 @inject_db
