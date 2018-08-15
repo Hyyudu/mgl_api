@@ -10,7 +10,22 @@ error_logger = get_logger(__name__, 'logs/api_errors.log')
 logger = get_logger(__name__, 'logs/api_posts.log')
 
 
-class ApiHandler(RequestHandler):
+class DefaultHandler(RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header("Access-Control-Allow-Headers",
+                        "x-requested-with,access-control-allow-origin,authorization,content-type")
+
+    def options(self):
+        self.set_status(204)
+        self.finish()
+
+    def get(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
+
+
+class ApiHandler(DefaultHandler):
     func = None
 
     def initialize(self, **kwargs):
@@ -43,15 +58,9 @@ class ApiHandler(RequestHandler):
 
             self.write(json.dumps(api_fail(**fail_args)))
 
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header("Access-Control-Allow-Headers",
-                        "x-requested-with,access-control-allow-origin,authorization,content-type")
 
-    def options(self):
-        self.set_status(204)
-        self.finish()
-
-    def get(self):
-        return self.post()
+class LogsHandler(DefaultHandler):
+    async def get(self):
+        args = {key: val[0].decode() for key, val in self.request.arguments.items()}
+        if 'log' in args:
+            self.write("<xmp>"+open("logs/"))

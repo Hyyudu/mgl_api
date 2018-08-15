@@ -1936,12 +1936,11 @@ CREATE TABLE IF NOT EXISTS `builds` (
   KEY `FK_builds_flights` (`flight_id`),
   KEY `FK_builds_nodes` (`node_id`),
   KEY `FK_builds_models` (`node_type_code`),
-  CONSTRAINT `FK_builds_flights` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_builds_models` FOREIGN KEY (`node_type_code`) REFERENCES `models` (`node_type_code`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_builds_nodes` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Состав кораблей, которые суперкарго собирают ';
 
--- Дамп данных таблицы magellan.builds: ~9 rows (приблизительно)
+-- Дамп данных таблицы magellan.builds: ~8 rows (приблизительно)
 DELETE FROM `builds`;
 /*!40000 ALTER TABLE `builds` DISABLE KEYS */;
 INSERT INTO `builds` (`flight_id`, `node_type_code`, `node_id`, `vector`, `correction`, `correction_func`, `total`, `params_json`, `slots_json`) VALUES
@@ -1988,18 +1987,107 @@ CREATE TABLE IF NOT EXISTS `flights` (
   `company` enum('mat','mst','gd','pre','kkg') DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `departure_dock` (`departure`,`dock`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
+) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=utf8 COMMENT='Вылеты';
 
 -- Дамп данных таблицы magellan.flights: ~6 rows (приблизительно)
 DELETE FROM `flights`;
 /*!40000 ALTER TABLE `flights` DISABLE KEYS */;
 INSERT INTO `flights` (`id`, `departure`, `dock`, `status`, `company`) VALUES
-	(1, '2018-08-15 22:00:00', 1, 'prepare', 'mat'),
-	(2, '2018-08-15 22:00:00', 2, 'prepare', 'mst'),
-	(3, '2018-08-15 22:00:00', 3, 'prepare', 'kkg'),
-	(4, '2018-08-15 22:00:00', 4, 'prepare', 'gd'),
-	(5, '2018-08-15 22:00:00', 5, 'prepare', 'pre'),
-	(6, '2018-08-17 15:00:00', 3, 'prepare', NULL);
+	(110, '2018-08-15 22:30:00', 1, 'prepare', 'kkg'),
+	(111, '2018-08-15 22:30:00', 2, 'prepare', NULL),
+	(112, '2018-08-15 22:30:00', 3, 'prepare', NULL),
+	(113, '2018-08-15 22:30:00', 4, 'prepare', NULL),
+	(114, '2018-08-15 22:30:00', 5, 'prepare', NULL),
+	(115, '2018-08-16 10:00:00', 1, 'prepare', NULL),
+	(116, '2018-08-16 10:00:00', 2, 'prepare', NULL),
+	(117, '2018-08-16 10:00:00', 3, 'prepare', NULL),
+	(118, '2018-08-16 10:00:00', 4, 'prepare', NULL),
+	(119, '2018-08-16 10:00:00', 5, 'prepare', NULL),
+	(120, '2018-08-16 12:00:00', 1, 'prepare', NULL),
+	(121, '2018-08-16 12:00:00', 2, 'prepare', NULL),
+	(122, '2018-08-16 12:00:00', 3, 'prepare', NULL),
+	(123, '2018-08-16 12:00:00', 4, 'prepare', NULL),
+	(124, '2018-08-16 12:00:00', 5, 'prepare', NULL),
+	(125, '2018-08-16 15:30:00', 1, 'prepare', NULL),
+	(126, '2018-08-16 15:30:00', 2, 'prepare', NULL),
+	(127, '2018-08-16 15:30:00', 3, 'prepare', NULL),
+	(128, '2018-08-16 15:30:00', 4, 'prepare', NULL),
+	(129, '2018-08-16 15:30:00', 5, 'prepare', NULL),
+	(130, '2018-08-16 17:30:00', 1, 'prepare', NULL),
+	(131, '2018-08-16 17:30:00', 2, 'prepare', NULL),
+	(132, '2018-08-16 17:30:00', 3, 'prepare', NULL),
+	(133, '2018-08-16 17:30:00', 4, 'prepare', NULL),
+	(134, '2018-08-16 17:30:00', 5, 'prepare', NULL),
+	(135, '2018-08-16 20:30:00', 1, 'prepare', NULL),
+	(136, '2018-08-16 20:30:00', 2, 'prepare', NULL),
+	(137, '2018-08-16 20:30:00', 3, 'prepare', NULL),
+	(138, '2018-08-16 20:30:00', 4, 'prepare', NULL),
+	(139, '2018-08-16 20:30:00', 5, 'prepare', NULL),
+	(140, '2018-08-16 22:30:00', 1, 'prepare', NULL),
+	(141, '2018-08-16 22:30:00', 2, 'prepare', NULL),
+	(142, '2018-08-16 22:30:00', 3, 'prepare', NULL),
+	(143, '2018-08-16 22:30:00', 4, 'prepare', NULL),
+	(144, '2018-08-16 22:30:00', 5, 'prepare', NULL),
+	(145, '2018-08-17 10:00:00', 1, 'prepare', NULL),
+	(146, '2018-08-17 10:00:00', 2, 'prepare', NULL),
+	(147, '2018-08-17 10:00:00', 3, 'prepare', NULL),
+	(148, '2018-08-17 10:00:00', 4, 'prepare', NULL),
+	(149, '2018-08-17 10:00:00', 5, 'prepare', NULL),
+	(150, '2018-08-17 12:00:00', 1, 'prepare', NULL),
+	(151, '2018-08-17 12:00:00', 2, 'prepare', NULL),
+	(152, '2018-08-17 12:00:00', 3, 'prepare', NULL),
+	(153, '2018-08-17 12:00:00', 4, 'prepare', NULL),
+	(154, '2018-08-17 12:00:00', 5, 'prepare', NULL),
+	(155, '2018-08-17 15:30:00', 1, 'prepare', NULL),
+	(156, '2018-08-17 15:30:00', 2, 'prepare', NULL),
+	(157, '2018-08-17 15:30:00', 3, 'prepare', NULL),
+	(158, '2018-08-17 15:30:00', 4, 'prepare', NULL),
+	(159, '2018-08-17 15:30:00', 5, 'prepare', NULL),
+	(160, '2018-08-17 17:30:00', 1, 'prepare', NULL),
+	(161, '2018-08-17 17:30:00', 2, 'prepare', NULL),
+	(162, '2018-08-17 17:30:00', 3, 'prepare', NULL),
+	(163, '2018-08-17 17:30:00', 4, 'prepare', NULL),
+	(164, '2018-08-17 17:30:00', 5, 'prepare', NULL),
+	(165, '2018-08-17 20:30:00', 1, 'prepare', NULL),
+	(166, '2018-08-17 20:30:00', 2, 'prepare', NULL),
+	(167, '2018-08-17 20:30:00', 3, 'prepare', NULL),
+	(168, '2018-08-17 20:30:00', 4, 'prepare', NULL),
+	(169, '2018-08-17 20:30:00', 5, 'prepare', NULL),
+	(170, '2018-08-17 22:30:00', 1, 'prepare', NULL),
+	(171, '2018-08-17 22:30:00', 2, 'prepare', NULL),
+	(172, '2018-08-17 22:30:00', 3, 'prepare', NULL),
+	(173, '2018-08-17 22:30:00', 4, 'prepare', NULL),
+	(174, '2018-08-17 22:30:00', 5, 'prepare', NULL),
+	(175, '2018-08-18 10:00:00', 1, 'prepare', NULL),
+	(176, '2018-08-18 10:00:00', 2, 'prepare', NULL),
+	(177, '2018-08-18 10:00:00', 3, 'prepare', NULL),
+	(178, '2018-08-18 10:00:00', 4, 'prepare', NULL),
+	(179, '2018-08-18 10:00:00', 5, 'prepare', NULL),
+	(180, '2018-08-18 12:00:00', 1, 'prepare', NULL),
+	(181, '2018-08-18 12:00:00', 2, 'prepare', NULL),
+	(182, '2018-08-18 12:00:00', 3, 'prepare', NULL),
+	(183, '2018-08-18 12:00:00', 4, 'prepare', NULL),
+	(184, '2018-08-18 12:00:00', 5, 'prepare', NULL),
+	(185, '2018-08-18 15:30:00', 1, 'prepare', NULL),
+	(186, '2018-08-18 15:30:00', 2, 'prepare', NULL),
+	(187, '2018-08-18 15:30:00', 3, 'prepare', NULL),
+	(188, '2018-08-18 15:30:00', 4, 'prepare', NULL),
+	(189, '2018-08-18 15:30:00', 5, 'prepare', NULL),
+	(190, '2018-08-18 17:30:00', 1, 'prepare', NULL),
+	(191, '2018-08-18 17:30:00', 2, 'prepare', NULL),
+	(192, '2018-08-18 17:30:00', 3, 'prepare', NULL),
+	(193, '2018-08-18 17:30:00', 4, 'prepare', NULL),
+	(194, '2018-08-18 17:30:00', 5, 'prepare', NULL),
+	(195, '2018-08-18 20:30:00', 1, 'prepare', NULL),
+	(196, '2018-08-18 20:30:00', 2, 'prepare', NULL),
+	(197, '2018-08-18 20:30:00', 3, 'prepare', NULL),
+	(198, '2018-08-18 20:30:00', 4, 'prepare', NULL),
+	(199, '2018-08-18 20:30:00', 5, 'prepare', NULL),
+	(200, '2018-08-18 22:30:00', 1, 'prepare', NULL),
+	(201, '2018-08-18 22:30:00', 2, 'prepare', NULL),
+	(202, '2018-08-18 22:30:00', 3, 'prepare', NULL),
+	(203, '2018-08-18 22:30:00', 4, 'prepare', NULL),
+	(204, '2018-08-18 22:30:00', 5, 'prepare', NULL);
 /*!40000 ALTER TABLE `flights` ENABLE KEYS */;
 
 
@@ -2009,8 +2097,7 @@ CREATE TABLE IF NOT EXISTS `flight_crews` (
   `flight_id` int(11) NOT NULL,
   `role` enum('pilot','navigator','supercargo','radist','engineer','_other') NOT NULL,
   `user_id` int(11) NOT NULL,
-  KEY `FK_flight_crews_flights` (`flight_id`),
-  CONSTRAINT `FK_flight_crews_flights` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `FK_flight_crews_flights` (`flight_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Экипаж';
 
 -- Дамп данных таблицы magellan.flight_crews: ~9 rows (приблизительно)
@@ -3720,7 +3807,7 @@ CREATE TABLE IF NOT EXISTS `nodes` (
   CONSTRAINT `FK_status_code` FOREIGN KEY (`status`) REFERENCES `node_statuses` (`code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=215 DEFAULT CHARSET=utf8 COMMENT='Узлы в технопарке';
 
--- Дамп данных таблицы magellan.nodes: ~96 rows (приблизительно)
+-- Дамп данных таблицы magellan.nodes: ~95 rows (приблизительно)
 DELETE FROM `nodes`;
 /*!40000 ALTER TABLE `nodes` DISABLE KEYS */;
 INSERT INTO `nodes` (`id`, `model_id`, `name`, `az_level`, `status`, `date_created`, `connected_to_hull_id`, `password`, `premium_expires`) VALUES

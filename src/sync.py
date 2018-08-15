@@ -1,6 +1,7 @@
 import json
 import re
 import sys
+import urllib.request, urllib.response
 from collections import defaultdict
 from itertools import product
 
@@ -95,8 +96,16 @@ class Sync:
     def send_post(self, url, data=None):
         try:
             url = SERVICE_URL + url
-            r = requests.post(url, json=data or {})
-            return json.loads(r.text)
+            req = urllib.request.Request(url)
+            req.add_header('Content-Type', 'application/json; charset=utf-8')
+            jsondata = json.dumps(data)
+            jsondataasbytes = jsondata.encode('utf-8')  # needs to be bytes
+            req.add_header('Content-Length', len(jsondataasbytes))
+            response = urllib.request.urlopen(req, jsondataasbytes)
+            return response
+
+            # r = requests.post(url, json=data or {})
+            # return json.loads(r.text)
         except requests.exceptions.ConnectionError:
             print("Удаленный сервер не ответил по адресу " + url + ". Работа программы аварийно завершена")
             sys.exit()

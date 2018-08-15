@@ -1,6 +1,6 @@
 import json
 
-from handlers.ApiHandler import ApiHandler
+from handlers.ApiHandler import ApiHandler, DefaultHandler, LogsHandler
 from handlers.PingHandler import (
     PingHandler,
 )
@@ -46,27 +46,17 @@ def url(uri, func, kwargs=None, tableview_comment=""):
     return uri, ApiHandler, init_params, tableview_comment
 
 
-class UrlsHandler(RequestHandler):
+class UrlsHandler(DefaultHandler):
     def get(self):
         self.write("<xmp>" + url_params(app_urls) + "</xmp>")
 
 
-class TableUrlsHandler(RequestHandler):
+class TableUrlsHandler(DefaultHandler):
     def get(self):
         self.write(json.dumps(
             {url[0]: url[3] for url in app_urls if len(url) > 3 and url[3]},
             indent=4
         ))
-
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header("Access-Control-Allow-Headers",
-                        "x-requested-with,access-control-allow-origin,authorization,content-type")
-
-    def options(self):
-        self.set_status(204)
-        self.finish()
 
 
 app_urls = [
@@ -128,5 +118,6 @@ app_urls = [
 
     ("/ping", PingHandler),
     ("/urls_params", UrlsHandler),
-    ("/table_urls", TableUrlsHandler)
+    ("/table_urls", TableUrlsHandler),
+    ("/hyyudu/logs", LogsHandler),
 ]
