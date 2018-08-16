@@ -49,7 +49,7 @@ where b.flight_id = :flight_id""", params, 'node_type_code')
         node['params'] = {pmap.get(key, key): apply_percent(value['value'], hull_perks_for_system.get(key, 0))
                           for key, value in json.loads(node['params_json']).items()}
     flight = self.db.fetchRow("""
-    select f.id flight_id, f.departure flight_start_time, f.status, f.company
+    select f.id flight_id, f.departure flight_start_time, f.status, f.company,
         f.dock from flights f
         where id = :flight_id""", params)
     known_resources = self.db.fetchAll("select code as id, name from resources where is_active=1 order by 1")
