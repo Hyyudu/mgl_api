@@ -6,7 +6,9 @@ from handlers.PingHandler import (
 )
 from services.boosts import boosts_read, boost_use
 from services.economic import (
-    read_pumps, resource_list, add_pump, stop_pump, set_mine, get_nodes_kpi,
+    read_pumps, resource_list, add_pump, stop_pump, set_mine,
+    get_nodes_kpi, 
+    get_full_kpi_gd, get_full_kpi_pre, get_full_kpi_kkg, get_full_kpi_mat, get_full_kpi_mst,
     get_company_income,
     get_all_companies_income,
     read_kpi,
@@ -103,6 +105,11 @@ app_urls = [
     url("/economics/stop_pump", stop_pump),
     url("/economics/set_mine", set_mine),
     url("/economics/get_nodes_kpi", get_nodes_kpi),
+    url("/economics/get_full_kpi_gd", get_full_kpi_gd),
+    url("/economics/get_full_kpi_pre", get_full_kpi_pre),
+    url("/economics/get_full_kpi_kkg", get_full_kpi_kkg),
+    url("/economics/get_full_kpi_mat", get_full_kpi_mat),
+    url("/economics/get_full_kpi_mst", get_full_kpi_mst),
     url("/economics/get_company_income", get_company_income),
     url("/economics/get_all_companies_income", get_all_companies_income, tableview_comment="Доходы компаний"),
 

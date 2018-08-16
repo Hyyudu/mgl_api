@@ -157,6 +157,41 @@ def get_nodes_kpi(self, params):
              for key, items in data.items()}
     return table
 
+@inject_db
+def get_full_kpi_gd(self):
+     return get_full_kpi(self, company="gd")
+
+@inject_db
+def get_full_kpi_pre(self):
+    return get_full_kpi(self, company="pre")
+
+@inject_db
+def get_full_kpi_kkg(self):
+    return get_full_kpi(self, company="kkg")
+
+@inject_db
+def get_full_kpi_mat(self):
+    return get_full_kpi(self, company="mat")
+
+@inject_db
+def get_full_kpi_mst(self):
+    return get_full_kpi(self, company="mst")
+
+
+@inject_db
+def get_full_kpi(self, company):
+    data = self.db.fetchAll("""
+        select 
+            n.name as node_name,
+            t.name as type_name,
+            cnt as count,
+            kpi_price as price,
+            full_kpi as total
+        from v_nodes_kpi n
+        inner join node_types t on t.code = n.node_type_code
+        where company = :company
+    """, (company))
+    return data
 
 @inject_db
 def get_company_income(self, params):
