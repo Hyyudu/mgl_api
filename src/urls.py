@@ -19,6 +19,7 @@ from services.mcc import (
     mcc_assign_flight,
     freight_flight,
     flight_died,
+    flight_returned,
 )
 from services.misc import url_params
 from services.model_crud import add_model, read_model, read_models, delete_model, get_model_upkeep_price
@@ -113,6 +114,7 @@ app_urls = [
     url('/mcc/get_nearest_flight_for_role', get_nearest_flight_for_role),
     url('/mcc/freight', freight_flight),
     url('/mcc/flight_died', flight_died),
+    url('/mcc/flight_returned', flight_returned),
 
     url("/boosts/read", boosts_read, tableview_comment="Список всех активных бустов"),
     url("/boosts/use", boost_use),

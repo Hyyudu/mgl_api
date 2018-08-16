@@ -22,6 +22,7 @@ def mcc_dashboard(self, params):
         LEFT JOIN nodes n on b.node_id = n.id
         LEFT JOIN models m on n.model_id = m.id
     WHERE f.status in ('prepare', 'freight')
+    and f.departure > Now() - interval 4 hour
     order by f.departure, f.dock""", associate='id')
     flight_ids = tuple(flights.keys())
     for flight in flights.values():
@@ -195,7 +196,7 @@ def flight_returned(self, params):
     "warp_engine": 12.9,
 }
 }"""
-    self.db.query("update flights set status='returned' where id = :flight_id", params)
+    self.db.query("update flights set status='returned' where id = :flight_id", params, need_commit=True)
     # Находим все узлы того полета
     nodes = self.db.fetchDict("select node_type_code, node_id from builds where flight_id=:flight_id", params,
                               'node_type_code', 'node_id')
@@ -204,8 +205,10 @@ def flight_returned(self, params):
             az_damage = roundTo(params['flight_time'] / (5 * 60))
         else:
             az_damage = roundTo(params['az_damage'].get(node_type_code, 0) + params['flight_time'] / (8 * 60))
-        self.db.query(f"update nodes set status='free', az_level = az_level - {az_damage} where id={node_id}")
+        self.db.query(f"update nodes set status='free', az_level = az_level - {az_damage} where id={node_id}", None,
+                      need_commit=True)
     logger.info("Полет {flight_id} вернулся".format(**params))
     nodes_to_decomm = self.db.fetchColumn("select id from nodes where az_level <= 15")
     for node_id in nodes_to_decomm:
         decomm_node(self, {"node_id": node_id, "is_auto": 1})
+    return api_ok(nodes_to_decomm=nodes_to_decomm)
