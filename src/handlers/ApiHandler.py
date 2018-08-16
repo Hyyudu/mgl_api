@@ -4,7 +4,7 @@ from json import JSONDecodeError
 
 from services.db import DB
 from services.misc import api_fail, get_logger
-from tornado.web import RequestHandler, HTTPError
+from tornado.web import RequestHandler, HTTPError, asynchronous
 
 
 error_logger = get_logger(__name__, 'logs/api_errors.log')
@@ -37,6 +37,7 @@ class ApiHandler(DefaultHandler):
     def get_exception_text(self, e, data):
         return ''
 
+    @asynchronous
     async def post(self):
         try:
             body = self.request.body or "{}"

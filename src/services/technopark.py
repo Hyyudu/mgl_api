@@ -42,7 +42,7 @@ where b.flight_id = :flight_id""", params, 'node_type_code')
         where id = :flight_id""", params)
     known_resources = self.db.fetchAll("select code, name from resources where is_active=1 order by 1")
     cargo = self.db.fetchAll("""
-    select fl.code, fl.company, l.weight 
+    select fl.code, fl.company, l.weight, fl.planet_id
 from flight_luggage fl 
 join v_luggages l on fl.code = l.code and (fl.company = l.company or (fl.company is null and l.company is null))
 where fl.flight_id = :flight_id""", params)
@@ -53,9 +53,21 @@ where fl.flight_id = :flight_id""", params)
     }
     flight['params'] = {node_type: node['params'] for node_type, node in nodes.items()}
     flight['known_minerals'] = known_resources
-    flight['cargo'] = {"mines": [], "beacons": [], "modules": []}
+    flight['cargo'] = {"mines": [], "beacons": {}, "modules": []}
     for item in cargo:
-        flight['cargo'][item['code'] + 's'].append({"company": item['company'], "weight": item['weight']})
+        if item['code'] == 'mine':
+            flight['cargo']['mines'].append({"company": item['company'], "weight": item['weight']})
+        elif item['code'] == 'beacon':
+            if flight['cargo']['beacons']:
+                flight['cargo']['beacons']['amount'] += 1
+            else:
+                flight['cargo']['beacons'] = {"weight": item['weight'], "amount": 1}
+        elif item['code'] == 'module':
+            flight['cargo']['modules'].append({
+                "company": item['company'],
+                "weight": item['weight'],
+                "planet_id": item['planet_id']
+            })
     return flight
 
 
