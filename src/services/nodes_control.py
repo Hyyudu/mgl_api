@@ -99,7 +99,10 @@ def check_password(self, data):
 
 @inject_db
 def get_all_params(self, data) -> List[Dict[str, Any]]:
-    return self.db.fetchAll('select * from v_node_parameter_list')
+    logger.info("Before get_all_params sql")
+    result = self.db.fetchAll('select * from v_node_parameter_list')
+    logger.info("After get_all_params sql")
+    return result
 
 
 def generate_slots(amount: int) -> Dict[str, int]:
