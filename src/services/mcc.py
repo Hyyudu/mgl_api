@@ -132,7 +132,7 @@ def freight_flight(self, params):
     from flight_luggage fl 
     join v_luggages vl on fl.code = vl.code
     and (fl.company = vl.company or (fl.company is null and vl.company is null))
-    where fl.flight_id = :flight_id""", params)
+    where fl.flight_id = :flight_id""", params) or 0
     if hull_volume - inner_nodes_volume - luggage_volume < 0:
         return api_fail(
             f"Внутренний объем вашего корпуса {hull_volume}. Его недостаточно для размещения всех узлов " +

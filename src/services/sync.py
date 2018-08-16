@@ -146,7 +146,7 @@ def set_build_correction(self, params):
     update_row['slots'] = count_elements_for_functext(params['correction'])
     update_row['slots_json'] = json.dumps(update_row['slots'])
     if update_row['slots_json'] == 'null':
-        update_row['slots_json'] = ''
+        update_row['slots_json'] = '{}'
     self.db.update('builds', update_row, 'flight_id = :flight_id and node_type_code=:node_type_code')
     del(params['correction'])
     return api_ok(node_sync=get_build_data(self, params))
