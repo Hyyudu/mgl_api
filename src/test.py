@@ -3,6 +3,25 @@ from services.db import DB
 
 db = DB()
 
+
+login = "zhuk"
+password  = "5356"
+url = 'https://api.alice.magellan2018.ru/account'
+import urllib.request
+import base64
+req = urllib.request.Request(url)
+
+credentials = ('%s:%s' % (login, password))
+encoded_credentials = base64.b64encode(credentials.encode('ascii'))
+req.add_header('Authorization', 'Basic %s' % encoded_credentials.decode("ascii"))
+
+with urllib.request.urlopen(req) as response:
+    data = response.read()
+    print(data.decode())
+
+
+exit()
+
 data = {
 
     "warp_engine": {

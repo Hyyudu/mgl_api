@@ -1,8 +1,8 @@
 import json
 import re
 import sys
+import urllib.request
 import base64
-import urllib.request, urllib.response, urllib.error
 from collections import defaultdict
 from itertools import product
 
@@ -102,7 +102,7 @@ class Sync:
                           "kkg": "Красный Крест Генетикс",
                           "gd": "Гугл Дисней", "pre": "Пони РосКосмос Экспресс"}
         self.roles = {"pilot": "Пилот", "navigator": "Навигатор", "engineer": "Инженер", "supercargo": "Суперкарго",
-                      "radist": "Радист"}
+                      "radist": "Радист", "_other": "Пассажир"}
         self.engineer_id = 0
 
     def send_post(self, url, data=None):
@@ -131,9 +131,17 @@ class Sync:
     def check_account (login, password):
         try:
             url = API_URL + "/account"
-            r = requests.get(url, auth=(login, password))
-            return json.loads(r.text)
-        except requests.exceptions.ConnectionError:
+
+            req = urllib.request.Request(url)
+
+            credentials = ('%s:%s' % (login, password))
+            encoded_credentials = base64.b64encode(credentials.encode('ascii'))
+            req.add_header('Authorization', 'Basic %s' % encoded_credentials.decode("ascii"))
+
+            with urllib.request.urlopen(req) as response:
+                data = response.read()
+                return json.loads(data.decode())
+        except:
             print(f"Удаленный сервер {API_URL} не ответил. Работа программы аварийно завершена")
             sys.exit()
 
@@ -152,7 +160,6 @@ class Sync:
             password = input ("Введите пароль > ")
 
         check_result = Sync.check_account(login, password)
-        print(json.dumps(check_result))
 
         if (not ('account' in check_result)):
             print(f"Возможно пароль неверный")
@@ -177,6 +184,8 @@ class Sync:
         return id
 
     def node_show_name(self, node_data):
+        if not node_data:
+            return " == нет == "
         if not node_data['node_name']:  # обычный узел
             return "{model_name} #{node_id}".format(**node_data)
         elif node_data['node_name'] == "{model_name}-{node_id}".format(**node_data):  # корпус с дефолтным именем
@@ -209,7 +218,7 @@ class Sync:
     def cmd_system_list(self):
         data = [["Код", "Система", "Узел"], "="]
         for node_type, name in self.node_names.items():
-            data.append([node_type, name, self.node_show_name(self.nodes_data[node_type])])
+            data.append([node_type, name, self.node_show_name(self.nodes_data.get(node_type, {}))])
         table_view(data)
 
     def count_system_slots(self):
