@@ -40,6 +40,7 @@ class ApiHandler(DefaultHandler):
     async def post(self):
         try:
             body = self.request.body or "{}"
+            logger.info(str(self.request.arguments))
             logger.info(body)
             try:
                 req = json.loads(body)

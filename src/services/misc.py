@@ -4,6 +4,8 @@ from random import choices, randint
 
 from services.db import DB
 
+db = DB()
+
 NODE_NAMES = {
     "march_engine": "маршевый двигатель",
     "shunter": "маневровый двигатель",
@@ -34,7 +36,7 @@ def get_error_logger(name):
 
 class DBHolder():
     def __init__(self):
-        self.db = DB()
+        self.db = None
 
 
 def node_type_list(without_hull=True):
@@ -87,7 +89,7 @@ def inject_db(func):
     def wrapper(obj, *args, **kwargs):
         if not obj:
             obj = DBHolder()
-            obj.db: DB
+            obj.db = db
         return func(obj, *args, **kwargs)
 
     wrapper.__doc__ = func.__doc__
