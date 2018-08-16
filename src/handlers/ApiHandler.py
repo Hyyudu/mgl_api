@@ -37,7 +37,7 @@ class ApiHandler(DefaultHandler):
     def get_exception_text(self, e, data):
         return ''
 
-    # @asynchronous
+    @asynchronous
     async def post(self):
         try:
             body = self.request.body or "{}"

@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 @inject_db
 def create_tech(self, params):
     """ params = {name: str, description: str, level: int, is_available: 0/1, point_cost: {str: float},
-    effects: [ {node_code: str, parameter_code: str, value: float},] }"""
+    effects: [ {node_code: str, parameter_code: str, value: float},], inventors: [str] }"""
     tech_id = self.db.insert('technologies', params)
     point_costs = [
         {"tech_id": tech_id,
@@ -25,6 +25,13 @@ def create_tech(self, params):
         for key, value in params['point_cost'].items()
     ]
     self.db.insert('tech_point_cost', point_costs)
+    tech_inventors = [
+        {"tech_id": tech_id, "company": company}
+        for company in params.get("inventors", [])
+    ]
+
+    self.db.insert()
+
     tech_effects = [
         {**{"tech_id": tech_id}, **effect}
         for effect in params['effects']
