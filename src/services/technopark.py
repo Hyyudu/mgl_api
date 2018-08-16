@@ -68,6 +68,9 @@ where fl.flight_id = :flight_id""", params)
     # Поправки
     if 'radar' in nodes:
         nodes['radar']['params']['range_max'] *= 1000
+    if 'scaner' in nodes:
+        nodes['scaner']['params']['scan_range'] *= 1000
+        nodes['scaner']['params']['drop_range'] *= 1000
 
     flight['params'] = {node_type: node['params'] for node_type, node in nodes.items()}
     flight['known_minerals'] = known_resources
