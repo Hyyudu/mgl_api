@@ -30,7 +30,7 @@ def create_tech(self, params):
         for company in params.get("inventors", [])
     ]
 
-    self.db.insert()
+    self.db.insert('tech_inventors', tech_inventors)
 
     tech_effects = [
         {**{"tech_id": tech_id}, **effect}
