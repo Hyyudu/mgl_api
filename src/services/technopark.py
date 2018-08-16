@@ -232,7 +232,7 @@ def decomm_node(self, params):
     self.db.query("update nodes set status='decomm' where id=:node_id", params, need_commit=True)
     if not params.get('is_auto'):
 
-        self.db.insert("kpi_change", {
+        self.db.insert("kpi_changes", {
             "company": node['company'], "reason": "Списание узла вручную", "node_id": params['node_id'], 'amount': 15
         })
     stop_pump(self, {"section": "nodes", "entity_id": params['node_id']})
