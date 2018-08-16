@@ -158,24 +158,24 @@ def get_nodes_kpi(self, params):
     return table
 
 @inject_db
-def get_full_kpi_gd(self):
-     return get_full_kpi(self, company="gd")
+def get_full_kpi_gd(self, params):
+     return get_full_kpi(self, dict(company="gd"))
 
 @inject_db
-def get_full_kpi_pre(self):
-    return get_full_kpi(self, company="pre")
+def get_full_kpi_pre(self, params):
+    return get_full_kpi(self, dict(company="pre"))
 
 @inject_db
-def get_full_kpi_kkg(self):
-    return get_full_kpi(self, company="kkg")
+def get_full_kpi_kkg(self, params):
+    return get_full_kpi(self, dict(company="kkg"))
 
 @inject_db
-def get_full_kpi_mat(self):
-    return get_full_kpi(self, company="mat")
+def get_full_kpi_mat(self, params):
+    return get_full_kpi(self, dict(company="mat"))
 
 @inject_db
-def get_full_kpi_mst(self):
-    return get_full_kpi(self, company="mst")
+def get_full_kpi_mst(self, params):
+    return get_full_kpi(self, dict(company="mst"))
 
 
 @inject_db
@@ -190,7 +190,7 @@ def get_full_kpi(self, company):
         from v_nodes_kpi n
         inner join node_types t on t.code = n.node_type_code
         where company = :company
-    """, (company))
+    """, company)
     return data
 
 @inject_db
