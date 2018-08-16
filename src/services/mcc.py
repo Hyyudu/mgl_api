@@ -226,13 +226,14 @@ def skip_flight(self, params):
     # "Возвращаем" полет
     self.db.query("update flights set status='returned' where id=:flight_id", params, need_commit=True)
     # Фрахтуем узлы
-    self.db.query("update nodes set status='free' where id in (" +
-                  ", ".join(map(str, node_ids)) + ")", None, need_commit=True)
-    # Выдаем компаниям KPI за фрахт узлов
-    kpi_insert = [
-        {"company": item['company'], "node_id": item['node_id'], "reason": "фрахт", "amount": 5}
-        for item in build.values()
-    ]
-    self.db.insert("kpi_changes", kpi_insert)
+    if node_ids:
+        self.db.query("update nodes set status='free' where id in (" +
+                      ", ".join(map(str, node_ids)) + ")", None, need_commit=True)
+        # Выдаем компаниям KPI за фрахт узлов
+        kpi_insert = [
+            {"company": item['company'], "node_id": item['node_id'], "reason": "фрахт", "amount": 5}
+            for item in build.values()
+        ]
+        self.db.insert("kpi_changes", kpi_insert)
     logger.info("Полет {flight_id} пропущен".format(**params))
     return api_ok()
