@@ -39,7 +39,7 @@ class DB:
 
             return self.cursor
         except Exception as e:
-            error_text = "Error executing query: " + sql+"\n"+json.dumps(data, indent=4) +"\n" + "\n".join(traceback.format_stack())
+            error_text = "Error executing query: " + sql+"\n"+json.dumps(data, indent=4)
             from src.services.misc import get_error_logger
 
             logger = get_error_logger(__name__)
