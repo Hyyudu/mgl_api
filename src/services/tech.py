@@ -127,6 +127,9 @@ def develop_model(self, params):
         "password": ""
     }
     """
+    existing_model_name = self.db.fetchRow("select * from models where name=:name", params)
+    if existing_model_name:
+        return api_fail("Модель с названием {name} уже создана".format(**params))
     # Читаем используемые технологии
     techs = read_techs(self, params)
     # Чистим неиспользуемые техи
@@ -155,6 +158,7 @@ def develop_model(self, params):
         [techs[key].get('level'), value]
         for key, value in params['tech_balls'].items()
     ])
+
     model_data = add_model(self, {
         "name": params['name'],
         "description": params.get("description", ''),
