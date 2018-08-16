@@ -1,6 +1,6 @@
 import json
 
-from handlers.ApiHandler import ApiHandler, DefaultHandler, LogsHandler
+from handlers.ApiHandler import ApiHandler, DefaultHandler, LogsHandler, SyncFileHandler
 from handlers.PingHandler import (
     PingHandler,
 )
@@ -122,4 +122,5 @@ app_urls = [
     ("/urls_params", UrlsHandler),
     ("/table_urls", TableUrlsHandler),
     ("/hyyudu/logs", LogsHandler),
+    ("/get_sync_program", SyncFileHandler),
 ]

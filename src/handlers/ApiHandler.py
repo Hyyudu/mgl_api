@@ -1,10 +1,10 @@
 import json
+import os
 from json import JSONDecodeError
 
-import os
 from services.db import DB
 from services.misc import api_fail, get_logger
-from tornado.web import RequestHandler
+from tornado.web import RequestHandler, HTTPError
 
 
 error_logger = get_logger(__name__, 'logs/api_errors.log')
@@ -66,6 +66,25 @@ class LogsHandler(DefaultHandler):
     async def get(self):
         args = {key: val[0].decode() for key, val in self.request.arguments.items()}
         if 'log' in args:
-            self.write("<xmp>"+open("logs/"+args['log']+".log").read()+"</xmp>")
+            self.write("<xmp>" + open("logs/" + args['log'] + ".log").read() + "</xmp>")
         if 'clear' in args:
-            os.unlink("logs/"+args['clear']+".log")
+            os.unlink("logs/" + args['clear'] + ".log")
+
+
+class SyncFileHandler(DefaultHandler):
+    def get(self):
+        text = open("sync.py", encoding="utf-8").read()
+        self.add_header("Content-type", "application/force-download")
+        self.add_header("Content-Disposition", 'attachment; filename=sync.py')
+        with open("sync.py", "rb") as f:
+            try:
+                while True:
+                    _buffer = f.read(4096)
+                    if _buffer:
+                        self.write(_buffer)
+                    else:
+                        f.close()
+                        self.finish()
+                        return
+            except:
+                raise HTTPError(404)

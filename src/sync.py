@@ -1,15 +1,15 @@
+import base64
 import json
+import os
 import re
 import sys
 import urllib.request
-import base64
 from collections import defaultdict
 from itertools import product
 
-from sync_config import SERVICE_URL, API_URL
 
-import os
-
+SERVICE_URL = "https://technopark-backend.alice.magellan2018.ru/"
+API_URL = "https://api.alice.magellan2018.ru"
 
 help_text = """help  - вызов справки
 system list  - Список кодов всех систем
@@ -21,6 +21,7 @@ correct <system>  - просмотреть корректирующий вект
 correct test <function>  - проверить вектор для заданной функции
 correct list  - просмотреть список текущих корректировок
 exit, halt, stop или quit  - завершение сеанса синхронизации"""
+
 
 def getfunc(functext):
     # очищаем вход
@@ -128,7 +129,7 @@ class Sync:
         return "".join([vector[i] if c == '1' else '*' for i, c in enumerate(list(total))])
 
     @staticmethod
-    def check_account (login, password):
+    def check_account(login, password):
         try:
             url = API_URL + "/account"
 
@@ -146,27 +147,27 @@ class Sync:
             sys.exit()
 
     def get_engineer_id(self):
-        auto = False 
+        auto = False
         if ('MAGELLAN_USER' in os.environ):
             login = os.environ['MAGELLAN_USER']
             auto = True
         else:
-            login = input ("Введите логин / ID инженера > ")
-        
+            login = input("Введите логин / ID инженера > ")
+
         if ('MAGELLAN_PASS' in os.environ):
             password = os.environ['MAGELLAN_PASS']
             auto = True
         else:
-            password = input ("Введите пароль > ")
+            password = input("Введите пароль > ")
 
         check_result = Sync.check_account(login, password)
 
         if (not ('account' in check_result)):
             print(f"Возможно пароль неверный")
             sys.exit()
-        
+
         account = check_result['account']
-            
+
         id = account['_id']
         isEngineer = account['professions']['isEngineer']
 
@@ -177,7 +178,7 @@ class Sync:
         if not auto:
             print("Вы можете установить переменные среды MAGELLAN_USER / MAGELLAN_PASS для автологина.")
             print("Не делайте это на общедоступных терминалах")
-        
+
         if not account['jobs']['tradeUnion']['isEngineer']:
             print("ВНИМАНИЕ! Похоже, вы не член профсоюза")
 
@@ -255,7 +256,7 @@ class Sync:
                 table_row.append(detail_cnt)
                 counter[detail] += detail_cnt
             lst.append(table_row)
-            mult = -1 # Для всех, кроме корпуса, значения отрицательные
+            mult = -1  # Для всех, кроме корпуса, значения отрицательные
         lst.append("=")
         lst.append(["Итого"] + [counter[detail] for detail in all_details])
         table_view(lst)
