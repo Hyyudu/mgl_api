@@ -17,7 +17,7 @@ def create_node(self, params):
     if not model_id:
         raise Exception("Не указан model_id!")
     model_id_dict = {"id": model_id}
-    model = read_models(None, model_id_dict, read_nodes=False)
+    model = read_models(self, model_id_dict, read_nodes=False)
 
     if len(model) < 0:
         raise Exception(f"No model with id {model_id}")
@@ -37,7 +37,7 @@ def create_node(self, params):
         'premium_expires': None if not existing_nodes else model['premium_expires']
     }
     node_id = self.db.insert('nodes', insert_data)
-    add_node_upkeep_pump(None, node_id=node_id, model=model)
+    add_node_upkeep_pump(self, node_id=node_id, model=model)
     if model['node_type_code'] != 'hull':
         result = self.db.fetchRow('select * from nodes where id=:id', {"id": node_id})
         return result
@@ -49,7 +49,7 @@ def create_node(self, params):
 def check_reserve_node(self, data):
     """ data = {user_id: int, node_id: int, password: str} """
     from services.mcc import get_nearest_flight_for_supercargo
-    flight = get_nearest_flight_for_supercargo(None, data.get('user_id', 0))
+    flight = get_nearest_flight_for_supercargo(self, data.get('user_id', 0))
     if not flight:
         return api_fail("Вы не назначены ни на какой полет в качестве суперкарго")
     flight['departure'] = modernize_date(flight['departure'])

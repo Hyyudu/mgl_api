@@ -62,7 +62,7 @@ where fl.flight_id = :flight_id""", params)
 @inject_db
 def reserve_node(self, params):
     """ params = {"user_id": int, "node_id": int, "password": str} """
-    build_item = check_reserve_node(None, params)
+    build_item = check_reserve_node(self, params)
     # build_item =  {"flight_id":int, "node_id": int}
     if 'errors' in build_item:
         return build_item
@@ -86,7 +86,7 @@ where n.id=:node_id""", build_item)
         where b.flight_id = :flight_id""", build_item, 'node_type_code', 'vector')
         # рассчитываем вектора
         build_item['vector'] = build_item['total'] = xor(
-            [get_node_vector(None, params),
+            [get_node_vector(self, params),
              hull_vectors[build_item['node_type_code']],
              ]
         )
@@ -99,7 +99,7 @@ where n.id=:node_id""", build_item)
         build_item['params_json'] = json.dumps(params_json)
 
     else:
-        model = read_models(None, {"node_id": build_item['node_id']})[0]
+        model = read_models(self, {"node_id": build_item['node_id']})[0]
         hull_params = {
             "weight": model['params']['weight'],
             "volume": model['params']['volume'],
@@ -128,7 +128,7 @@ def get_luggages_info(self, params):
 def get_my_reserved_nodes(self, params) -> Dict[str, Any]:
     """ params: {"user_id": int} """
     from services.mcc import get_nearest_flight_for_supercargo
-    flight = get_nearest_flight_for_supercargo(None, params.get('user_id'))
+    flight = get_nearest_flight_for_supercargo(self, params.get('user_id'))
     if not flight:
         return api_fail("Суперкарго {} не назначен ни на какой полет".format(params.get('user_id')))
     nodes = self.db.fetchDict(
@@ -210,7 +210,7 @@ def decomm_node(self, params):
         self.db.insert("kpi_change", {
             "company": node['company'], "reason": "Списание узла вручную", "node_id": params['node_id'], 'amount': 15
         })
-    stop_pump(None, {"section": "nodes", "entity_id": params['node_id']})
+    stop_pump(self, {"section": "nodes", "entity_id": params['node_id']})
     if params.get('is_auto'):
         params['reason'] = f"Автоматическое списание, уровень АЗ {node['az_level']}"
     logger.info("Списан узел {node_id}, причина: {reason}".format(**params))

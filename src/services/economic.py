@@ -109,7 +109,7 @@ def add_node_upkeep_pump(self, node_id=None, model=None):
         model = self.db.fetchRow("""select m.id, m.name, m.company
     from models m join nodes n on m.id = n.model_id
     where n.id = :node_id""", {"node_id": node_id})
-    upkeep_price = get_model_upkeep_price(None, {"model_id": model['id']})
+    upkeep_price = get_model_upkeep_price(self, {"model_id": model['id']})
     insufficient = get_insufficient_for_node(company=model['company'], model_id=model['id'], upkeep_price=upkeep_price)
     if insufficient:
         return api_fail("Вашего дохода не хватает для создания узла: " + dict2str(insufficient))
