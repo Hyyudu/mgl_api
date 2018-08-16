@@ -144,8 +144,9 @@ def set_mine(self, params):
 
 @inject_db
 def get_nodes_kpi(self, params):
-    """ params = no params """
-    data = self.db.fetchAll("""select * from v_nodes_kpi """, params)
+    """ params = {node_type_code: str} """
+    data = self.db.fetchAll("""select * from v_nodes_kpi
+    where node_type_code=:node_type_code""", params, associate='company', cumulative=True)
     sum_kpi = self.db.fetchOne("""select sum(full_kpi) from v_nodes_kpi 
         where node_type_code=:node_type_code""", params)
     table = {key: ["{name} = {kpi_price} * {cnt} = {full_kpi}".format(**item) for item in items] +
