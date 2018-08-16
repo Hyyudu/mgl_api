@@ -35,7 +35,8 @@ where b.flight_id = :flight_id""", params, 'node_type_code')
             'distort_slowdown': 'distort_slow'
         },
         'shunter': {
-            'turn_max': 'turn'
+            'turn_max': 'turn',
+            'turn_accel': 'turn_acc'
         }
     }
 

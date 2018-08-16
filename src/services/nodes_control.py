@@ -8,7 +8,9 @@ from services.misc import modernize_date, api_fail, gen_array_by_weight, node_ty
 from services.model_crud import read_models
 from services.sync import get_rand_func, xor, get_func_vector
 
+
 logger = get_logger(__name__)
+
 
 @inject_db
 def create_node(self, params):
@@ -25,7 +27,7 @@ def create_node(self, params):
 
     insufficient = get_insufficient_for_node(company=model['company'], model_id=model_id)
     if insufficient:
-        return api_fail("Для создания узла вам не хватает следующих ресурсов: "+
+        return api_fail("Для создания узла вам не хватает следующих ресурсов: " +
                         dict2str(insufficient))
 
     existing_nodes = self.db.fetchOne('select count(*) from nodes where model_id=:id', model_id_dict)
