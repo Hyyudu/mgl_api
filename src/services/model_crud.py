@@ -61,8 +61,12 @@ def read_model(self, data):
 @inject_db
 def delete_model(self, data):
     """ params = {id: int} """
+    model_nodes_id = self.db.fetchOne("select group_concat(id) from nodes where model_id = :id", data)
+
     self.db.query('delete from nodes where model_id=:id', data, need_commit=True)
     self.db.query('delete from model_parameters where model_id=:id', data, need_commit=True)
+    self.db.query('delete from pumps where entity="models" and entity_id=:id', data, need_commit=True)
+    self.db.query(f'delete from pumps where entity="nodes" and entity_id in {model_nodes_id}', need_commit=True)
     deleted = self.db.query('delete from models where id=:id', data, need_commit=True)
     return {"status": "ok", "deleted": deleted.rowcount}
 
