@@ -212,3 +212,27 @@ def flight_returned(self, params):
     for node_id in nodes_to_decomm:
         decomm_node(self, {"node_id": node_id, "is_auto": 1})
     return api_ok(nodes_to_decomm=nodes_to_decomm)
+
+
+@inject_db
+def skip_flight(self, params):
+    """ params: {flight_id: int} """
+    flight = self.db.fetchRow("select * from flights where id=:flight_id", params)
+    if flight['status'] != 'prepare':
+        return api_fail(f"Полет находится в статусе {flight['status']} и не может быть пропущен")
+    build = get_build_data(self, params)
+    # Все нормально - можем фрахтовать
+    node_ids = [item['node_id'] for item in build.values()]
+    # "Возвращаем" полет
+    self.db.query("update flights set status='returned' where id=:flight_id", params, need_commit=True)
+    # Фрахтуем узлы
+    self.db.query("update nodes set status='free' where id in (" +
+                  ", ".join(map(str, node_ids)) + ")", None, need_commit=True)
+    # Выдаем компаниям KPI за фрахт узлов
+    kpi_insert = [
+        {"company": item['company'], "node_id": item['node_id'], "reason": "фрахт", "amount": 5}
+        for item in build.values()
+    ]
+    self.db.insert("kpi_changes", kpi_insert)
+    logger.info("Полет {flight_id} пропущен".format(**params))
+    return api_ok()

@@ -88,8 +88,8 @@ def apply_companies_perks(model):
         node_type = model['node_type_code']
         if node_type == 'march_engine':
             model['params']['thrust'] = apply_percent(model['params']['thrust'], 15)
-        elif node_type == 'shunter':
-            model['params']['turn_accel'] = apply_percent(model['params']['turn_accel'], 15)
+        # elif node_type == 'shunter':
+        #     model['params']['turn_accel'] = apply_percent(model['params']['turn_accel'], 15)
         elif node_type == 'fuel_tank':
             model['params']['fuel_volume'] = apply_percent(model['params']['fuel_volume'], 15)
 
