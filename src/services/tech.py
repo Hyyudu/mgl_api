@@ -49,7 +49,7 @@ def read_techs(self, params):
                 join tech_effects te on te.tech_id = t.id and te.node_code = :node_type_code
                 left join tech_inventors ti on ti.tech_id = t.id and ti.company=:company
             where t.is_available = 1
-                and (ti.company is not null or t.opened_at + INTERVAL {TECH_WOW_PERIOD_HOURS} hour < Now())
+                and (ti.company is not null or coalesce(t.opened_at, '2000-01-01') + INTERVAL {TECH_WOW_PERIOD_HOURS} hour < Now())
                 """
 
     techs = self.db.fetchAll(tech_sql, params, "id")
