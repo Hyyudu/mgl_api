@@ -28,19 +28,31 @@ where b.flight_id = :flight_id""", params, 'node_type_code')
     join builds b on hp.hull_id = b.node_id and b.node_type_code = "hull"
     where b.flight_id = :flight_id """, params)
 
+    params_map = {
+        'warp_engine': {
+            'distort_level': 'distort',
+            'distort_accel': 'distort_acc',
+            'distort_slowdown': 'distort_slow'
+        },
+        'shunter': {
+            'turn_max': 'turn'
+        }
+    }
+
     for node_type, node in nodes.items():
         hull_perks_for_system = {
             perk['parameter_code']: perk['value']
             for perk in hull_perks
             if perk['node_type_code'] == 'node_type'
         }
-        node['params'] = {key: apply_percent(value['value'], hull_perks_for_system.get(key, 100))
+        pmap = params_map.get(node_type, {})
+        node['params'] = {pmap.get(key, key): apply_percent(value['value'], hull_perks_for_system.get(key, 0))
                           for key, value in json.loads(node['params_json']).items()}
     flight = self.db.fetchRow("""
-    select f.id flight_id, f.departure flight_start_time, f.status,
+    select f.id flight_id, f.departure flight_start_time, f.status, f.company
         f.dock from flights f
         where id = :flight_id""", params)
-    known_resources = self.db.fetchAll("select code, name from resources where is_active=1 order by 1")
+    known_resources = self.db.fetchAll("select code as id, name from resources where is_active=1 order by 1")
     cargo = self.db.fetchAll("""
     select fl.code, fl.company, l.weight, fl.planet_id
 from flight_luggage fl 
@@ -64,7 +76,7 @@ where fl.flight_id = :flight_id""", params)
                 flight['cargo']['beacons'] = {"weight": item['weight'], "amount": 1}
         elif item['code'] == 'module':
             flight['cargo']['modules'].append({
-                "company": item['company'],
+                "company": flight['company'],
                 "weight": item['weight'],
                 "planet_id": item['planet_id']
             })
