@@ -64,6 +64,11 @@ where fl.flight_id = :flight_id""", params)
         "name": nodes['hull']['node_name'],
         "nodes_weight": sum([float(node['params']['weight']) for node in nodes.values()])
     }
+
+    # Поправки
+    if 'radar' in nodes:
+        nodes['radar']['params']['range_max'] *= 1000
+
     flight['params'] = {node_type: node['params'] for node_type, node in nodes.items()}
     flight['known_minerals'] = known_resources
     flight['cargo'] = {"mines": [], "beacons": {}, "modules": []}
