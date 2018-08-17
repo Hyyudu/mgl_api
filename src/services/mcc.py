@@ -179,7 +179,7 @@ def flight_died(self, params):
     node_ids = self.db.fetchColumn("select node_id from builds where flight_id=:flight_id", params)
     nodelist = "(" + ", ".join(map(str, node_ids)) + ")"
     # Ставим всем узлам статус "утерян"
-    self.db.query(f"update nodes set status='lost' where id in {nodelist}", None, need_commit=True)
+    self.db.query(f"update nodes set status='lost', az_level = 0 where id in {nodelist}", None, need_commit=True)
     # Отключаем их насосы в экономике
     self.db.query(f"update pumps set date_end = Now() where section='nodes' and entity_id in {nodelist}",
                   need_commit=True)
@@ -211,7 +211,7 @@ def flight_returned(self, params):
         self.db.query(f"update nodes set status='free', az_level = az_level - {az_damage} where id={node_id}", None,
                       need_commit=True)
     logger.info("Полет {flight_id} вернулся".format(**params))
-    nodes_to_decomm = self.db.fetchColumn("select id from nodes where az_level <= 15")
+    nodes_to_decomm = self.db.fetchColumn("select id from nodes where az_level  <= 15 and status='free'")
     for node_id in nodes_to_decomm:
         decomm_node(self, {"node_id": node_id, "is_auto": 1})
     return api_ok(nodes_to_decomm=nodes_to_decomm)
