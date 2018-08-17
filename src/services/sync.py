@@ -132,6 +132,9 @@ def set_build_correction(self, params):
     if not existing:
         return api_fail(
             "Полет {flight_id) не существует, либо для него не зарезервировано ни одного узла!".format(**params))
+    flight = self.db.fetchRow("select * from flights where id=:flight_id", params)
+    if flight.get('status') == 'freight':
+        return api_fail("Ваш полет уже зафрахтован. Дальнейшая синхронизация невозможна")
     update_row = existing.get(params['node_type_code'])
     if not update_row:
         return api_fail("Для полета не зарезервирован узел {node_type_code}".format(**params))
