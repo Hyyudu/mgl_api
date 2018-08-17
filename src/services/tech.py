@@ -93,7 +93,7 @@ def calc_model_params(self, params):
     for param in data:
         param_code = param['parameter_code']
         modifiers = sorted(
-            [item.get(param_code, 0) * params['tech_balls'].get(str(tech_id), 0) for tech_id, item in techs.items()],
+            [item.get(param_code, 0) * params['tech_balls'].get(int(tech_id), 0) for tech_id, item in techs.items()],
             reverse=int(param['increase_direction']) == 1)
         if param_code == 'volume':
             model_params['volume'] = apply_percent(param['def_value'], sum(modifiers))
