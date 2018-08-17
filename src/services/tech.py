@@ -114,6 +114,14 @@ def preview_model_params(self, params):
     # Применяем модификаторы размера
     for param, modifier in size_modifiers.items():
         model_params[param] = roundTo(model_params[param] * modifier)
+
+    techs = read_techs(self, params)
+
+    model_params['level'] = get_model_level_by_technologies([
+        [techs.get(key, techs.get(int(key))).get('level'), value]
+        for key, value in params['tech_balls'].items()
+    ])
+
     # Применяем модификаторы компании
     model = params
     model['params'] = model_params

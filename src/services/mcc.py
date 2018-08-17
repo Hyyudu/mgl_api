@@ -111,6 +111,8 @@ def get_nearest_flight_for_engineer(self, user_id):
 def freight_flight(self, params):
     """ params {flight_id: int} """
     flight = self.db.fetchRow("select * from flights where id=:flight_id", params)
+    if flight['status'] == 'freight':
+        return api_fail(f"Ваш полет уже зафрахтован")
     if flight['status'] != 'prepare':
         return api_fail(f"Полет находится в статусе {flight['status']} и не может быть зафрахтован")
     build = get_build_data(self, params)
@@ -219,7 +221,7 @@ def flight_returned(self, params):
 
 @inject_db
 def skip_flight(self, params):
-    """ params: {flight_id: int} """
+    """ params: {"flight_id": int, "flight_time": int, "az_damage": dict/int} """
     flight = self.db.fetchRow("select * from flights where id=:flight_id", params)
     if flight['status'] != 'prepare':
         return api_fail(f"Полет находится в статусе {flight['status']} и не может быть пропущен")

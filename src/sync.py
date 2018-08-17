@@ -130,7 +130,7 @@ class Sync:
 
     @staticmethod
     def check_account(login, password):
-        try:
+        # try:
             url = API_URL + "/account"
 
             req = urllib.request.Request(url)
@@ -142,9 +142,9 @@ class Sync:
             with urllib.request.urlopen(req) as response:
                 data = response.read()
                 return json.loads(data.decode())
-        except:
-            print(f"Удаленный сервер {API_URL} не ответил. Работа программы аварийно завершена")
-            sys.exit()
+        # except:
+        #     print(f"Удаленный сервер {API_URL} не ответил. Работа программы аварийно завершена")
+        #     sys.exit()
 
     def get_engineer_id(self):
         auto = False
