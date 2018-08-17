@@ -174,10 +174,10 @@ def freight_flight(self, params):
 @inject_db
 def flight_died(self, params):
     """ params = {flight_id: int} """
-    self.db.query("update flights set status='lost' where id=:flight_id", params)
+    self.db.query("update flights set status='lost' where id=:flight_id", params, need_commit=True)
     # Находим все узлы того полета
     node_ids = self.db.fetchColumn("select node_id from builds where flight_id=:flight_id", params)
-    nodelist = "(" + ", ".join(node_ids) + ")"
+    nodelist = "(" + ", ".join(map(str, node_ids)) + ")"
     # Ставим всем узлам статус "утерян"
     self.db.query(f"update nodes set status='lost' where id in {nodelist}", None, need_commit=True)
     # Отключаем их насосы в экономике
