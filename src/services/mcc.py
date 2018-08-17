@@ -246,7 +246,7 @@ def skip_flight(self, params):
 @inject_db
 def get_flight_data_for_demetreus(self, params):
     data = self.db.fetchAll("""
-    select node_type_code, node_id, model_id, model_name, company, level, size, total desync
+    select node_type_code, node_id, model_id, model_name, company, level, size, total desync, az_level
     from v_builds where flight_id=:flight_id""", params)
     for item in data:
         item['desync'] = item['desync'].count('1')
