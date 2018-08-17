@@ -3,6 +3,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.request
 from collections import defaultdict
 from itertools import product
@@ -130,7 +131,7 @@ class Sync:
 
     @staticmethod
     def check_account(login, password):
-        # try:
+        try:
             url = API_URL + "/account"
 
             req = urllib.request.Request(url)
@@ -142,9 +143,12 @@ class Sync:
             with urllib.request.urlopen(req) as response:
                 data = response.read()
                 return json.loads(data.decode())
-        # except:
-        #     print(f"Удаленный сервер {API_URL} не ответил. Работа программы аварийно завершена")
-        #     sys.exit()
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                print("Логин/ID не найден")
+            elif e.code == 401:
+                print("Пароль неверен")
+            sys.exit()
 
     def get_engineer_id(self):
         auto = False
