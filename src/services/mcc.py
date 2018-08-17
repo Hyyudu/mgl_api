@@ -212,8 +212,8 @@ def flight_returned(self, params):
                       need_commit=True)
     logger.info("Полет {flight_id} вернулся".format(**params))
     nodes_to_decomm = self.db.fetchColumn("select id from nodes where az_level  <= 15 and status='free'")
-    # for node_id in nodes_to_decomm:
-    #     decomm_node(self, {"node_id": node_id, "is_auto": 1})
+    for node_id in nodes_to_decomm:
+        decomm_node(self, {"node_id": node_id, "is_auto": 1})
     return api_ok(nodes_to_decomm=nodes_to_decomm)
 
 
