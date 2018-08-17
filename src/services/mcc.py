@@ -86,7 +86,7 @@ def get_nearest_flight_for_role(self, params):
         select f.* from flights f
         join flight_crews fc on f.id = fc.flight_id
         where fc.role=:role and fc.user_id = :user_id
-        and departure > Now()
+        and departure > Now() - interval 1 hour
         order by departure asc 
         limit 1""", params)
     if flight:
