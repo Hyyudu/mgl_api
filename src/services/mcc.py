@@ -194,7 +194,7 @@ def flight_returned(self, params):
 "az_damage": {
     "march_engine": 32.5,
     "warp_engine": 12.9,
-}
+} / float
 }"""
     self.db.query("update flights set status='returned' where id = :flight_id", params, need_commit=True)
     # Находим все узлы того полета
@@ -204,7 +204,10 @@ def flight_returned(self, params):
         if node_type_code == 'hull':
             az_damage = roundTo(params['flight_time'] / (5 * 60))
         else:
-            az_damage = roundTo(params['az_damage'].get(node_type_code, 0) + params['flight_time'] / (8 * 60))
+            if isinstance(params['az_damage'], dict):
+                az_damage = roundTo(params['az_damage'].get(node_type_code, 0) + params['flight_time'] / (8 * 60))
+            else:
+                az_damage = roundTo(params['az_damage'] + params['flight_time'] / (8 * 60))
         self.db.query(f"update nodes set status='free', az_level = az_level - {az_damage} where id={node_id}", None,
                       need_commit=True)
     logger.info("Полет {flight_id} вернулся".format(**params))
