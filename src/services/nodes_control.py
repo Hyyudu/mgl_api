@@ -59,7 +59,8 @@ def check_reserve_node(self, data):
         return api_fail("""Вы назначены суперкарго на полет №{id} (вылет {departure}, док №{dock}).
     В настоящее время ваш корабль уже зафрахтован, внесение изменений в конструкцию невозможно""".format(**flight))
     node = self.db.fetchRow("""select n.*, ns.name status_name, m.node_type_code,
-            (n.premium_expires > Now() or n.premium_expires = 0 or n.premium_expires is null) as is_premium
+            ((n.premium_expires > Now() or n.premium_expires = 0 or n.premium_expires is null)
+             and (n.password is not null and n.password != "") ) as is_premium
          from nodes n 
             left join node_statuses ns on n.status = ns.code
             left join models m on m.id = n.model_id
