@@ -241,7 +241,7 @@ def decomm_node(self, params):
     if not params.get('is_auto'):
 
         self.db.insert("kpi_changes", {
-            "company": node['company'], "reason": "Списание узла вручную", "node_id": params['node_id'], 'amount': 15
+            "company": node['company'], "reason": "Списание узла вручную", "node_id": params['node_id'], 'amount': -15
         })
     stop_pump(self, {"section": "nodes", "entity_id": params['node_id']})
     if params.get('is_auto'):

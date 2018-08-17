@@ -125,7 +125,7 @@ def read_models(self=None, params=None, read_nodes=True):
         nodes_sql = """
             select n.id, n.model_id, n.name, n.az_level, n.status, n.date_created, m.node_type_code,
                 n.password,
-                if (n.password is not null and (
+                if ((n.password is not null and n.password!="") and (
                     n.premium_expires = 0
                     or n.premium_expires is null
                     or n.premium_expires > Now()

@@ -192,6 +192,6 @@ def develop_model(self, params):
             where id=:id""", model_pump['data'], need_commit=True)
     # Создаем стартовый узел
     if not params.get('password'):
-        params['password'] = str(randint(1000, 9999))
+        params['password'] = str(randint(1000, 9999)) if params['company'] != 'pre' else ''
     create_node(self, {"model_id": model_id, "password": params['password']})
     return api_ok(params=params)
