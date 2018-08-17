@@ -106,6 +106,7 @@ def calc_model_params(self, params):
 @inject_db
 def preview_model_params(self, params):
     """ params = {"node_type_code": "radar", "company": "mat","size": "large", "tech_balls": {"1": 10, "2": 5}}"""
+    params['tech_balls'] = {int(key): val for key, val in params['tech_balls'].items()}
     model_params = calc_model_params(self, params)
     modif = {"small": "mult_small", "large": "mult_large", "medium": "1"}.get(params['size'])
     size_modifiers = self.db.fetchDict(f"""select parameter_code, {modif} modifier 
