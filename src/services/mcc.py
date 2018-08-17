@@ -212,8 +212,8 @@ def flight_returned(self, params):
                       need_commit=True)
     logger.info("Полет {flight_id} вернулся".format(**params))
     nodes_to_decomm = self.db.fetchColumn("select id from nodes where az_level  <= 15 and status='free'")
-    for node_id in nodes_to_decomm:
-        decomm_node(self, {"node_id": node_id, "is_auto": 1})
+    # for node_id in nodes_to_decomm:
+    #     decomm_node(self, {"node_id": node_id, "is_auto": 1})
     return api_ok(nodes_to_decomm=nodes_to_decomm)
 
 
@@ -240,3 +240,14 @@ def skip_flight(self, params):
         self.db.insert("kpi_changes", kpi_insert)
     logger.info("Полет {flight_id} пропущен".format(**params))
     return api_ok()
+
+
+
+@inject_db
+def get_flight_data_for_demetreus(self, params):
+    data = self.db.fetchAll("""
+    select node_type_code, node_id, model_id, model_name, company, level, size, total desync
+    from v_builds where flight_id=:flight_id""", params)
+    for item in data:
+        item['desync'] = item['desync'].count('1')
+    return data

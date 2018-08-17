@@ -3,6 +3,7 @@ import os
 from json import JSONDecodeError
 
 from services.db import DB
+from services.mcc import get_flight_data_for_demetreus
 from services.misc import api_fail, get_logger
 from tornado.web import RequestHandler, HTTPError, asynchronous
 
@@ -71,6 +72,13 @@ class LogsHandler(DefaultHandler):
             self.write("<xmp>" + open("logs/" + args['log'] + ".log").read() + "</xmp>")
         if 'clear' in args:
             os.unlink("logs/" + args['clear'] + ".log")
+
+
+class DemetreusFlightsHandler(DefaultHandler):
+    async def get(self):
+        args = {key: val[0].decode() for key, val in self.request.arguments.items()}
+        self.add_header("Content-type", "application/json")
+        self.write(json.dumps(get_flight_data_for_demetreus(None, args)))
 
 
 class SyncFileHandler(DefaultHandler):
