@@ -224,11 +224,5 @@ def calc_model_upkeep(self, params):
 @inject_db
 def read_kpi(self, params):
     """ no params """
-    return (self.db.fetchAll("""select company, reason, sum(amount) kpi 
-        from kpi_changes group by company, reason order by 1""")+self.db.fetchAll("""
-            select m.company, "Ручное списание узлов" reason, -15*count(*) as kpi
-            from nodes n 
-            join models m on m.id = n.model_id
-            where n.status = 'decomm'
-            group by m.company
-        """))
+    return self.db.fetchAll("""select company, reason, sum(amount) kpi 
+        from kpi_changes group by company, reason order by 1""")
