@@ -95,7 +95,7 @@ def calc_model_params(self, params):
         modifiers = sorted(
             [item.get(param_code, 0) * params['tech_balls'].get(int(tech_id), 0) for tech_id, item in techs.items()],
             reverse=int(param['increase_direction']) == 1)
-        if param_code == 'volume':
+        if param_code == 'volume' and params['node_type_code'] != 'hull':
             model_params['volume'] = apply_percent(param['def_value'], sum(modifiers))
         else:
             model_params[param_code] = param['def_value'] + modifiers[0]
